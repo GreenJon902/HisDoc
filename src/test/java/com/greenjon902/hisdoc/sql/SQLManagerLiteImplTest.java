@@ -1,14 +1,14 @@
 package com.greenjon902.hisdoc.sql;
 
-import com.greenjon902.hisdoc.sql.sqlLiteImpl.SQLLiteImpl;
+import com.greenjon902.hisdoc.sql.sqlLiteImpl.SQLLiteManagerImpl;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-class SQLLiteImplTest {
+class SQLManagerLiteImplTest {
 	@Test
 	public void testGetEvents() throws ClassNotFoundException, SQLException {
-		SQLLiteImpl sql = new SQLLiteImpl("jdbc:sqlite:./test.db");
+		SQLLiteManagerImpl sql = new SQLLiteManagerImpl("jdbc:sqlite:./test.db");
 
 	}
 

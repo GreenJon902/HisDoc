@@ -1,5 +1,5 @@
 package com.greenjon902.hisdoc.sql;
 
-public interface SQL {
+public interface SQLManager {
 	EventInfo getEvent(int id);
 }

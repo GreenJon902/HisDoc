@@ -8,9 +8,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SQLManagerLiteImpl implements SQLManager {
+public class SQLLiteManagerImpl implements SQLManager {
 	Connection conn;
-	public SQLManagerLiteImpl(String path) throws SQLException {
+	SQLLiteDispatcherImpl dispatcher;
+
+	public SQLLiteManagerImpl(String path) throws SQLException {
 		try {
 			Class.forName("org.hsqldb.jdbc.JDBCDriver" );
 		} catch (Exception e) {
@@ -19,10 +21,11 @@ public class SQLManagerLiteImpl implements SQLManager {
 			return;
 		}
 
-		conn = DriverManager.getConnection("jdbc:hsqldb:hsql:./test.db");
+		conn = DriverManager.getConnection("jdbc:hsqldb:./test.db");
+		dispatcher = new SQLLiteDispatcherImpl(conn);
+		dispatcher.dispatchInit();
+		conn.close();
 	}
-
-	private runInit
 
 
 	@Override

@@ -6,15 +6,15 @@ import com.greenjon902.hisdoc.webDriver.User;
 import java.util.Map;
 
 public class EventPage {
-	private final SQL sql;
+	private final SQLManager sqlManager;
 
-	public EventPage(SQL sql) {
-		this.sql = sql;
+	public EventPage(SQLManager sqlManager) {
+		this.sqlManager = sqlManager;
 	}
 
 	public String render(User user, Map<String, String> query, String fragment) {
 		int eventId = Integer.parseInt(query.get("id"));
-		EventInfo eventInfo = sql.getEvent(eventId);
+		EventInfo eventInfo = sqlManager.getEvent(eventId);
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("<html>");

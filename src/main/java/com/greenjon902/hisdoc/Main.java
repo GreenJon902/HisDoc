@@ -12,7 +12,7 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		FileOutputStream f = new FileOutputStream("./test.html");
 		f.write(
-				new EventPage(new SQL() {
+				new EventPage(new SQLManager() {
 					@Override
 					public EventInfo getEvent(int id) {
 						return new EventInfo("Omega Happens", "Omega starts a new base at (7777, -7777) causing the server to run out of storage.<br>The server runs out of storage. But world download problems delay the payed server.", "2022.02.05",
