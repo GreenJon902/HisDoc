@@ -1,54 +1,29 @@
 package com.greenjon902.hisdoc;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
+import com.greenjon902.hisdoc.pages.EventPage;
+import com.greenjon902.hisdoc.sql.EventInfo;
+import com.greenjon902.hisdoc.sql.SQL;
+import com.greenjon902.hisdoc.sql.TagInfo;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.util.Arrays;
+import java.io.FileOutputStream;
+import java.util.Map;
 
 public class Main {
 
 
 	public static void main(String[] args) throws Exception {
-		HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
-		server.createContext("/", new MyHandler());
-		server.setExecutor(null); // creates a default executor
-		server.start();
-	}
-
-	static class MyHandler implements HttpHandler {
-		@Override
-		public void handle(HttpExchange t) throws IOException {
-			var h = t.getRequestHeaders();
-			System.out.println(t.getRequestHeaders().get("cookie"));
-			try {
-			String response = " <form action=\"/action_page.php\">\n" +
-					"  <label for=\"fname\">First name:</label><br>\n" +
-					"  <input type=\"text\" id=\"fname\" name=\"fname\" value=\"John\"><br>\n" +
-					"  <label for=\"lname\">Last name:</label><br>\n" +
-					"  <input type=\"text\" id=\"lname\" name=\"lname\" value=\"Doe\"><br><br>\n" +
-					"  <input type=\"submit\" value=\"Submit\">\n" +
-					"</form> ";
-			t.getResponseHeaders().set("Set-Cookie", "id=a3fWa;");
+		FileOutputStream f = new FileOutputStream("./test.html");
+		f.write(
+				new EventPage(new SQL() {
+					@Override
+					public EventInfo getEvent(int id) {
+						return new EventInfo("Omega Happens", "Omega starts a new base at (7777, -7777) causing the server to run out of storage.<br>The server runs out of storage. But world download problems delay the payed server.", "2022.02.05",
+								new TagInfo[]{new TagInfo("Base", "green"), new TagInfo("Payed-Server", "red")});
 
 
-
-				System.out.println(Arrays.toString(t.getRequestBody().readAllBytes()));
-
-			t.sendResponseHeaders(200, response.length());
-			OutputStream os = t.getResponseBody();
-			os.write(response.getBytes());
-			os.close();
-
-			System.out.println(t.getRequestURI());
-			System.out.println(t.getRequestMethod());
-			} catch (Exception e) {
-				System.out.println(e);
-				e.printStackTrace();
-			}
-		}
+					}
+				}).render(null, Map.of("id", "123"), null).getBytes()
+		);
+		f.close();
 	}
 }
