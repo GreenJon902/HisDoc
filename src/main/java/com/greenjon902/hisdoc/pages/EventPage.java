@@ -1,8 +1,6 @@
 package com.greenjon902.hisdoc.pages;
 
-import com.greenjon902.hisdoc.sql.EventInfo;
-import com.greenjon902.hisdoc.sql.SQL;
-import com.greenjon902.hisdoc.sql.TagInfo;
+import com.greenjon902.hisdoc.sql.*;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.util.Map;
@@ -26,8 +24,8 @@ public class EventPage {
 		builder.append("<style>");
 
 		builder.append("html {background:#f8f9fa;min-height:100%;}");
-		builder.append("body {background:#ffffff;max-width:95.75em;min-width:31.25em;padding:1em;margin:0 auto;min-height:100%;font-family: \"Roboto\", sans-serif;}");;
-		builder.append(".date {color:#555555;margin-right:1em}");
+		builder.append("body {background:#ffffff;max-width:95.75em;min-width:31.25em;padding:1em;margin:0 auto;min-height:100vh;font-family: \"Roboto\", sans-serif;}");;
+		builder.append(".date {color:#555555;margin-right:1em;float:right;}");
 		builder.append("#circle {\n" +
 				"      width: 15px;\n" +
 				"      height: 15px;\n" +
@@ -37,6 +35,32 @@ public class EventPage {
 				"      float: left;\n" +
 				"      margin-right: 2.5px;\n" +
 				"    }");
+		builder.append(".tag\n" +
+				"{\n" +
+				"  opacity:0.7;\n" +
+				"  transition: opacity .2s ease-out;\n" +
+				"  -moz-transition: opacity .2s ease-out;\n" +
+				"  -webkit-transition: opacity .2s ease-out;\n" +
+				"  -o-transition: opacity .2s ease-out;\n" +
+				"}\n" +
+				"\n" +
+				".tag:hover\n" +
+				"{\n" +
+				"  opacity:1;\n" +
+				"  transition: opacity .2s ease-out;\n" +
+				"  -moz-transition: opacity .2s ease-out;\n" +
+				"  -webkit-transition: opacity .2s ease-out;\n" +
+				"  -o-transition: opacity .2s ease-out;\n" +
+				"}");
+		builder.append(".related\n" +
+				"{\n" +
+				"  text-decoration:none;\n" +
+				"}\n" +
+				"\n" +
+				".related:hover\n" +
+				"{\n" +
+				"  text-decoration:underline;\n" +
+				"}");
 
 		builder.append("</style>");
 		builder.append("</head>");
@@ -44,19 +68,70 @@ public class EventPage {
 
 		builder.append("<body>");
 
-		builder.append("<span style=\"font-size:4em\"><b>").append(eventInfo.name()).append("</b></span><br>");
+		builder.append("<div style=\"justify-content: space-between;display: flex;\">");
 		builder.append("<div>");
-		builder.append("<span class=\"date\">").append(eventId).append("</span>");
+		builder.append("<span style=\"font-size:4em;font-family:serif;\"><b>").append(eventInfo.name()).append("</b></span>");
+
+		builder.append("<br><span style=\"font-size:1.2em;font-family:serif;\"><b>").append("Description").append("</b></span>");
+		builder.append("<hr>");
+		builder.append("<p>").append(eventInfo.description()).append("</p>");
+
+		builder.append("<br>");
+		builder.append("<span style=\"font-size:1.2em;font-family:serif;\"><b>").append("Changelog").append("</b></span>");
+		builder.append("<hr>");
+		builder.append("<div>");
+
+		int maxSpace = 0;
+		for (Changelog changelog : eventInfo.changelogs()) {
+			if (changelog.authorName().length() > maxSpace) {
+				maxSpace = changelog.authorName().length();
+			}
+		}
+
+		builder.append("<span>").append(eventInfo.createdDate()).append("&nbsp;&nbsp;&nbsp;");
+		builder.append(String.format("%1$" + maxSpace + "s", eventInfo.postedBy()).replace(" ", "&nbsp;&nbsp;"));
+		builder.append(": </span>");
+		builder.append("<span class=\"date\" style=\"float:none\">").append("This event was created!").append("</span>");
+
+		for (Changelog changelog : eventInfo.changelogs()) {
+			builder.append("<br>");
+			builder.append("<span>").append(changelog.dateString()).append("&nbsp;&nbsp;&nbsp;");
+			builder.append(String.format("%1$" + maxSpace + "s", changelog.authorName()).replace(" ", "&nbsp;&nbsp;"));
+			builder.append(": </span>");
+			builder.append("<span class=\"date\" style=\"float:none\">").append(changelog.changeDescription()).append("</span>");
+		}
+		builder.append("</div>");
+
+		builder.append("</div>");
+		builder.append("<div>");
+
 		builder.append("<span class=\"date\">").append(eventInfo.dateString()).append("</span>");
-		builder.append("<div style=\"border-style:solid;padding:10px;overflow:auto;border-width:1px;border-color:#666666;\">");
+		builder.append("<br>");
+
+		builder.append("<span><u>Related Events</u></span>");
+		builder.append("<div style=\"overflow:auto;border-width:0.1em;border-color:#666666;\">");
 		for (TagInfo tag : eventInfo.tags()) {
 			builder.append(renderTag(tag));
 		}
 		builder.append("</div>");
-		builder.append("</div>");
-		builder.append("<p>").append(eventInfo.description()).append("</b>");
+		builder.append("<br>");
 
-		// TODO: Tags from sql
+		builder.append("<span><u>Related Events</u></span>");
+		for (LinkInfo link : eventInfo.relatedEvents()) {
+			builder.append("<br>");
+			builder.append("<a class=\"related\" href=\"event?id=").append(link.id()).append("\">").append(link.name()).append("</a>");
+		}
+		builder.append("<br>");
+		builder.append("<br>");
+
+		builder.append("<span><u>Related Players</u></span>");
+		for (LinkInfo link : eventInfo.relatedPlayers()) {
+			builder.append("<br>");
+			builder.append("<a class=\"related\" href=\"player?id=").append(link.id()).append("\">").append(link.name()).append("</a>");
+		}
+
+		builder.append("</div>");
+		builder.append("</div>");
 
 
 		// TODO: Images from sql
@@ -75,7 +150,7 @@ public class EventPage {
 
 	public String renderTag(TagInfo tag) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("<div style=\"")
+		builder.append("<div class=\"tag\" style=\"")
 					.append("background-color:").append(tag.color()).append(";")
 					.append("float:").append("left").append(";")
 					.append("padding:").append("2px 5px").append(";")
