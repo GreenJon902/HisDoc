@@ -1,3 +1,3 @@
-SELECT Tags.name as text FROM Tags
+SELECT Tag.name as text FROM Tag
 UNION
-SELECT Users.userInfo as text FROM Users
+SELECT User.userInfo as text FROM User

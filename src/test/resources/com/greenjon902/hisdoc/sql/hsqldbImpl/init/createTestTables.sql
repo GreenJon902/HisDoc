@@ -1,16 +1,16 @@
-CREATE TABLE IF NOT EXISTS Tags (
+CREATE TABLE IF NOT EXISTS Tag (
   tid           INTEGER      NOT NULL PRIMARY KEY IDENTITY,
   name          VARCHAR(255) NOT NULL,
   desc          VARCHAR(64k) NOT NULL,
   color         INTEGER      NOT NULL  -- _RGB, we have 8 unused bits
 );
 
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE IF NOT EXISTS User (
   uid      INTEGER      NOT NULL PRIMARY KEY IDENTITY,
   userInfo VARCHAR(64k) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Dates (
+CREATE TABLE IF NOT EXISTS Date (
   did       INTEGER   NOT NULL PRIMARY KEY IDENTITY,
   type      CHARACTER NOT NULL CHECK(type IN ('c', 'b')), -- 'c': centered around date1, with precision and a difference, 'b': between two dates
   date1     TIMESTAMP NOT NULL,  -- If type is 'c' then it is centered around this date as a timestamp with precision, if type is 'b' then this is rounded to a date

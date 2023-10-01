@@ -14,6 +14,8 @@ import java.util.Set;
 import static com.greenjon902.hisdoc.sql.hsqldbImpl.Utils.getColumnValues;
 import static com.greenjon902.hisdoc.sql.hsqldbImpl.Utils.makeInMemoryConnection;
 
+// TODO: This could be loaded from a list of scripts to run, then a queries and expected results
+
 public class TestInit {
 	/**
 	 * Executes a sql from a code for this specific test. It appends the type to the start of the code.
@@ -32,7 +34,7 @@ public class TestInit {
 
 		Set<String> names = getColumnValues(execute(conn, "getTableNames"), "TABLE_NAME", String::toLowerCase);
 		Assertions.assertEquals(
-				Set.of("users", "dates", "events", "eventuserrelations", "eventtagrelations", "tags", "changelog", "eventeventrelations"),
+				Set.of("user", "date", "event", "eventuserrelation", "eventtagrelation", "tag", "changelog", "eventeventrelation"),
 				names
 		);
 	}
@@ -49,7 +51,7 @@ public class TestInit {
 
 		Set<String> names = getColumnValues(execute(conn, "getTableNames"), "TABLE_NAME", String::toLowerCase);
 		Assertions.assertEquals(
-				Set.of("users", "dates", "events", "eventuserrelations", "eventtagrelations", "tags", "changelog", "eventeventrelations"),
+				Set.of("user", "date", "event", "eventuserrelation", "eventtagrelation", "tag", "changelog", "eventeventrelation"),
 				names
 		);
 
