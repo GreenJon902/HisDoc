@@ -13,7 +13,7 @@ public class HSQLDBDispatcherImpl {
 		this.conn = conn;
 	}
 
-	public void dispatch(String string) {
+	private void dispatch(String string) {
 		try {
 			conn.createStatement().execute(string);
 		} catch (SQLException e) {
