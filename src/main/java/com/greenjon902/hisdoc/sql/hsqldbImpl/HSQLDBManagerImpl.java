@@ -1,4 +1,4 @@
-package com.greenjon902.hisdoc.sql.sqlLiteImpl;
+package com.greenjon902.hisdoc.sql.hsqldbImpl;
 
 
 import com.greenjon902.hisdoc.sql.EventInfo;
@@ -8,11 +8,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SQLLiteManagerImpl implements SQLManager {
+public class HSQLDBManagerImpl implements SQLManager {
 	Connection conn;
-	SQLLiteDispatcherImpl dispatcher;
+	HSQLDBDispatcherImpl dispatcher;
 
-	public SQLLiteManagerImpl(String path) throws SQLException {
+	public HSQLDBManagerImpl(String path) throws SQLException {
 		try {
 			Class.forName("org.hsqldb.jdbc.JDBCDriver" );
 		} catch (Exception e) {
@@ -21,8 +21,8 @@ public class SQLLiteManagerImpl implements SQLManager {
 			return;
 		}
 
-		conn = DriverManager.getConnection("jdbc:hsqldb:./test.db");
-		dispatcher = new SQLLiteDispatcherImpl(conn);
+		conn = DriverManager.getConnection(path);
+		dispatcher = new HSQLDBDispatcherImpl(conn);
 		dispatcher.dispatchInit();
 		conn.close();
 	}
