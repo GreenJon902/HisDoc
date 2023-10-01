@@ -1,8 +1,8 @@
-package com.greenjon902.hisdoc.sql.hsqldbImpl;
+package com.greenjon902.hisdoc.sql.hsqldbImpl.hsqldbImpl;
 
 
-import com.greenjon902.hisdoc.sql.EventInfo;
-import com.greenjon902.hisdoc.sql.SQLManager;
+import com.greenjon902.hisdoc.sql.hsqldbImpl.EventInfo;
+import com.greenjon902.hisdoc.sql.hsqldbImpl.SQLManager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

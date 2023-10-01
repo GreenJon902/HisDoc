@@ -1,3 +1,5 @@
+-- TODO: Create documentation of each table and its columns
+
 CREATE TABLE IF NOT EXISTS Users (
   uid      INTEGER      NOT NULL PRIMARY KEY IDENTITY,
   userInfo VARCHAR(64k) NOT NULL

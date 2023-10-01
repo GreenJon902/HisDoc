@@ -1,4 +1,4 @@
-package com.greenjon902.hisdoc.sql.hsqldbImpl;
+package com.greenjon902.hisdoc.sql.hsqldbImpl.hsqldbImpl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

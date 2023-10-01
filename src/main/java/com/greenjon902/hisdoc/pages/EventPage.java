@@ -1,6 +1,6 @@
 package com.greenjon902.hisdoc.pages;
 
-import com.greenjon902.hisdoc.sql.*;
+import com.greenjon902.hisdoc.sql.hsqldbImpl.*;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.util.Map;
