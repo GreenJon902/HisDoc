@@ -1,14 +1,15 @@
 package com.greenjon902.hisdoc.sql.hsqldbImpl.hsqldbImpl;
 
+import com.greenjon902.hisdoc.sql.results.EventInfo;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class HSQLDBDispatcherImpl {
 	private final Connection conn;
@@ -26,30 +27,32 @@ public class HSQLDBDispatcherImpl {
 	}
 
 	public void dispatchInit() {
-		String string;
-		try {
-			InputStream fileInputStream = getClass().getClassLoader().getResourceAsStream("com/greenjon902/hisdoc/sql/hsqldbImpl/init.sql");
-			string = new String(fileInputStream.readAllBytes());
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		dispatch(string);
 	}
 
 	public void dispatchGetEvent(int eid) {
-		String string;
-		try {
-			InputStream fileInputStream = getClass().getClassLoader().getResourceAsStream("com/greenjon902/hisdoc/sql/hsqldbImpl/getEvent.sql");
-			string = new String(fileInputStream.readAllBytes());
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		try {
-			ResultSet result = conn.createStatement().executeQuery(string.replace("{0}", String.valueOf(eid)));
+		try (CallableStatement cs = conn.prepareCall("CALL getEvent(?)}")) {
+			cs.setInt("eid", eid);
+
+			cs.execute();
+			System.out.println(cs.getString("name"));
+
+			/*EventInfo event = new EventInfo(
+					result.getInt("eid"),
+					result.getString("name"),
+					result.getString("desc"),
+					(String[]) result.getArray("TagName").getArray(),
+					(int[]) result.getArray("TagColor").getArray(),
+					(String[]) result.getArray("UserInfo").getArray(),
+					(String[]) result.getArray("ChangeDesc").getArray(),
+					(String[]) result.getArray("ChangeAuthorInfo").getArray(),
+					(String[]) result.getArray("ChangeDate").getArray(),
+					(String[]) result.getArray("DateType").getArray(),
+					(String[]) result.getArray("Date1").getArray(),
+					(String[]) result.getArray("DatePrecision").getArray(),
+					(String[]) result.getArray("DateDiff").getArray(),
+					(String[]) result.getArray("DateDiffType").getArray(),
+					(String[]) result.getArray("Date2").getArray()
+			);
 
 			while(result.next()){
 
@@ -68,7 +71,7 @@ public class HSQLDBDispatcherImpl {
 				System.out.println(padLeftZeros(result.getMetaData().getColumnName(13), 15) + ": " + result.getString(13));
 				System.out.println(padLeftZeros(result.getMetaData().getColumnName(14), 15) + ": " + result.getString(14));
 				System.out.println(padLeftZeros(result.getMetaData().getColumnName(15), 15) + ": " + result.getString(15));
-			}
+			}*/
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
