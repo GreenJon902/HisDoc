@@ -1,27 +1,25 @@
-package com.greenjon902.hisdoc.sql.hsqldbImpl.hsqldbImpl;
+package com.greenjon902.hisdoc.sql.mysqlImpl.mysqlImpl;
 
 
-import com.greenjon902.hisdoc.sql.hsqldbImpl.EventInfo;
-import com.greenjon902.hisdoc.sql.hsqldbImpl.SQLManager;
+import com.greenjon902.hisdoc.sql.mysqlImpl.EventInfo;
+import com.greenjon902.hisdoc.sql.mysqlImpl.SQLManager;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class HSQLDBManagerImpl implements SQLManager {
+public class MySQLManagerImpl implements SQLManager {
 	Connection conn;
-	HSQLDBDispatcherImpl dispatcher;
+	MySQLDispatcherImpl dispatcher;
 
-	public HSQLDBManagerImpl(String path) throws SQLException {
+	public MySQLManagerImpl(String path) throws SQLException {
 		try {
 			Class.forName("org.hsqldb.jdbc.JDBCDriver" );
 		} catch (Exception e) {
@@ -32,21 +30,21 @@ public class HSQLDBManagerImpl implements SQLManager {
 
 		conn = DriverManager.getConnection(path);
 		loadProcedures(conn);
-		dispatcher = new HSQLDBDispatcherImpl(conn);
+		dispatcher = new MySQLDispatcherImpl(conn);
 		dispatcher.dispatchInit();
 		conn.close();
 	}
 
 	public static void loadProcedures(Connection conn) {
 		URL packageURL;
-		packageURL = conn.getClass().getClassLoader().getResource("com/greenjon902/hisdoc/sql/hsqldbImpl/procedures/");
+		packageURL = conn.getClass().getClassLoader().getResource("com/greenjon902/hisdoc/sql/mysqlImpl/procedures/");
 		Objects.requireNonNull(packageURL, "Could not find procedures folder");
 		try {
 			String[] files = new File(packageURL.toURI()).list();
 			Arrays.sort(files);
 			Objects.requireNonNull(files, "Failed to get script list");
 			for (String file : files) {
-				loadScript("com/greenjon902/hisdoc/sql/hsqldbImpl/procedures/" + file, conn);
+				loadScript("com/greenjon902/hisdoc/sql/mysqlImpl/procedures/" + file, conn);
 			}
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);

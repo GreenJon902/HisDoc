@@ -1,18 +1,18 @@
-package com.greenjon902.hisdoc.sql.hsqldbImpl;
+package com.greenjon902.hisdoc.sql.mysqlImpl;
 
-import com.greenjon902.hisdoc.sql.hsqldbImpl.hsqldbImpl.HSQLDBDispatcherImpl;
+import ch.vorburger.exec.ManagedProcessException;
+import com.greenjon902.hisdoc.sql.mysqlImpl.mysqlImpl.MySQLDispatcherImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Set;
 
-import static com.greenjon902.hisdoc.sql.hsqldbImpl.Utils.getColumnValues;
-import static com.greenjon902.hisdoc.sql.hsqldbImpl.Utils.makeInMemoryConnection;
+import static com.greenjon902.hisdoc.sql.mysqlImpl.Utils.getColumnValues;
+import static com.greenjon902.hisdoc.sql.mysqlImpl.Utils.makeInMemoryConnection;
 
 // TODO: This could be loaded from a list of scripts to run, then a queries and expected results
 
@@ -26,10 +26,10 @@ public class TestInit {
 	}
 
 	@Test
-	public void should_createTables_when_noneExist() throws ClassNotFoundException, SQLException, IOException {
+	public void should_createTables_when_noneExist() throws ClassNotFoundException, SQLException, IOException, ManagedProcessException {
 		Connection conn = makeInMemoryConnection();
 
-		HSQLDBDispatcherImpl dispatcher = new HSQLDBDispatcherImpl(conn);
+		MySQLDispatcherImpl dispatcher = new MySQLDispatcherImpl(conn);
 		dispatcher.dispatchInit();
 
 		Set<String> names = getColumnValues(execute(conn, "getTableNames"), "TABLE_NAME", String::toLowerCase);
@@ -40,13 +40,13 @@ public class TestInit {
 	}
 
 	@Test
-	public void should_createTables_when_someExist() throws ClassNotFoundException, SQLException, IOException {
+	public void should_createTables_when_someExist() throws ClassNotFoundException, SQLException, IOException, ManagedProcessException {
 		Connection conn = makeInMemoryConnection();
 
 		execute(conn, "createTestTables");
 		execute(conn, "fillTestTables");
 
-		HSQLDBDispatcherImpl dispatcher = new HSQLDBDispatcherImpl(conn);
+		MySQLDispatcherImpl dispatcher = new MySQLDispatcherImpl(conn);
 		dispatcher.dispatchInit();
 
 		Set<String> names = getColumnValues(execute(conn, "getTableNames"), "TABLE_NAME", String::toLowerCase);

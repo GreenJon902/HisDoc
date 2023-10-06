@@ -1,20 +1,13 @@
-package com.greenjon902.hisdoc.sql.hsqldbImpl.hsqldbImpl;
+package com.greenjon902.hisdoc.sql.mysqlImpl.mysqlImpl;
 
-import com.greenjon902.hisdoc.sql.results.EventInfo;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 
-public class HSQLDBDispatcherImpl {
+public class MySQLDispatcherImpl {
 	private final Connection conn;
 
-	public HSQLDBDispatcherImpl(Connection conn) {
+	public MySQLDispatcherImpl(Connection conn) {
 		this.conn = conn;
 	}
 

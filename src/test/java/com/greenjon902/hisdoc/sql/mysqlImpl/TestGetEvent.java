@@ -1,7 +1,8 @@
-package com.greenjon902.hisdoc.sql.hsqldbImpl;
+package com.greenjon902.hisdoc.sql.mysqlImpl;
 
-import com.greenjon902.hisdoc.sql.hsqldbImpl.hsqldbImpl.HSQLDBDispatcherImpl;
-import com.greenjon902.hisdoc.sql.hsqldbImpl.hsqldbImpl.HSQLDBManagerImpl;
+import ch.vorburger.exec.ManagedProcessException;
+import com.greenjon902.hisdoc.sql.mysqlImpl.mysqlImpl.MySQLDispatcherImpl;
+import com.greenjon902.hisdoc.sql.mysqlImpl.mysqlImpl.MySQLManagerImpl;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.greenjon902.hisdoc.sql.hsqldbImpl.Utils.makeInMemoryConnection;
+import static com.greenjon902.hisdoc.sql.mysqlImpl.Utils.makeInMemoryConnection;
 
 public class TestGetEvent {
 	/**
@@ -26,10 +27,12 @@ public class TestGetEvent {
 		try {
 			conn = makeInMemoryConnection();
 
-			HSQLDBDispatcherImpl dispatcher = new HSQLDBDispatcherImpl(conn);
-			HSQLDBManagerImpl.loadProcedures(conn);
+			MySQLDispatcherImpl dispatcher = new MySQLDispatcherImpl(conn);
+			MySQLManagerImpl.loadProcedures(conn);
 			dispatcher.dispatchInit();
 			dispatcher.dispatchGetEvent(0);
+		} catch (ManagedProcessException e) {
+			throw new RuntimeException(e);
 		} finally {
 			if (conn != null) {
 				conn.close();

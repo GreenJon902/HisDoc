@@ -1,4 +1,8 @@
-package com.greenjon902.hisdoc.sql.hsqldbImpl;
+package com.greenjon902.hisdoc.sql.mysqlImpl;
+
+import ch.vorburger.exec.ManagedProcessException;
+import ch.vorburger.mariadb4j.DB;
+import com.greenjon902.hisdoc.sql.mysqlImpl.mysqlImpl.MySQLManagerImpl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +23,7 @@ public class Utils {
 
 		String string;
 		try (InputStream stream = Utils.class.getClassLoader().getResourceAsStream(
-				"com/greenjon902/hisdoc/sql/hsqldbImpl/" + code + ".sql")) {
+				"com/greenjon902/hisdoc/sql/mysqlImpl/" + code + ".sql")) {
 			if (stream == null) throw new RuntimeException("Could not find sql util \"" + code + "\"");
 			string = new String(stream.readAllBytes());
 		}
@@ -39,8 +43,13 @@ public class Utils {
 		return getColumnValues(result, columnName, Function.identity());
 	}
 
-	public static Connection makeInMemoryConnection() throws SQLException, ClassNotFoundException {
-		Class.forName("org.hsqldb.jdbc.JDBCDriver" );
-		return DriverManager.getConnection("jdbc:hsqldb:mem");
+	public static Connection makeInMemoryConnection() throws SQLException, ClassNotFoundException, ManagedProcessException {
+		DB database = DB.newEmbeddedDB(3306);
+		database.start();
+		database.createDB("HisDoc");
+
+		Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/HisDoc");
+		MySQLManagerImpl.loadProcedures(conn);
+		return conn;
 	}
 }
