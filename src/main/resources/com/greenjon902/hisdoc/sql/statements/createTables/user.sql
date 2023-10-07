@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS {prefix}User (
+  uid      INTEGER      NOT NULL AUTO_INCREMENT,
+  userInfo  LONGTEXT NOT NULL,
+  PRIMARY KEY (uid)
+);

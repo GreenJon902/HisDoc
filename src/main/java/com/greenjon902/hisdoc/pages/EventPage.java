@@ -1,11 +1,7 @@
 package com.greenjon902.hisdoc.pages;
 
-import com.greenjon902.hisdoc.sql.mysqlImpl.*;
-import com.greenjon902.hisdoc.webDriver.User;
-
-import java.util.Map;
-
 public class EventPage {
+	/**
 	private final SQLManager sqlManager;
 
 	public EventPage(SQLManager sqlManager) {
@@ -177,4 +173,5 @@ public class EventPage {
 				.append("</div>");
 		return builder.toString();
 	}
+	 */
 }

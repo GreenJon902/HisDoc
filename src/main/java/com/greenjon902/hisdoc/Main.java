@@ -1,7 +1,7 @@
 package com.greenjon902.hisdoc;
 
 import com.greenjon902.hisdoc.pages.EventPage;
-import com.greenjon902.hisdoc.sql.mysqlImpl.*;
+import com.greenjon902.hisdoc.sql.*;
 
 import java.io.FileOutputStream;
 import java.util.Map;
@@ -10,7 +10,7 @@ public class Main {
 
 
 	public static void main(String[] args) throws Exception {
-		FileOutputStream f = new FileOutputStream("./test.html");
+		/**FileOutputStream f = new FileOutputStream("./test.html");
 		f.write(
 				new EventPage(new SQLManager() {
 					@Override
@@ -34,6 +34,6 @@ public class Main {
 					}
 				}).render(null, Map.of("id", "123"), null).getBytes()
 		);
-		f.close();
+		f.close();*/
 	}
 }
