@@ -6,23 +6,27 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
-public abstract class WebDriver {
+public class WebDriver {
 	private final HttpServer server;
 	protected final WebDriverConfig webDriverConfig;
-	private final HttpHandlerImpl httpHandler;
 
 	public WebDriver(WebDriverConfig webDriverConfig) throws IOException {
 		this.webDriverConfig = webDriverConfig;
-		this.httpHandler = new HttpHandlerImpl();
 
 		server = HttpServer.create();
 		server.bind(new InetSocketAddress(webDriverConfig.port()), webDriverConfig.backlog());
 
-		server.createContext("/", httpHandler);
+		for (String path : webDriverConfig.pageRenderers().keySet()) {
+			server.createContext(path, new HttpHandlerImpl(webDriverConfig.pageRenderers().get(path)));
+		}
 	}
 
 	/**
@@ -41,17 +45,36 @@ public abstract class WebDriver {
 }
 
 class HttpHandlerImpl implements HttpHandler {
+	private final PageRenderer pageRenderer;
+
+	public HttpHandlerImpl(PageRenderer pageRenderer) {
+		this.pageRenderer = pageRenderer;
+	}
+
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
 		getUser(exchange);
-		exchange.sendResponseHeaders(10, 10);
-		exchange.close();
 
-		System.out.println(exchange.getRequestURI().getQuery());
-		System.out.println(exchange.getRequestHeaders());
-		System.out.println(exchange.getRequestBody());
-		System.out.println(exchange.getRequestURI());
-		System.out.println(exchange.getRequestMethod());
+		Map<String, String> query = new HashMap<>();
+		for (String line : exchange.getRequestURI().getQuery().split("\n")) {
+			String[] sides = line.split("=");
+			if (sides.length == 2) {
+				query.put(sides[0], sides[1]);
+			}
+		}
+
+		String rendered = "An error has occurred";
+		try {
+			rendered = pageRenderer.render(null, query, null);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+
+
+		exchange.sendResponseHeaders(200, rendered.length());
+		OutputStream os = exchange.getResponseBody();
+		os.write(rendered.getBytes());
+		os.close();
 	}
 
 	public void getUser(HttpExchange exchange) {

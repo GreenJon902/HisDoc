@@ -1,5 +1,8 @@
 package com.greenjon902.hisdoc.webDriver;
 
-public record WebDriverConfig(int port, int backlog, int stopDelay) {
+import java.util.HashMap;
+import java.util.Map;
+
+public record WebDriverConfig(Map<String, PageRenderer> pageRenderers, int port, int backlog, int stopDelay) {
 
 }

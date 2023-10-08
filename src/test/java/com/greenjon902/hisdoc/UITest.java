@@ -1,14 +1,15 @@
 package com.greenjon902.hisdoc;
 
 import ch.vorburger.mariadb4j.DB;
-import com.greenjon902.hisdoc.pages.EventPage;
+import com.greenjon902.hisdoc.pages.EventPageRenderer;
+import com.greenjon902.hisdoc.pages.TagPageRenderer;
+import com.greenjon902.hisdoc.pages.UserPageRenderer;
 import com.greenjon902.hisdoc.sql.Dispatcher;
+import com.greenjon902.hisdoc.webDriver.WebDriver;
+import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
 
-import java.io.FileOutputStream;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.util.Map;
 
 public class UITest {
@@ -24,10 +25,12 @@ public class UITest {
 		dispatcher.createTables();
 		dispatcher.prepare("UITestSetup").execute();  // Make a test database
 
-		FileOutputStream f = new FileOutputStream("./test.html");
-		f.write(new EventPage(dispatcher).render(null, Map.of("id", "1"), null).getBytes());
-		f.close();
-
-		database.stop();
+		WebDriver webDriver = new WebDriver(new WebDriverConfig(
+				Map.of("/event", new EventPageRenderer(dispatcher),
+						"/tag", new TagPageRenderer(dispatcher),
+						"/user", new UserPageRenderer(dispatcher)),
+				8080, 0, 0
+		));
+		webDriver.start();
 	}
 }

@@ -2,24 +2,28 @@ package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.*;
+import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-public class EventPage {
+public class EventPageRenderer extends PageRenderer {
 
 	private final Dispatcher dispatcher;
 
-	public EventPage(Dispatcher dispatcher) {
+	public EventPageRenderer(Dispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 	}
 
 	public String render(User user, Map<String, String> query, String fragment) throws SQLException {
+		if (!query.containsKey("id")) {
+			return "No id given :(";
+		}
+
 		int eventId = Integer.parseInt(query.get("id"));
 		EventInfo eventInfo = dispatcher.getEventInfo(eventId);
 
@@ -153,7 +157,7 @@ public class EventPage {
 		builder.append("<span><u>Related Players</u></span>");
 		for (UserInfo userInfo : eventInfo.relatedPlayerInfos()) {
 			builder.append("<br>");
-			builder.append("<a class=\"related\" href=\"player?id=").append(userInfo.id()).append("\">").append(userInfo.userInfo()).append("</a>");
+			builder.append("<a class=\"related\" href=\"user?id=").append(userInfo.id()).append("\">").append(userInfo.userInfo()).append("</a>");
 		}
 
 		builder.append("</div>");
@@ -208,7 +212,7 @@ public class EventPage {
 				.append("justify-items:").append("center").append(";")
 				.append("display:").append("flex").append(";")
 				.append("\">")
-				.append("<div id=\"circle\"></div><a href=\"tag=").append(tag.id()).append("\" style=\"color:#ffffff;margin-right:5px;\"><b>").append(tag.name()).append("</b></a>")
+				.append("<div id=\"circle\"></div><a href=\"tag?id=").append(tag.id()).append("\" style=\"color:#ffffff;margin-right:5px;\"><b>").append(tag.name()).append("</b></a>")
 		.append("</div>");
 		return builder.toString();
 	}
