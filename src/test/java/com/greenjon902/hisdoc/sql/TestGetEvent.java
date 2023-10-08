@@ -1,15 +1,13 @@
 package com.greenjon902.hisdoc.sql;
 
-import com.greenjon902.hisdoc.sql.results.ChangeInfo;
-import com.greenjon902.hisdoc.sql.results.DateInfo;
-import com.greenjon902.hisdoc.sql.results.EventInfo;
-import com.greenjon902.hisdoc.sql.results.TagInfo;
+import com.greenjon902.hisdoc.sql.results.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.Collections;
 import java.util.Set;
 
 import static com.greenjon902.hisdoc.sql.Utils.*;
@@ -27,12 +25,12 @@ public class TestGetEvent {
 	}
 
 	@Test
-	public void should_returnTheEvents_when_onlyThatEventExists_and_usingDateFrom0() throws SQLException {
+	public void should_returnTheEvents_when_onlyThatEventExists_and_usingEvent1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
 
-		dispatcher.prepare("testGetEvent/makeEvent0").execute();
+		dispatcher.prepare("testGetEvent/makeEvent1").execute();
 
 
 		//waitForNewline();
@@ -42,10 +40,92 @@ public class TestGetEvent {
 		Assertions.assertEquals(
 				new EventInfo(1,
 						"testing", "i was testing",
-						DateInfo.centered(new Timestamp(2017, 7, 23, 13, 10, 11, 0), "d", 4, "h"),
-						new TagInfo[]{},
-						new String[]{},
-						new ChangeInfo[]{}
+						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
+						Collections.emptySet(),
+						Collections.emptySet(),
+						Collections.emptySet()
+						),
+				eventInfo);
+	}
+
+	@Test
+	public void should_returnTheEvents_when_onlyThatEventExists_and_usingEvent2() throws SQLException {
+		Connection conn = makeInMemoryConnection();
+		Dispatcher dispatcher = new Dispatcher(conn);
+		dispatcher.createTables();
+
+		dispatcher.prepare("testGetEvent/makeUsers").execute();  // Requires this beforehand
+		dispatcher.prepare("testGetEvent/makeEvent2").execute();
+
+
+		//waitForNewline();
+
+		EventInfo eventInfo = dispatcher.getEventInfo(2);
+
+		Assertions.assertEquals(
+				new EventInfo(2,
+						"testing", "i was testing",
+						new Timestamp(1696767960000L), new UserInfo(1, "User1"),
+						DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)),
+						Collections.emptySet(),
+						Collections.emptySet(),
+						Collections.emptySet()
+				),
+				eventInfo);
+	}
+
+	@Test
+	public void should_returnTheEvents_when_onlyOneEventExists_andOtherDataPiecesExistButAreNotRelated_and_usingEvent1() throws SQLException {
+		Connection conn = makeInMemoryConnection();
+		Dispatcher dispatcher = new Dispatcher(conn);
+		dispatcher.createTables();
+
+		dispatcher.prepare("testGetEvent/makeEvent1").execute();
+		dispatcher.prepare("testGetEvent/makeTags").execute();
+		dispatcher.prepare("testGetEvent/makeUsers").execute();
+		dispatcher.prepare("testGetEvent/makeChangeLogsFor5And6").execute();
+
+
+		//waitForNewline();
+
+		EventInfo eventInfo = dispatcher.getEventInfo(1);
+
+		Assertions.assertEquals(
+				new EventInfo(1,
+						"testing", "i was testing",
+						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
+						Collections.emptySet(),
+						Collections.emptySet(),
+						Collections.emptySet()
+						),
+				eventInfo);
+	}
+
+	@Test
+	public void should_returnTheEvents_when_onlyOneEventExists_andOtherDataPiecesExistAndAreRelated_and_usingEvent1() throws SQLException {
+		Connection conn = makeInMemoryConnection();
+		Dispatcher dispatcher = new Dispatcher(conn);
+		dispatcher.createTables();
+
+		dispatcher.prepare("testGetEvent/makeEvent1").execute();
+		dispatcher.prepare("testGetEvent/makeTags").execute();
+		dispatcher.prepare("testGetEvent/makeTagRelations").execute();
+		dispatcher.prepare("testGetEvent/makeUsers").execute();
+		dispatcher.prepare("testGetEvent/makeUserRelations").execute();
+		dispatcher.prepare("testGetEvent/makeChangeLogsFor1And2").execute();
+
+
+		//waitForNewline();
+
+		EventInfo eventInfo = dispatcher.getEventInfo(1);
+
+		Assertions.assertEquals(
+				new EventInfo(1,
+						"testing", "i was testing",
+						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
+						Set.of(new TagInfo(2, "Tag2", 321)),
+						Set.of(new UserInfo(2, "User2")),
+						Set.of(new ChangeInfo(new Timestamp(1500811811000L), new UserInfo(2, "User2"), "I did you"))
 						),
 				eventInfo);
 	}

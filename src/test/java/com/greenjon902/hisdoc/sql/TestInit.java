@@ -36,10 +36,10 @@ public class TestInit {
 		Connection conn = makeInMemoryConnection();
 
 		Dispatcher dispatcher = new Dispatcher(conn);
-		dispatcher.prepareWithArgs("createTables/user").execute();
-		dispatcher.prepareWithArgs("createTables/tag").execute();
-		dispatcher.prepareWithArgs("testInit/fillTag").execute();
-		dispatcher.prepareWithArgs("testInit/fillUser").execute();
+		dispatcher.prepare("createTables/user").execute();
+		dispatcher.prepare("createTables/tag").execute();
+		dispatcher.prepare("testInit/fillTag").execute();
+		dispatcher.prepare("testInit/fillUser").execute();
 		dispatcher.createTables();
 
 		dispatcher.createTables();
