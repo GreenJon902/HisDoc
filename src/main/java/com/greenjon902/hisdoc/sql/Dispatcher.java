@@ -16,7 +16,7 @@ public class Dispatcher {
 		this.conn = conn;
 	}
 
-	protected PreparedStatement prepare(String... codes) throws SQLException {
+	public PreparedStatement prepare(String... codes) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(checkStatement("statement/start"));
 		for (int i=0; i<codes.length; i++) {
@@ -29,7 +29,7 @@ public class Dispatcher {
 		return conn.prepareStatement(sql.toString());
 	}
 
-	protected PreparedStatement prepareWithArgs(String code, Object... arguments) throws SQLException {
+	public PreparedStatement prepareWithArgs(String code, Object... arguments) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(checkStatement("statement/start"));
 		String statement = checkStatement(code);

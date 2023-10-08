@@ -1,16 +1,31 @@
 package com.greenjon902.hisdoc.pages;
 
-public class EventPage {
-	/**
-	private final SQLManager sqlManager;
+import com.greenjon902.hisdoc.sql.Dispatcher;
+import com.greenjon902.hisdoc.sql.results.*;
+import com.greenjon902.hisdoc.webDriver.User;
 
-	public EventPage(SQLManager sqlManager) {
-		this.sqlManager = sqlManager;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+
+public class EventPage {
+
+	private final Dispatcher dispatcher;
+
+	public EventPage(Dispatcher dispatcher) {
+		this.dispatcher = dispatcher;
 	}
 
-	public String render(User user, Map<String, String> query, String fragment) {
+	public String render(User user, Map<String, String> query, String fragment) throws SQLException {
 		int eventId = Integer.parseInt(query.get("id"));
-		EventInfo eventInfo = sqlManager.getEvent(eventId);
+		EventInfo eventInfo = dispatcher.getEventInfo(eventId);
+
+		if (eventInfo == null) {
+			return "No event found :(";
+		}
 
 		StringBuilder builder = new StringBuilder();
 		builder.append("<html>");
@@ -77,53 +92,68 @@ public class EventPage {
 		builder.append("<hr>");
 		builder.append("<div>");
 
-		int maxSpace = 0;
-		for (Changelog changelog : eventInfo.changelogs()) {
-			if (changelog.authorName().length() > maxSpace) {
-				maxSpace = changelog.authorName().length();
+		String postedBy;
+		if (eventInfo.postedBy() == null) {
+			postedBy = "Unknown";
+		} else {
+			postedBy = eventInfo.postedBy().userInfo();
+		}
+
+		int maxSpace = postedBy.length();
+		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
+			int space;
+			System.out.println(changeInfo.author().userInfo());
+			if ((space = changeInfo.author().userInfo().length()) > maxSpace) {
+				maxSpace = space;
 			}
 		}
 
-		builder.append("<span>").append(eventInfo.createdDate()).append("&nbsp;&nbsp;&nbsp;");
-		builder.append(String.format("%1$" + maxSpace + "s", eventInfo.postedBy()).replace(" ", "&nbsp;&nbsp;"));
+		String postedDate = "Unknown";
+		if (eventInfo.postedDate() != null) {
+			postedDate = eventInfo.postedDate().toString();
+		}
+
+		builder.append("<span>").append(postedDate).append("&nbsp;&nbsp;&nbsp;");
+		builder.append(String.format("%1$" + maxSpace + "s", postedBy).replace(" ", "&nbsp;&nbsp;"));
 		builder.append(": </span>");
 		builder.append("<span class=\"date\" style=\"float:none\">").append("This event was created!").append("</span>");
 
-		for (Changelog changelog : eventInfo.changelogs()) {
+		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
 			builder.append("<br>");
-			builder.append("<span>").append(changelog.dateString()).append("&nbsp;&nbsp;&nbsp;");
-			builder.append(String.format("%1$" + maxSpace + "s", changelog.authorName()).replace(" ", "&nbsp;&nbsp;"));
+			builder.append("<span>").append(changeInfo.date()).append("&nbsp;&nbsp;&nbsp;");
+			builder.append(String.format("%1$" + maxSpace + "s", changeInfo.author()).replace(" ", "&nbsp;&nbsp;"));
 			builder.append(": </span>");
-			builder.append("<span class=\"date\" style=\"float:none\">").append(changelog.changeDescription()).append("</span>");
+			builder.append("<span class=\"date\" style=\"float:none\">").append(changeInfo.description()).append("</span>");
 		}
 		builder.append("</div>");
 
 		builder.append("</div>");
 		builder.append("<div>");
 
-		builder.append("<span class=\"date\">").append(eventInfo.dateString()).append("</span>");
+		builder.append("<span class=\"date\">").append(formatDateString(eventInfo.eventDateInfo())).append("</span>");
 		builder.append("<br>");
 
 		builder.append("<span><u>Related Events</u></span>");
 		builder.append("<div style=\"overflow:auto;border-width:0.1em;border-color:#666666;\">");
-		for (TagInfo tag : eventInfo.tags()) {
+		System.out.println(eventInfo.tagInfos());
+		for (TagInfo tag : eventInfo.tagInfos()) {
 			builder.append(renderTag(tag));
 		}
 		builder.append("</div>");
 		builder.append("<br>");
 
-		builder.append("<span><u>Related Events</u></span>");
+		/*builder.append("<span><u>Related Events</u></span>");
 		for (LinkInfo link : eventInfo.relatedEvents()) {
 			builder.append("<br>");
 			builder.append("<a class=\"related\" href=\"event?id=").append(link.id()).append("\">").append(link.name()).append("</a>");
 		}
 		builder.append("<br>");
-		builder.append("<br>");
+		builder.append("<br>");*/
 
 		builder.append("<span><u>Related Players</u></span>");
-		for (LinkInfo link : eventInfo.relatedPlayers()) {
+		for (UserInfo userInfo : eventInfo.relatedPlayerInfos()) {
 			builder.append("<br>");
-			builder.append("<a class=\"related\" href=\"player?id=").append(link.id()).append("\">").append(link.name()).append("</a>");
+			builder.append("<a class=\"related\" href=\"player?id=").append(userInfo.id()).append("\">").append(userInfo.userInfo()).append("</a>");
 		}
 
 		builder.append("</div>");
@@ -138,27 +168,47 @@ public class EventPage {
 		//		.append(renderImage("https://cdn.discordapp.com/attachments/902163346898423808/1149975706118389820/image.png?ex=65192555&is=6517d3d5&hm=2923716cd3fbadb99797ac62fcdf733e0e03d8aff77865170fad99bd15a9fa57&"))
 		//		.append("</div>");
 
-		//builder.append("</body>");
-		//builder.append("</html>");
+		builder.append("</body>");
+		builder.append("</html>");
 
 		return builder.toString();
 	}
 
+	private String formatDateString(DateInfo dateInfo) {
+		if (Objects.equals(dateInfo.type(), "c")) {
+			String pattern = "";
+			switch (dateInfo.precision()) {
+				case "d": pattern += "yyyy-MM-dd";
+				case "h": pattern += " hh";
+				case "m": pattern += ":mm";
+			}
+			String center = dateInfo.date1().toLocalDateTime().format(DateTimeFormatter.ofPattern(pattern));
+			String diff = "";
+			if (dateInfo.diff() != 0) {
+				diff = " &plusmn;" + String.format("%02d", dateInfo.diff()) + dateInfo.diffType().toUpperCase(Locale.ROOT);
+			}
+			return center + diff;
+		} else {
+			return "Somewhere between " + dateInfo.date1().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) +
+					" and " + dateInfo.date2().toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		}
+	}
+
 	public String renderTag(TagInfo tag) {
 		StringBuilder builder = new StringBuilder();
+		//.append("padding-left:").append("20px").append(";")
 		builder.append("<div class=\"tag\" style=\"")
-					.append("background-color:").append(tag.color()).append(";")
-					.append("float:").append("left").append(";")
-					.append("padding:").append("2px 5px").append(";")
-					//.append("padding-left:").append("20px").append(";")
-					.append("border-radius:").append("20px").append(";")
-					.append("margin-right:").append("10px").append(";")
-					.append("align-items:").append("center").append(";")
-					.append("justify-items:").append("center").append(";")
-					.append("display:").append("flex").append(";")
+				.append("background-color:").append(String.format("%06x", tag.color())).append(";")
+				.append("float:").append("left").append(";")
+				.append("padding:").append("2px 5px").append(";")
+				//.append("padding-left:").append("20px").append(";")
+				.append("border-radius:").append("20px").append(";")
+				.append("margin-right:").append("10px").append(";")
+				.append("align-items:").append("center").append(";")
+				.append("justify-items:").append("center").append(";")
+				.append("display:").append("flex").append(";")
 				.append("\">")
-				.append("<div id=\"circle\">").append("</div>")
-				.append("<a href=\"tag\" style=\"color:#ffffff;margin-right:5px;\"><b>").append(tag.text()).append("</b></a>")
+				.append("<div id=\"circle\"></div><a href=\"tag=").append(tag.id()).append("\" style=\"color:#ffffff;margin-right:5px;\"><b>").append(tag.name()).append("</b></a>")
 		.append("</div>");
 		return builder.toString();
 	}
@@ -173,5 +223,5 @@ public class EventPage {
 				.append("</div>");
 		return builder.toString();
 	}
-	 */
+
 }
