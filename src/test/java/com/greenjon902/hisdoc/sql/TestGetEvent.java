@@ -3,9 +3,7 @@ package com.greenjon902.hisdoc.sql;
 import com.greenjon902.hisdoc.sql.results.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runners.Parameterized;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.Collections;
 import java.util.Set;
@@ -65,7 +63,7 @@ public class TestGetEvent {
 		Assertions.assertEquals(
 				new EventInfo(2,
 						"testing", "i was testing",
-						new Timestamp(1696767960000L), new UserInfo(1, "User1"),
+						new Timestamp(1696767960000L), new UserLink(1, "User1"),
 						DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)),
 						Collections.emptySet(),
 						Collections.emptySet(),
@@ -123,9 +121,9 @@ public class TestGetEvent {
 				new EventInfo(1,
 						"testing", "i was testing",
 						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
-						Set.of(new TagInfo(2, "Tag2", 321)),
-						Set.of(new UserInfo(2, "User2")),
-						Set.of(new ChangeInfo(new Timestamp(1500811811000L), new UserInfo(2, "User2"), "I did you"))
+						Set.of(new TagLink(2, "Tag2", 321)),
+						Set.of(new UserLink(2, "User2")),
+						Set.of(new ChangeInfo(new Timestamp(1500811811000L), new UserLink(2, "User2"), "I did you"))
 						),
 				eventInfo);
 	}

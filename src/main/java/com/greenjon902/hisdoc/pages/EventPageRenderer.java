@@ -139,8 +139,8 @@ public class EventPageRenderer extends PageRenderer {
 
 		builder.append("<span><u>Related Events</u></span>");
 		builder.append("<div style=\"overflow:auto;border-width:0.1em;border-color:#666666;\">");
-		System.out.println(eventInfo.tagInfos());
-		for (TagInfo tag : eventInfo.tagInfos()) {
+		System.out.println(eventInfo.tagLinks());
+		for (TagLink tag : eventInfo.tagLinks()) {
 			builder.append(renderTag(tag));
 		}
 		builder.append("</div>");
@@ -155,9 +155,9 @@ public class EventPageRenderer extends PageRenderer {
 		builder.append("<br>");*/
 
 		builder.append("<span><u>Related Players</u></span>");
-		for (UserInfo userInfo : eventInfo.relatedPlayerInfos()) {
+		for (UserLink userLink : eventInfo.relatedPlayerInfos()) {
 			builder.append("<br>");
-			builder.append("<a class=\"related\" href=\"user?id=").append(userInfo.id()).append("\">").append(userInfo.userInfo()).append("</a>");
+			builder.append("<a class=\"related\" href=\"user?id=").append(userLink.id()).append("\">").append(userLink.userInfo()).append("</a>");
 		}
 
 		builder.append("</div>");
@@ -198,7 +198,7 @@ public class EventPageRenderer extends PageRenderer {
 		}
 	}
 
-	public String renderTag(TagInfo tag) {
+	public String renderTag(TagLink tag) {
 		StringBuilder builder = new StringBuilder();
 		//.append("padding-left:").append("20px").append(";")
 		builder.append("<div class=\"tag\" style=\"")

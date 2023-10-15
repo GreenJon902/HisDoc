@@ -1,7 +1,6 @@
 package com.greenjon902.hisdoc.sql;
 
 import com.greenjon902.hisdoc.sql.results.*;
-import com.greenjon902.hisdoc.webDriver.User;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,18 +70,18 @@ public class Dispatcher {
 		ps.execute();
 
 		ResultSet result = ps.getResultSet();
-		Set<TagInfo> tagInfos = new HashSet<>();
+		Set<TagLink> tagLinks = new HashSet<>();
 		while (result.next()) {
-			tagInfos.add(new TagInfo(result.getInt("tid"), result.getString("name"), result.getInt("color")));
+			tagLinks.add(new TagLink(result.getInt("tid"), result.getString("name"), result.getInt("color")));
 		}
 
 		if (!ps.getMoreResults()) {
 			throw new RuntimeException("Could not find second results");
 		}
 		result = ps.getResultSet();
-		Set<UserInfo> userInfos = new HashSet<>();
+		Set<UserLink> userLinks = new HashSet<>();
 		while (result.next()) {
-			userInfos.add(new UserInfo(result.getInt("uid"), result.getString("userInfo")));
+			userLinks.add(new UserLink(result.getInt("uid"), result.getString("userInfo")));
 		}
 
 		if (!ps.getMoreResults()) {
@@ -92,7 +91,7 @@ public class Dispatcher {
 		Set<ChangeInfo> changeInfos = new HashSet<>();
 		while (result.next()) {
 			changeInfos.add(new ChangeInfo(result.getTimestamp("date"),
-					new UserInfo(result.getInt("authorUid"), result.getString("authorInfo")),
+					new UserLink(result.getInt("authorUid"), result.getString("authorInfo")),
 					result.getString("description")));
 		}
 
@@ -101,7 +100,7 @@ public class Dispatcher {
 		}
 		result = ps.getResultSet();
 		if (!result.next()) {  // No event found
-			if (!tagInfos.isEmpty() || !userInfos.isEmpty() || !changeInfos.isEmpty()) {
+			if (!tagLinks.isEmpty() || !userLinks.isEmpty() || !changeInfos.isEmpty()) {
 				throw new RuntimeException("Found no event but found some info relating to the event with id " + eid);
 			}
 			return null;
@@ -116,9 +115,9 @@ public class Dispatcher {
 		);
 
 		Integer postedUid;
-		UserInfo postedUser = null;
+		UserLink postedUser = null;
 		if ((postedUid = getInteger(result, "postedUid")) != null) {
-			postedUser = new UserInfo(postedUid, result.getString("postedInfo"));
+			postedUser = new UserLink(postedUid, result.getString("postedInfo"));
 		}
 
 		EventInfo eventInfo = new EventInfo(
@@ -128,8 +127,8 @@ public class Dispatcher {
 				result.getTimestamp("postedDate"),
 				postedUser,
 				eventDateInfo,
-				tagInfos,
-				userInfos,
+				tagLinks,
+				userLinks,
 				changeInfos
 		);
 
