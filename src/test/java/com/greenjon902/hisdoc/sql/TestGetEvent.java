@@ -12,18 +12,31 @@ import static com.greenjon902.hisdoc.sql.Utils.*;
 
 public class TestGetEvent {
 	@Test
-	public void should_returnNoEvents_when_noEventsExist() throws SQLException {
+	public void should_returnNoEvent_when_noEventsExist() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
 
-		EventInfo eventInfo = dispatcher.getEventInfo(0);
+		EventInfo eventInfo = dispatcher.getEventInfo(1);
 
 		Assertions.assertNull(eventInfo);
 	}
 
 	@Test
-	public void should_returnTheEvents_when_onlyThatEventExists_and_usingEvent1() throws SQLException {
+	public void should_returnNoEvent_when_thatEventDoesNotExist() throws SQLException {
+		Connection conn = makeInMemoryConnection();
+		Dispatcher dispatcher = new Dispatcher(conn);
+		dispatcher.createTables();
+
+		dispatcher.prepare("testGetEvent/makeEvent1").execute();
+
+		EventInfo eventInfo = dispatcher.getEventInfo(2);
+
+		Assertions.assertNull(eventInfo);
+	}
+
+	@Test
+	public void should_returnTheEvent_when_onlyThatEventExists_and_usingEvent1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
@@ -47,7 +60,7 @@ public class TestGetEvent {
 	}
 
 	@Test
-	public void should_returnTheEvents_when_onlyThatEventExists_and_usingEvent2() throws SQLException {
+	public void should_returnTheEvent_when_onlyThatEventExists_and_usingEvent2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
@@ -73,7 +86,7 @@ public class TestGetEvent {
 	}
 
 	@Test
-	public void should_returnTheEvents_when_onlyOneEventExists_andOtherDataPiecesExistButAreNotRelated_and_usingEvent1() throws SQLException {
+	public void should_returnTheEvent_when_onlyOneEventExists_andOtherDataPiecesExistButAreNotRelated_and_usingEvent1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
@@ -100,7 +113,7 @@ public class TestGetEvent {
 	}
 
 	@Test
-	public void should_returnTheEvents_when_onlyOneEventExists_andOtherDataPiecesExistAndAreRelated_and_usingEvent1() throws SQLException {
+	public void should_returnTheEvent_when_onlyOneEventExists_andOtherDataPiecesExistAndAreRelated_and_usingEvent1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();

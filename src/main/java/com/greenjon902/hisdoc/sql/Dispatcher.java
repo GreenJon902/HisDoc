@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 
+// TODO: Warn on sets and maps having duplicates
+
 public class Dispatcher {
 	Map<String, String> statements = new HashMap<>();
 	Connection conn;
@@ -140,6 +142,85 @@ public class Dispatcher {
 		}
 
 		return eventInfo;
+	}
+
+	public UserInfo getUserInfo(int uid) throws SQLException {
+		PreparedStatement ps = prepareWithArgs("queries/getUserInfo", "uid", uid);
+		ps.execute();
+
+		ResultSet result = ps.getResultSet();
+		Map<TagLink, Integer> countedTagLinks = new HashMap<>();
+		while (result.next()) {
+			TagLink tagLink = new TagLink(result.getInt("tid"), result.getString("name"), result.getInt("color"));
+			int count = result.getInt("count");
+			countedTagLinks.put(tagLink, count);
+		}
+
+		// --------------------------------------------------------------
+		if (!ps.getMoreResults()) {
+			throw new RuntimeException("Could not find second results");
+		}
+		result = ps.getResultSet();
+		if (!result.next()) {
+			throw new RuntimeException("Could not find post count for user with id " + uid);
+		}
+		int postCount = result.getInt("count");
+		if (result.next()) {
+			throw new RuntimeException("Too many post counts for user with id " + uid);
+		}
+
+		// --------------------------------------------------------------
+		if (!ps.getMoreResults()) {
+			throw new RuntimeException("Could not find third results");
+		}
+		result = ps.getResultSet();
+		if (!result.next()) {
+			throw new RuntimeException("Could not find event count for user with id " + uid);
+		}
+		int eventCount = result.getInt("count");
+		if (result.next()) {
+			throw new RuntimeException("Too many event counts for user with id " + uid);
+		}
+
+		// --------------------------------------------------------------
+		if (!ps.getMoreResults()) {
+			throw new RuntimeException("Could not find fourth results");
+		}
+		result = ps.getResultSet();
+		List<EventLink> recentEventLinks = new ArrayList<>(10);  // This is likely how long it will be
+		while (result.next()) {
+			recentEventLinks.add(new EventLink(result.getInt("eid"), result.getString("name")));
+		}
+
+		// --------------------------------------------------------------
+		if (!ps.getMoreResults()) {
+			throw new RuntimeException("Could not find fifth results");
+		}
+		result = ps.getResultSet();
+		if (!result.next()) {  // No event found
+			if (!countedTagLinks.isEmpty()) {
+				throw new RuntimeException("Found no user but found some info relating to the user with id " + uid);
+			}
+			return null;
+		}
+
+		UserInfo userInfo = new UserInfo(
+				uid,
+				result.getString("userInfo"),
+				countedTagLinks,
+				postCount, eventCount, recentEventLinks
+
+		);
+
+		// --------------------------------------------------------------
+		if (result.next()) {
+			throw new RuntimeException("Multiple users were returned for id " + uid + ", when only one is expected");
+		}
+		if (ps.getMoreResults()) {
+			throw new RuntimeException("Too many results were returned for id " + uid);
+		}
+
+		return userInfo;
 	}
 
 	private Integer getInteger(ResultSet result, String name) throws SQLException {
