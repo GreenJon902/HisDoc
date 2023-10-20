@@ -2,7 +2,6 @@ package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
-import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -15,7 +14,7 @@ public class UserPageRenderer extends PageRenderer {
 	}
 
 	@Override
-	public String render(User user, Map<String, String> query, String fragment) throws SQLException {
+	public String render(Map<String, String> query, String fragment) throws SQLException {
 		if (!query.containsKey("id")) {
 			return "No id given :(";
 		}

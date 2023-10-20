@@ -3,7 +3,6 @@ package com.greenjon902.hisdoc.pages;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.*;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
-import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -19,12 +18,17 @@ public class EventPageRenderer extends PageRenderer {
 		this.dispatcher = dispatcher;
 	}
 
-	public String render(User user, Map<String, String> query, String fragment) throws SQLException {
+	public String render(Map<String, String> query, String fragment) throws SQLException {
 		if (!query.containsKey("id")) {
 			return "No id given :(";
 		}
 
-		int eventId = Integer.parseInt(query.get("id"));
+		int eventId;
+		try {
+			eventId = Integer.parseInt(query.get("id"));
+		} catch (NumberFormatException e) {
+			return "Malformed event id :(";
+		}
 		EventInfo eventInfo = dispatcher.getEventInfo(eventId);
 
 		if (eventInfo == null) {

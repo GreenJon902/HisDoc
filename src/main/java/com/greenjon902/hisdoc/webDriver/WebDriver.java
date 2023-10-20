@@ -7,8 +7,11 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,20 +56,22 @@ class HttpHandlerImpl implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		getUser(exchange);
 
-		Map<String, String> query = new HashMap<>();
-		for (String line : exchange.getRequestURI().getQuery().split("\n")) {
-			String[] sides = line.split("=");
-			if (sides.length == 2) {
-				query.put(sides[0], sides[1]);
-			}
-		}
-
-		String rendered = "An error has occurred";
+		String rendered;
 		try {
-			rendered = pageRenderer.render(null, query, null);
-		} catch (SQLException e) {
+			Map<String, String> query = getQuery(exchange);
+			rendered = pageRenderer.render(query, null);
+
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			String error = sw.toString();
+
+			exchange.sendResponseHeaders(200, error.length());
+			OutputStream os = exchange.getResponseBody();
+			os.write(error.getBytes());
+			os.close();
 			throw new RuntimeException(e);
 		}
 
@@ -77,8 +82,22 @@ class HttpHandlerImpl implements HttpHandler {
 		os.close();
 	}
 
-	public void getUser(HttpExchange exchange) {
-		List<String> cookies = exchange.getRequestHeaders().get("Cookie");
-		System.out.println(cookies.get(0));
+	protected Map<String, String> getQuery(HttpExchange exchange) {
+		String queryString = exchange.getRequestURI().getQuery();
+
+		if (queryString == null || queryString.isEmpty()) return Collections.emptyMap();
+
+		Map<String, String> query = new HashMap<>();
+		for (String line : queryString.split("&")) {
+			String[] sides = line.split("=", 2);
+			if (sides.length == 1) {
+				query.put(sides[0], null);
+			} else if (sides.length == 2) {
+				query.put(sides[0], sides[1]);
+			} else {
+				throw new RuntimeException("The query item has the wrong number of parts, expected 1 or 2, got " + sides.length);
+			}
+		}
+		return query;
 	}
 }
