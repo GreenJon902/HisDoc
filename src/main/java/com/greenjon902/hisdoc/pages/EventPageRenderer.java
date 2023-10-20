@@ -1,5 +1,6 @@
 package com.greenjon902.hisdoc.pages;
 
+import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.*;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;

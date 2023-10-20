@@ -1,0 +1,14 @@
+html {
+    background: #f8f9fa;
+}
+
+body {
+    background: #fff;
+}
+
+.logo {
+}
+
+.logo:after {
+    background-color: #000;
+}
