@@ -38,7 +38,7 @@ public class TestGetUser {
 	}
 
 	@Test
-	public void should_returnTheEvent_when_usingUser1() throws SQLException {
+	public void should_returnTheUser_when_usingUser1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
@@ -56,7 +56,7 @@ public class TestGetUser {
 	}
 
 	@Test
-	public void should_returnTheEvent_when_usingUser2() throws SQLException {
+	public void should_returnTheUser_when_usingUser2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
@@ -80,7 +80,7 @@ public class TestGetUser {
 	}
 
 	@Test
-	public void should_returnTheCorrectEvent_when_usingUser1AndUser2() throws SQLException {
+	public void should_returnTheCorrectUser_when_usingUser1AndUser2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();

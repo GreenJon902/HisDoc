@@ -198,7 +198,7 @@ public class Dispatcher {
 		}
 		result = ps.getResultSet();
 		if (!result.next()) {  // No event found
-			if (!countedTagLinks.isEmpty()) {
+			if (!countedTagLinks.isEmpty() && !recentEventLinks.isEmpty()) {
 				throw new RuntimeException("Found no user but found some info relating to the user with id " + uid);
 			}
 			return null;
@@ -221,6 +221,49 @@ public class Dispatcher {
 		}
 
 		return userInfo;
+	}
+
+
+	public TagInfo getTagInfo(int tid) throws SQLException {
+		PreparedStatement ps = prepareWithArgs("queries/getTagInfo", "tid", tid);
+		ps.execute();
+
+		ResultSet result = ps.getResultSet();
+		List<EventLink> recentEventLinks = new ArrayList<>(10);  // This is likely how long it will be
+		while (result.next()) {
+			recentEventLinks.add(new EventLink(result.getInt("eid"), result.getString("name")));
+		}
+
+		// --------------------------------------------------------------
+		if (!ps.getMoreResults()) {
+			throw new RuntimeException("Could not find second results");
+		}
+		result = ps.getResultSet();
+		if (!result.next()) {  // No event found
+			if (!recentEventLinks.isEmpty()) {
+				throw new RuntimeException("Found no tag but found some info relating to the tid with id " + tid);
+			}
+			return null;
+		}
+
+		TagInfo tagInfo = new TagInfo(
+				tid,
+				result.getString("name"),
+				result.getString("description"),
+				result.getInt("color"),
+				recentEventLinks
+
+		);
+
+		// --------------------------------------------------------------
+		if (result.next()) {
+			throw new RuntimeException("Multiple tags were returned for id " + tid + ", when only one is expected");
+		}
+		if (ps.getMoreResults()) {
+			throw new RuntimeException("Too many results were returned for id " + tid);
+		}
+
+		return tagInfo;
 	}
 
 	private Integer getInteger(ResultSet result, String name) throws SQLException {
