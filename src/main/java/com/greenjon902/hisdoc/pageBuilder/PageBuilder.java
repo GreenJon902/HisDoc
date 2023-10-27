@@ -1,17 +1,12 @@
 package com.greenjon902.hisdoc.pageBuilder;
 
-import com.greenjon902.hisdoc.pageBuilder.widgets.ContainerWidgetBuilder;
-import com.greenjon902.hisdoc.pageBuilder.widgets.LogoBuilder;
-import com.greenjon902.hisdoc.pageBuilder.widgets.WidgetBuilder;
+import com.greenjon902.hisdoc.pageBuilder.widgets.AbstractContainerWidgetBuilder;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
-public class PageBuilder extends ContainerWidgetBuilder {
+public class PageBuilder extends AbstractContainerWidgetBuilder {
 	private String title;
 
 

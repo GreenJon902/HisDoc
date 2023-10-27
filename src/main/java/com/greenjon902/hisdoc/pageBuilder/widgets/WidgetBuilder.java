@@ -6,6 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class WidgetBuilder {
-	public abstract void render(HtmlOutputStream stream) throws IOException;
+public interface WidgetBuilder {
+	void render(HtmlOutputStream stream) throws IOException;
 }

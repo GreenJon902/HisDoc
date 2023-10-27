@@ -3,22 +3,28 @@ package com.greenjon902.hisdoc.pageBuilder.widgets;
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-/**
- * A widget that can take more widgets.
- */
-public abstract class ContainerWidgetBuilder extends WidgetBuilder {
-	protected final List<WidgetBuilder> childrenBuilders = new ArrayList<>();
+public class ContainerWidgetBuilder extends AbstractContainerWidgetBuilder {
+	private final String classes;
 
-	public void add(WidgetBuilder widgetBuilder) {
-		childrenBuilders.add(widgetBuilder);
+	public ContainerWidgetBuilder(String classes) {
+		this.classes = classes;
 	}
 
-	protected void renderAllChildren(HtmlOutputStream stream) throws IOException {
-		for (WidgetBuilder childBuilder : childrenBuilders) {
-			childBuilder.render(stream);
+	public ContainerWidgetBuilder() {
+		this("");
+	}
+
+	@Override
+	public void render(HtmlOutputStream stream) throws IOException {
+		stream.write("<div ");
+		if (!classes.isEmpty()) {
+			stream.write("class=\"");
+			stream.write(classes);
+			stream.write("\"");
 		}
+		stream.write(">");
+		renderAllChildren(stream);
+		stream.write("</div>");
 	}
 }

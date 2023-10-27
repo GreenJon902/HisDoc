@@ -12,3 +12,59 @@ body {
 .logo:after {
     background-color: #000;
 }
+
+.title {
+
+}
+
+.subtitle {
+
+}
+
+.auxiliary-info-title {
+
+}
+
+.title, .subtitle, .auxiliary-info-title {
+
+}
+
+.text, .auxiliary-info-title {
+
+}
+
+.separator {
+    background-color: #000;
+}
+
+.thick-separator {
+    background-color: #000;
+}
+
+.column-container {
+
+}
+
+.column-container>* {
+
+}
+
+.tag-container {
+
+}
+
+.tag {
+
+}
+
+.tag:hover {
+
+}
+
+.tag-circle {
+
+}
+
+.tag-text {
+    color: #ffffff;
+}
