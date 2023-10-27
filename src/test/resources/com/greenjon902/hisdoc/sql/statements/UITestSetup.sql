@@ -8,7 +8,7 @@ VALUES (1, 'Base', 'An event that relates to someones base.', 65280),
 INSERT INTO {prefix}Event (eid, name, description, postedUid, postedDate, eventDateType, eventDate1,
 eventDatePrecision, eventDateDiff, eventDateDiffType)
 VALUES
-(1, 'Omega Happens', 'Omega starts a new base at (7777, -7777) causing the server to run out of storage.<br>The server runs out of storage. But world download problems delay the payed server.', null, null, 'c', TIMESTAMP('2022.02.05',  '00:00:00'), 'd', 0, 'h');
+(1, 'Omega Happens', 'Omega starts a new base at (7777, -7777) causing the server to run out of storage.\nThe server runs out of storage. But world download problems delay the payed server.', null, null, 'c', TIMESTAMP('2022.02.05',  '00:00:00'), 'd', 0, 'h');
 
 INSERT INTO {prefix}EventUserRelation (eid, uid)
 VALUES (1, 4);

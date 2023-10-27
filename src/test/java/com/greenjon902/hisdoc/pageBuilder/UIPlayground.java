@@ -53,7 +53,7 @@ public class UIPlayground {
 						TitleBuilder tagTitles = TitleBuilder.auxiliaryInfoTitleBuilder();
 						tagTitles.add("Tags");
 						right.add(tagTitles);
-						ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");  // TODO: lr-tb stacking
+						ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
 						tagContainer.add(new TagBuilder("Hello", 3, 0xff0000));
 						tagContainer.add(new TagBuilder("Hi", 3, 0x00ff00));
 						tagContainer.add(new TagBuilder("Who Asked", 3, 0x0000ff));

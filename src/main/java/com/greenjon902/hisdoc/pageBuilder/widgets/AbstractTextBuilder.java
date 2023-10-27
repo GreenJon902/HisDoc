@@ -67,7 +67,7 @@ record SimpleText(String text) implements WidgetBuilder {
 record LinkedText(String text, String href) implements WidgetBuilder {
 	@Override
 	public void render(HtmlOutputStream stream) throws IOException {
-		stream.write("<a href=\"");
+		stream.write("<a class=\"text-link\" href=\"");
 		stream.writeSafe(href);
 		stream.write("\">");
 		stream.writeSafe(text);

@@ -90,7 +90,7 @@ public class Dispatcher {
 			throw new RuntimeException("Could not find third results");
 		}
 		result = ps.getResultSet();
-		Set<ChangeInfo> changeInfos = new HashSet<>();
+		List<ChangeInfo> changeInfos = new ArrayList<>();
 		while (result.next()) {
 			changeInfos.add(new ChangeInfo(result.getTimestamp("date"),
 					new UserLink(result.getInt("authorUid"), result.getString("authorInfo")),

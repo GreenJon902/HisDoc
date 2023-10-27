@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.*;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static com.greenjon902.hisdoc.sql.Utils.*;
@@ -54,7 +55,7 @@ public class TestGetEvent {
 						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
 						Collections.emptySet(),
 						Collections.emptySet(),
-						Collections.emptySet()
+						Collections.emptyList()
 						),
 				eventInfo);
 	}
@@ -80,7 +81,7 @@ public class TestGetEvent {
 						DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)),
 						Collections.emptySet(),
 						Collections.emptySet(),
-						Collections.emptySet()
+						Collections.emptyList()
 				),
 				eventInfo);
 	}
@@ -107,7 +108,7 @@ public class TestGetEvent {
 						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
 						Collections.emptySet(),
 						Collections.emptySet(),
-						Collections.emptySet()
+						Collections.emptyList()
 						),
 				eventInfo);
 	}
@@ -136,7 +137,7 @@ public class TestGetEvent {
 						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
 						Set.of(new TagLink(2, "Tag2", 321)),
 						Set.of(new UserLink(2, "User2")),
-						Set.of(new ChangeInfo(new Timestamp(1500811811000L), new UserLink(2, "User2"), "I did you"))
+						List.of(new ChangeInfo(new Timestamp(1500811811000L), new UserLink(2, "User2"), "I did you"))
 						),
 				eventInfo);
 	}
