@@ -29,8 +29,12 @@ body {
 
 }
 
-.text, .auxiliary-info-title {
+.text, .auxiliary-info-title, .misc-text {
 
+}
+
+.misc-text {
+    color: #aaa
 }
 
 .separator {

@@ -5,17 +5,27 @@ import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
 import java.io.IOException;
 
 public class TextBuilder extends AbstractTextBuilder {
-	public TextBuilder(String delimiter) {
+	private final TextType type;
+
+	public TextBuilder(TextType type) {
+		this(type, "");
+	}
+
+	public TextBuilder(TextType type, String delimiter) {
 		super(delimiter);
+		this.type = type;
 	}
-
-	public TextBuilder() {
-	}
-
 	@Override
 	public void render(HtmlOutputStream stream) throws IOException {
-		stream.write("<p class=\"text\">");
+		stream.write("<");
+		stream.write(String.valueOf(type.tagType));
+		stream.write(" class=\"");
+		stream.write(type.cssClass);
+		stream.write("\">");
 		renderAllChildren(stream);
-		stream.write("</p>");
+		stream.write("</");
+		stream.write(String.valueOf(type.tagType));
+		stream.write(">");
+		if (type.separator) new SeparatorBuilder(0.2).render(stream);
 	}
 }

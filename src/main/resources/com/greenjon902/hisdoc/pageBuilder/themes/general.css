@@ -45,11 +45,15 @@ body {
     font-weight: normal;
 }
 
-.text, .auxiliary-info-title {
+.text, .auxiliary-info-title, .misc-text {
     margin: 0em;
     font-size: 1em;
     font-family: "Roboto", sans-serif;
     white-space: pre-wrap;
+}
+
+.misc-text {
+
 }
 
 .separator {

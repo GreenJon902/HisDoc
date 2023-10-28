@@ -12,6 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
+
 public class EventPageRenderer extends PageRenderer {
 
 	private final Dispatcher dispatcher;
@@ -41,64 +43,8 @@ public class EventPageRenderer extends PageRenderer {
 		pageBuilder.add(new LogoBuilder());
 		pageBuilder.add(new SeparatorBuilder(0.3));
 
-		// -------------------
-		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
-
-		TitleBuilder titleBuilder = new TitleBuilder();
-		titleBuilder.add(eventInfo.name());
-		left.add(titleBuilder);
-
-		TitleBuilder descriptionTitleBuilder = TitleBuilder.subtitleBuilder();
-		descriptionTitleBuilder.add("Description");
-		left.add(descriptionTitleBuilder);
-		TextBuilder descriptionTextBuilder = new TextBuilder();
-		descriptionTextBuilder.add(eventInfo.description());
-		left.add(descriptionTextBuilder);
-
-		TitleBuilder changelogTitleBuilder = TitleBuilder.subtitleBuilder();
-		changelogTitleBuilder.add("Changelog");
-		left.add(changelogTitleBuilder);
-		TextBuilder changelogTextBuilder = new TextBuilder();
-		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
-			changelogTextBuilder.add(changeInfo.date() + " " + changeInfo.author() + ": ");
-			changelogTextBuilder.add(changeInfo.description() + "\n", 0xaaa, 0);
-		}
-		left.add(changelogTextBuilder);
-		// -------------------
-
-		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
-
-		TitleBuilder tagTitles = TitleBuilder.auxiliaryInfoTitleBuilder();
-		tagTitles.add("Tags");
-		right.add(tagTitles);
-		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
-		for (TagLink tagLink : eventInfo.tagLinks()) {
-			tagContainer.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
-		}
-		right.add(tagContainer);
-		right.add(new BreakBuilder());
-
-		TitleBuilder relatedEventTitles = TitleBuilder.auxiliaryInfoTitleBuilder();
-		relatedEventTitles.add("Related Events");
-		right.add(relatedEventTitles);
-		TextBuilder relatedEvents = new TextBuilder("\n");
-		// TODO: Make these
-		relatedEvents.add("a", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-		relatedEvents.add("bcdefghijklmnopqrstuvplaw", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-		relatedEvents.add("3w4aet gaerta eraerhyg a", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-		relatedEvents.add("3w4aet gaerta eraerhyg awawer g", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-		right.add(relatedEvents);
-		right.add(new BreakBuilder());
-
-		TitleBuilder relatedUserTitles = TitleBuilder.auxiliaryInfoTitleBuilder();
-		relatedUserTitles.add("Related Users");
-		right.add(relatedUserTitles);
-		TextBuilder relatedUsers = new TextBuilder("\n");
-		for (UserLink userLink : eventInfo.relatedPlayerInfos()) {
-			relatedUsers.add(userLink.userInfo(), "user?id:" + userLink.id());
-		}
-		right.add(relatedUsers);
-		// -------------------
+		ContainerWidgetBuilder left = makeLeft(eventInfo);
+		ContainerWidgetBuilder right = makeRight(eventInfo);
 
 
 		ColumnLayoutBuilder columnLayoutBuilder = new ColumnLayoutBuilder();
@@ -109,4 +55,125 @@ public class EventPageRenderer extends PageRenderer {
 		return pageBuilder.render();
 	}
 
+	private ContainerWidgetBuilder makeLeft(EventInfo eventInfo) {
+		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
+
+		TextBuilder titleBuilder = new TextBuilder(TITLE);
+		titleBuilder.add(eventInfo.name());
+		left.add(titleBuilder);
+
+		TextBuilder idTextBuilder = new TextBuilder(MISC);
+		idTextBuilder.add("EID: " + eventInfo.eid());
+		left.add(idTextBuilder);
+
+		TextBuilder descriptionTitleBuilder = new TextBuilder(SUBTITLE);
+		descriptionTitleBuilder.add("Description");
+		left.add(descriptionTitleBuilder);
+		TextBuilder descriptionTextBuilder = new TextBuilder(NORMAL);
+		descriptionTextBuilder.add(eventInfo.description());
+		left.add(descriptionTextBuilder);
+
+		TextBuilder changelogTitleBuilder = new TextBuilder(SUBTITLE);
+		changelogTitleBuilder.add("Changelog");
+		left.add(changelogTitleBuilder);
+		WidgetBuilder changelogTextBuilder = makeChangelogContents(eventInfo);
+		left.add(changelogTextBuilder);
+
+		return left;
+	}
+
+	private ContainerWidgetBuilder makeRight(EventInfo eventInfo) {
+		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
+
+		TextBuilder date = new TextBuilder(MISC);
+		date.add(formatDateString(eventInfo.eventDateInfo()));
+		right.add(date);
+
+		right.add(new BreakBuilder());
+
+		TextBuilder tagTitles = new TextBuilder(AUX_INFO_TITLE);
+		tagTitles.add("Tags");
+		right.add(tagTitles);
+		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
+		for (TagLink tagLink : eventInfo.tagLinks()) {
+			tagContainer.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
+		}
+		right.add(tagContainer);
+		right.add(new BreakBuilder());
+
+		TextBuilder relatedEventTitles = new TextBuilder(AUX_INFO_TITLE);
+		relatedEventTitles.add("Related Events");
+		right.add(relatedEventTitles);
+		TextBuilder relatedEvents = new TextBuilder(NORMAL, "\n");
+		// TODO: Make these
+		relatedEvents.add("a", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+		relatedEvents.add("bcdefghijklmnopqrstuvplaw", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+		relatedEvents.add("3w4aet gaerta eraerhyg a", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+		relatedEvents.add("3w4aet gaerta eraerhyg awawer g", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+		right.add(relatedEvents);
+		right.add(new BreakBuilder());
+
+		TextBuilder relatedUserTitles = new TextBuilder(AUX_INFO_TITLE);
+		relatedUserTitles.add("Related Users");
+		right.add(relatedUserTitles);
+		TextBuilder relatedUsers = new TextBuilder(NORMAL, "\n");
+		for (UserLink userLink : eventInfo.relatedPlayerInfos()) {
+			relatedUsers.add(userLink.userInfo(), "user?id=" + userLink.id());
+		}
+		right.add(relatedUsers);
+
+		return right;
+	}
+
+	private WidgetBuilder makeChangelogContents(EventInfo eventInfo) {
+		String postedBy = "Unknown";
+		if (eventInfo.postedDate() != null) {
+			postedBy = eventInfo.postedBy().userInfo();
+		}
+
+		int maxSpace = postedBy.length();
+		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
+			int space;
+			if ((space = changeInfo.author().userInfo().length()) > maxSpace) {
+				maxSpace = space;
+			}
+		}
+
+		TextBuilder changelog = new TextBuilder(NORMAL);
+
+		String postedDate = "Unknown";
+		if (eventInfo.postedDate() != null) {
+			postedDate = eventInfo.postedDate().toString();
+		}
+		changelog.add(postedDate + " " + String.format("%1$" + maxSpace + "s", postedBy) + ": ");
+		changelog.add("This event was created!\n", 0xaaaaaa, 0);
+
+		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
+			changelog.add(changeInfo.date() + " " + String.format("%1$" + maxSpace + "s", changeInfo.author()) + ": ");
+			changelog.add(changeInfo.description() + "\n", 0xaaaaaa, 0);
+		}
+
+		return changelog;
+	}
+
+
+	private String formatDateString(DateInfo dateInfo) {
+		if (Objects.equals(dateInfo.type(), "c")) {
+			String pattern = "";
+			switch (dateInfo.precision()) {
+				case "d": pattern += "yyyy-MM-dd";
+				case "h": pattern += " hh";
+				case "m": pattern += ":mm";
+			}
+			String center = dateInfo.date1().toLocalDateTime().format(DateTimeFormatter.ofPattern(pattern));
+			String diff = "";
+			if (dateInfo.diff() != 0) {
+				diff = " &plusmn;" + String.format("%02d", dateInfo.diff()) + dateInfo.diffType().toUpperCase(Locale.ROOT);
+			}
+			return center + diff;
+		} else {
+			return "Somewhere between " + dateInfo.date1().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) +
+					" and " + dateInfo.date2().toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		}
+	}
 }
