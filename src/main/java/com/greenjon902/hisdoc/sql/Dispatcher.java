@@ -189,7 +189,15 @@ public class Dispatcher {
 		result = ps.getResultSet();
 		List<EventLink> recentEventLinks = new ArrayList<>(10);  // This is likely how long it will be
 		while (result.next()) {
-			recentEventLinks.add(new EventLink(result.getInt("eid"), result.getString("name")));
+			DateInfo eventDateInfo = new DateInfo(
+					result.getString("eventDateType"),
+					result.getTimestamp("eventDate1"),
+					result.getString("eventDatePrecision"),
+					getInteger(result, "eventDateDiff"),
+					result.getString("eventDateDiffType"),
+					result.getDate("eventDate2")
+			);
+			recentEventLinks.add(new EventLink(result.getInt("eid"), result.getString("name"), eventDateInfo));
 		}
 
 		// --------------------------------------------------------------
@@ -231,7 +239,15 @@ public class Dispatcher {
 		ResultSet result = ps.getResultSet();
 		List<EventLink> recentEventLinks = new ArrayList<>(10);  // This is likely how long it will be
 		while (result.next()) {
-			recentEventLinks.add(new EventLink(result.getInt("eid"), result.getString("name")));
+			DateInfo eventDateInfo = new DateInfo(
+					result.getString("eventDateType"),
+					result.getTimestamp("eventDate1"),
+					result.getString("eventDatePrecision"),
+					getInteger(result, "eventDateDiff"),
+					result.getString("eventDateDiffType"),
+					result.getDate("eventDate2")
+			);
+			recentEventLinks.add(new EventLink(result.getInt("eid"), result.getString("name"), eventDateInfo));
 		}
 
 		// --------------------------------------------------------------

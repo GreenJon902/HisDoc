@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -73,8 +74,8 @@ public class TestGetUser {
 							new TagLink(1, "Tag1", 123), 2,
 							new TagLink(2, "Tag2", 321), 1
 						), 2, 2, List.of(
-								new EventLink(1, "testing1"),
-								new EventLink(2, "testing2")
+								new EventLink(1, "testing1", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
+								new EventLink(2, "testing2", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"))
 				)),
 				userInfo);
 	}
@@ -100,8 +101,8 @@ public class TestGetUser {
 								new TagLink(1, "Tag1", 123), 2,
 								new TagLink(2, "Tag2", 321), 1
 						), 2, 2, List.of(
-						new EventLink(1, "testing1"),
-						new EventLink(2, "testing2")
+						new EventLink(1, "testing1", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
+						new EventLink(2, "testing2", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"))
 				)),
 				userInfo);
 	}

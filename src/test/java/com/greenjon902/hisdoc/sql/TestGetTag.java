@@ -1,15 +1,13 @@
 package com.greenjon902.hisdoc.sql;
 
-import com.greenjon902.hisdoc.sql.results.EventLink;
-import com.greenjon902.hisdoc.sql.results.TagInfo;
-import com.greenjon902.hisdoc.sql.results.TagLink;
-import com.greenjon902.hisdoc.sql.results.UserInfo;
+import com.greenjon902.hisdoc.sql.results.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -74,9 +72,9 @@ public class TestGetTag {
 		Assertions.assertEquals(
 				new TagInfo(2, "Tag2", "This is another tag with a color that i dont quite know", 123,
 						List.of(
-								new EventLink(4, "testing4"),
-								new EventLink(1, "testing1"),
-								new EventLink(2, "testing2")
+								new EventLink(4, "testing4", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
+								new EventLink(1, "testing1", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
+								new EventLink(2, "testing2", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"))
 						)),
 				tagInfo);
 	}
@@ -99,9 +97,9 @@ public class TestGetTag {
 		Assertions.assertEquals(
 				new TagInfo(2, "Tag2", "This is another tag with a color that i dont quite know", 123,
 						List.of(
-								new EventLink(4, "testing4"),
-								new EventLink(1, "testing1"),
-								new EventLink(2, "testing2")
+								new EventLink(4, "testing4", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
+								new EventLink(1, "testing1", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
+								new EventLink(2, "testing2", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"))
 						)),
 				tagInfo);
 	}

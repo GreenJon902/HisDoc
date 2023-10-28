@@ -157,7 +157,7 @@ public class EventPageRenderer extends PageRenderer {
 	}
 
 
-	private String formatDateString(DateInfo dateInfo) {
+	public static String formatDateString(DateInfo dateInfo) {
 		if (Objects.equals(dateInfo.type(), "c")) {
 			String pattern = "";
 			switch (dateInfo.precision()) {
