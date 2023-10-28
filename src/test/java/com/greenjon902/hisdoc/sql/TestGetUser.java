@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -74,8 +75,8 @@ public class TestGetUser {
 							new TagLink(1, "Tag1", 123), 2,
 							new TagLink(2, "Tag2", 321), 1
 						), 2, 2, List.of(
-								new EventLink(1, "testing1", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
-								new EventLink(2, "testing2", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"))
+						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), "d", 4, "h")),
+						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")))
 				)),
 				userInfo);
 	}
@@ -101,8 +102,8 @@ public class TestGetUser {
 								new TagLink(1, "Tag1", 123), 2,
 								new TagLink(2, "Tag2", 321), 1
 						), 2, 2, List.of(
-						new EventLink(1, "testing1", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
-						new EventLink(2, "testing2", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"))
+						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), "d", 4, "h")),
+						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")))
 				)),
 				userInfo);
 	}

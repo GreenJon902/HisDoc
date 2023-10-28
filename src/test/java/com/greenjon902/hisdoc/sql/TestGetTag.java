@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collections;
@@ -72,9 +73,9 @@ public class TestGetTag {
 		Assertions.assertEquals(
 				new TagInfo(2, "Tag2", "This is another tag with a color that i dont quite know", 123,
 						List.of(
-								new EventLink(4, "testing4", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
-								new EventLink(1, "testing1", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
-								new EventLink(2, "testing2", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"))
+								new EventLink(4, "testing4", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), "d", 4, "h")),
+								new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2012-07-24 13:10:11"), "d", 4, "h")),
+								new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2010-07-23 13:10:11"), Date.valueOf("2017-08-23")))
 						)),
 				tagInfo);
 	}
@@ -97,9 +98,9 @@ public class TestGetTag {
 		Assertions.assertEquals(
 				new TagInfo(2, "Tag2", "This is another tag with a color that i dont quite know", 123,
 						List.of(
-								new EventLink(4, "testing4", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
-								new EventLink(1, "testing1", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")),
-								new EventLink(2, "testing2", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"))
+								new EventLink(4, "testing4", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), "d", 4, "h")),
+								new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2012-07-24 13:10:11"), "d", 4, "h")),
+								new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2010-07-23 13:10:11"), Date.valueOf("2017-08-23")))
 						)),
 				tagInfo);
 	}

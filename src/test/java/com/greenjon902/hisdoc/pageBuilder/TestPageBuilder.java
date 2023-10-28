@@ -20,7 +20,7 @@ public class TestPageBuilder {
 		pageBuilder.title("Empty Page");
 		String rendered = pageBuilder.render();
 
-		Assertions.assertFalse(rendered.contains("title"));
-		Assertions.assertFalse(rendered.contains("Empty Page"));
+		Assertions.assertTrue(rendered.contains("title"));
+		Assertions.assertTrue(rendered.contains("Empty Page"));
 	}
 }
