@@ -7,6 +7,7 @@ import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.*;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
+import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -26,7 +27,7 @@ public class EventPageRenderer extends PageRenderer {
 		this.dispatcher = dispatcher;
 	}
 
-	public String render(Map<String, String> query, String fragment) throws SQLException {  // TODO: Posted date and eid
+	public String render(Map<String, String> query, String fragment, Session session) throws SQLException {  // TODO: Posted date and eid
 		if (!query.containsKey("id")) {
 			return "No id given :(";
 		}
@@ -58,7 +59,7 @@ public class EventPageRenderer extends PageRenderer {
 		columnLayoutBuilder.add(right);
 
 		pageBuilder.add(columnLayoutBuilder);
-		return pageBuilder.render();
+		return pageBuilder.render(session);
 	}
 
 	private ContainerWidgetBuilder makeLeft(EventInfo eventInfo) {

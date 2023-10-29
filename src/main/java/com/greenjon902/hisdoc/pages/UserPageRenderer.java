@@ -9,6 +9,7 @@ import com.greenjon902.hisdoc.sql.results.EventLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
 import com.greenjon902.hisdoc.sql.results.UserInfo;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
+import com.greenjon902.hisdoc.webDriver.Session;
 import io.quickchart.QuickChart;
 
 import java.sql.SQLException;
@@ -27,7 +28,7 @@ public class UserPageRenderer extends PageRenderer {
 	}
 
 	@Override
-	public String render(Map<String, String> query, String fragment) throws SQLException {
+	public String render(Map<String, String> query, String fragment, Session session) throws SQLException {
 		if (!query.containsKey("id")) {
 			return "No id given :(";
 		}
@@ -58,7 +59,7 @@ public class UserPageRenderer extends PageRenderer {
 		columnLayoutBuilder.add(right);
 
 		pageBuilder.add(columnLayoutBuilder);
-		return pageBuilder.render();
+		return pageBuilder.render(session);
 	}
 
 	private ContainerWidgetBuilder makeLeft(UserInfo userInfo, PageVariable accountNameVar) {

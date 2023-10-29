@@ -1,6 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
+import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.IOException;
 
@@ -22,7 +23,7 @@ public class ContainerWidgetBuilder extends AbstractContainerWidgetBuilder {
 	}
 
 	@Override
-	public void render(HtmlOutputStream stream) throws IOException {
+	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<div");
 		if (!classes.isEmpty()) {
 			stream.write(" class=\"");
@@ -35,7 +36,7 @@ public class ContainerWidgetBuilder extends AbstractContainerWidgetBuilder {
 			stream.write("\"");
 		}
 		stream.write(">");
-		renderAllChildren(stream);
+		renderAllChildren(stream, session);
 		stream.write("</div>");
 	}
 }

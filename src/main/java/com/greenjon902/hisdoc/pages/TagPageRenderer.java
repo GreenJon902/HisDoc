@@ -6,6 +6,7 @@ import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.EventLink;
 import com.greenjon902.hisdoc.sql.results.TagInfo;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
+import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class TagPageRenderer extends PageRenderer {
 	}
 
 	@Override
-	public String render(Map<String, String> query, String fragment) throws SQLException {
+	public String render(Map<String, String> query, String fragment, Session session) throws SQLException {
 		if (!query.containsKey("id")) {
 			return "No id given :(";
 		}
@@ -63,7 +64,7 @@ public class TagPageRenderer extends PageRenderer {
 		WidgetBuilder recentEvents = makeRecentEventContents(tagInfo);
 		pageBuilder.add(recentEvents);
 
-		return pageBuilder.render();
+		return pageBuilder.render(session);
 	}
 
 	private WidgetBuilder makeRecentEventContents(TagInfo tagInfo) {

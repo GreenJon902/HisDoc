@@ -2,6 +2,7 @@ package com.greenjon902.hisdoc.pageBuilder;
 
 import com.greenjon902.hisdoc.pageBuilder.scripts.Script;
 import com.greenjon902.hisdoc.pageBuilder.widgets.AbstractContainerWidgetBuilder;
+import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,16 +16,40 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 	private final Set<Script> scripts = new HashSet<>();
 
 
-	public void render(HtmlOutputStream stream) throws IOException {
+	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<!doctype html>");
 		stream.write("<html>");
-		renderHead(stream);
-		renderBody(stream);
-		renderScripts(stream);
+		renderHead(stream, session);
+		renderBody(stream, session);
 		stream.write("</html>");
 	}
 
-	protected void renderHead(HtmlOutputStream stream) throws IOException {
+	/**
+	 * Writes the links for the different themes to the stream, also leaves only the correct theme enabled so page
+	 * loading does not flicker.
+	 * <p>
+	 * Last theme name is the default.
+	 */
+	private void renderThemes(HtmlOutputStream stream, Session session, String... names) throws IOException {
+		boolean hadEnabled = false;
+		for (int i=0; i < names.length; i++) {
+			String name = names[i];
+
+			stream.write("<link class=\"theme\" href=\"themes?name=");
+			stream.write(name);
+			stream.write("\" rel=\"stylesheet\"");
+
+			if (session.theme().equals(name) || (!hadEnabled && i == names.length - 1)) {
+				hadEnabled = true;
+			} else {
+				stream.write(" disabled");
+			}
+
+			stream.write(">");
+		}
+	}
+
+	protected void renderHead(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<head>");
 		if (title != null) {
 			stream.write("<title>");
@@ -34,15 +59,18 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 		stream.write("<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap\">");
 		stream.write("<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Roboto\">");
 		stream.write("<link rel=\"stylesheet\" href=\"https://unpkg.com/css.gg@2.0.0/icons/css/sun.css\" >");
+		stream.write("<link rel=\"stylesheet\" href=\"https://unpkg.com/css.gg@2.0.0/icons/css/moon.css\" >");
 		stream.write("<link href=\"themes?name=general\" rel=\"stylesheet\">");
-		stream.write("<link id=\"theme\" href=\"themes?name=light\" rel=\"stylesheet\">");  // Modified by the theme switcher
+		renderThemes(stream, session, "dark", "light");
+
+		renderScripts(stream);
 		stream.write("</head>");
 	}
 
-	protected void renderBody(HtmlOutputStream stream) throws IOException {
+	protected void renderBody(HtmlOutputStream stream, Session session) throws IOException {
 		if (!childrenBuilders.isEmpty()) {
 			stream.write("<body>");
-			renderAllChildren(stream);
+			renderAllChildren(stream, session);
 			stream.write("</body>");
 		}
 	}
@@ -53,14 +81,14 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 		}
 	}
 
-	public void render(OutputStream stream) throws IOException {
-		render(new HtmlOutputStream(stream));
+	public void render(OutputStream stream, Session session) throws IOException {
+		render(new HtmlOutputStream(stream), session);
 	}
 
-	public String render() {
+	public String render(Session session) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
-			render(stream);
+			render(stream, session);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

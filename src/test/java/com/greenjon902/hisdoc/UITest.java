@@ -6,6 +6,7 @@ import com.greenjon902.hisdoc.pages.TagPageRenderer;
 import com.greenjon902.hisdoc.pages.UserPageRenderer;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
+import com.greenjon902.hisdoc.webDriver.Session;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
 
@@ -35,7 +36,7 @@ public class UITest {
 						"/user", new UserPageRenderer(dispatcher),
 						"/themes", new PageRenderer() {
 					@Override
-					public String render(Map<String, String> query, String fragment) throws SQLException {
+					public String render(Map<String, String> query, String fragment, Session session) throws SQLException {
 						try {
 							InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("com/greenjon902/hisdoc/pageBuilder/themes/" + query.get("name") + ".css");
 							return new String(fileInputStream.readAllBytes());

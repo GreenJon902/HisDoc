@@ -1,17 +1,17 @@
 html {
-    background: #f8f9fa;
+    background: #1e1f22;
 }
 
 body {
-    background: #fff;
+    background: #2b2d31;
 }
 
 .logo {
-    color: #000;
+    color: #fff;
 }
 
 .logo:after {
-    background-color: #000;
+    background-color: #fff;
 }
 
 .title {
@@ -27,11 +27,11 @@ body {
 }
 
 .title, .subtitle, .auxiliary-info-title {
-    color: #000;
+    color: #fff;
 }
 
 .text, .auxiliary-info-title {
-    color: #000;
+    color: #fff;
 }
 
 .text, .auxiliary-info-title, .misc-text {
@@ -43,11 +43,11 @@ body {
 }
 
 .separator {
-    background-color: #000;
+    background-color: #fff;
 }
 
 .thick-separator {
-    background-color: #000;
+    background-color: #fff;
 }
 
 .column-container {
@@ -79,7 +79,7 @@ body {
 }
 
 .text-link {
-    color: #1a0dab;
+    color: #8ab4f8;
 }
 
 .tag-page-title {
@@ -91,9 +91,9 @@ body {
 }
 
 .theme-switcher-button {
-    --next-stylesheet: dark;
-    --icon-class: gg-moon;
-    color: #000;
+    --next-stylesheet: light;
+    --icon-class: gg-sun;
+    color: #fff;
 }
 
 iframe {

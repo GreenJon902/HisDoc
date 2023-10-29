@@ -11,11 +11,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.stream.Stream;
 
 public class WebDriver {
 	private final HttpServer server;
@@ -56,11 +54,12 @@ class HttpHandlerImpl implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
+		Session session = getSession(exchange);
 
 		String rendered;
 		try {
 			Map<String, String> query = getQuery(exchange);
-			rendered = pageRenderer.render(query, null);
+			rendered = pageRenderer.render(query, null, session);
 
 		} catch (Exception e) {
 			StringWriter sw = new StringWriter();
@@ -99,5 +98,27 @@ class HttpHandlerImpl implements HttpHandler {
 			}
 		}
 		return query;
+	}
+
+	public Session getSession(HttpExchange exchange) {
+		List<String> cookieStrings = exchange.getRequestHeaders().get("Cookie");
+		List<String> cookies = new ArrayList<>();
+		for (String cookieString : cookieStrings) {
+			cookies.addAll(Stream.of(cookieString.split(";")).map(String::trim).toList());
+		}
+
+		String theme = "";
+		for (String cookie : cookies) {
+			String[] parts = cookie.split("=", 2);
+			if (parts.length != 2) {
+				throw new RuntimeException("Expected cookie in two parts, got " + parts.length + ", " + Arrays.toString(parts));
+			}
+			switch (parts[0]) {
+				case "theme" -> theme = parts[1];
+				default -> System.out.println("Unknown cookie with key \"" + parts[0] + "\" and value \"" + parts[1] + "\"");
+			}
+		}
+
+		return new Session(theme);
 	}
 }

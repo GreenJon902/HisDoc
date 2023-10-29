@@ -1,6 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
+import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,9 +17,9 @@ public abstract class AbstractContainerWidgetBuilder implements WidgetBuilder {
 		childrenBuilders.add(widgetBuilder);
 	}
 
-	protected void renderAllChildren(HtmlOutputStream stream) throws IOException {
+	protected void renderAllChildren(HtmlOutputStream stream, Session session) throws IOException {
 		for (WidgetBuilder childBuilder : childrenBuilders) {
-			childBuilder.render(stream);
+			childBuilder.render(stream, session);
 		}
 	}
 }

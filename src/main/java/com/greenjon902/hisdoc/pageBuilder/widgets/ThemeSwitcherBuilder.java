@@ -3,6 +3,7 @@ package com.greenjon902.hisdoc.pageBuilder.widgets;
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.scripts.ThemeSwitcherHelperScript;
+import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.IOException;
 
@@ -11,11 +12,11 @@ import java.io.IOException;
  */
 public class ThemeSwitcherBuilder implements WidgetBuilder {
 	public ThemeSwitcherBuilder(PageBuilder pageBuilder) {
-		pageBuilder.addScript(new ThemeSwitcherHelperScript());
+		pageBuilder.addScript(new ThemeSwitcherHelperScript(pageBuilder));
 	}
 
 	@Override
-	public void render(HtmlOutputStream stream) throws IOException {
+	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<div id=\"theme-switcher-button\" class=\"theme-switcher-button\" onclick=\"cycleThemes()\">" +
 							"<div id=\"theme-switcher-icon\"></div>" +
 						"</div>");

@@ -1,6 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
+import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.IOException;
 
@@ -16,9 +17,17 @@ public class TagBuilder implements WidgetBuilder{
 	}
 
 	@Override
-	public void render(HtmlOutputStream stream) throws IOException {
-		stream.write("<div class=\"tag\" style=\"background-color: #");
-		stream.write(String.format("%06x", color));
+	public void render(HtmlOutputStream stream, Session session) throws IOException {
+		int red = (color & 0xFF0000) >> 16;
+		int green = (color & 0x00FF00) >> 8;
+		int blue = (color & 0x0000FF);
+
+		stream.write("<div class=\"tag\" style=\"--tag-color-red: ");
+		stream.write(String.valueOf(red));
+		stream.write("; --tag-color-green: ");
+		stream.write(String.valueOf(green));
+		stream.write("; --tag-color-blue: ");
+		stream.write(String.valueOf(blue));
 		stream.write(";\">");
 		stream.write("<div class=\"tag-circle\"></div>");
 		stream.write("<a class=\"tag-text\" href=\"tag?id=");

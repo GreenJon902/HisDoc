@@ -1,11 +1,10 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
+import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public interface WidgetBuilder {
-	void render(HtmlOutputStream stream) throws IOException;
+	void render(HtmlOutputStream stream, Session session) throws IOException;
 }

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class LazyLoadAccountNameScript extends Script {
 	private final List<PageVariable> accountNameVars = new ArrayList<>();
@@ -79,5 +80,21 @@ public class LazyLoadAccountNameScript extends Script {
 		// Write to the stream
 		stream.write(js.toString());
 
+	}
+
+	// TODO: Some system of if there are two lazy load account name scripts, combind them into one?
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) return true;
+		if (object == null || getClass() != object.getClass()) return false;
+		if (!super.equals(object)) return false;
+		LazyLoadAccountNameScript that = (LazyLoadAccountNameScript) object;
+		return Objects.equals(accountNameVars, that.accountNameVars) && Objects.equals(userInfos, that.userInfos);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(accountNameVars, userInfos);
 	}
 }

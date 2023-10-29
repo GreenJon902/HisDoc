@@ -1,6 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder;
 
 import com.greenjon902.hisdoc.pageBuilder.widgets.LogoBuilder;
+import com.greenjon902.hisdoc.webDriver.Session;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -12,6 +13,6 @@ public class TestSimpleWidgets {
 		LogoBuilder logoBuilder = new LogoBuilder();
 		pageBuilder.add(logoBuilder);
 
-		pageBuilder.render();
+		pageBuilder.render(Session.empty());
 	}
 }

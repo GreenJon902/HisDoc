@@ -1,9 +1,9 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
+import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public abstract class AbstractTextBuilder extends AbstractContainerWidgetBuilder {
 	private String delimiter;
@@ -61,7 +61,7 @@ public abstract class AbstractTextBuilder extends AbstractContainerWidgetBuilder
  */
 record SimpleText(String text) implements WidgetBuilder {
 	@Override
-	public void render(HtmlOutputStream stream) throws IOException {
+	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.writeSafe(text);
 	}
 }
@@ -71,7 +71,7 @@ record SimpleText(String text) implements WidgetBuilder {
  */
 record LinkedText(String text, String href) implements WidgetBuilder {
 	@Override
-	public void render(HtmlOutputStream stream) throws IOException {
+	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<a class=\"text-link\" href=\"");
 		stream.writeSafe(href);
 		stream.write("\">");
@@ -88,7 +88,7 @@ record LinkedText(String text, String href) implements WidgetBuilder {
  */
 record StyledText(String text, int color, int stylingFlags) implements WidgetBuilder {
 	@Override
-	public void render(HtmlOutputStream stream) throws IOException {
+	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<span style=\"");
 
 		if (color != -1) stream.write("color: #" + String.format("%06x", color) + ";");
