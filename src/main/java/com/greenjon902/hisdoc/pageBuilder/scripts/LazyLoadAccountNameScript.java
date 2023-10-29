@@ -31,10 +31,10 @@ public class LazyLoadAccountNameScript extends Script {
 		// TODO: Load these from a file or somin, plugin style
 		// Name format is "load" + prefix + "AccountName"
 		StringBuilder js = new StringBuilder("""
-			async function loadAccountName(info) {  // When has no prefix (not connected to anything)
+			async function loadAccountName(info, accountNameVarName) {  // When has no prefix (not connected to anything)
 				const name = info;
 				console.log("Name: " +  name);
-				document.body.innerHTML = document.body.innerHTML.replaceAll("accountNameVar", name);
+				document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
 			};
 			
 			async function loadMCAccountName(info, accountNameVarName) {
