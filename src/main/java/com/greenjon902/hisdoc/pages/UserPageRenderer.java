@@ -35,12 +35,12 @@ public class UserPageRenderer extends PageRenderer {
 		try {
 			userId = Integer.parseInt(query.get("id"));
 		} catch (NumberFormatException e) {
-			return "Malformed user id :(";
+			return "Malformed user id :(\nUID: " + query.get("id");
 		}
 		UserInfo userInfo = dispatcher.getUserInfo(userId);
 
 		if (userInfo == null) {
-			return "No user found :(";
+			return "No user found :(\nTID: " + userId + " (" + query.get("id") + ")";
 		}
 
 		PageBuilder pageBuilder = new PageBuilder();

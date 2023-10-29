@@ -31,12 +31,12 @@ public class EventPageRenderer extends PageRenderer {
 		try {
 			eventId = Integer.parseInt(query.get("id"));
 		} catch (NumberFormatException e) {
-			return "Malformed event id :(";
+			return "Malformed event id :(\nEID: " + query.get("id");
 		}
 		EventInfo eventInfo = dispatcher.getEventInfo(eventId);
 
 		if (eventInfo == null) {
-			return "No event found :(";
+			return "No event found :(\nEID: " + eventId + " (" + query.get("id") + ")";
 		}
 
 		PageBuilder pageBuilder = new PageBuilder();

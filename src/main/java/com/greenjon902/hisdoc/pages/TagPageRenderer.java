@@ -1,10 +1,17 @@
 package com.greenjon902.hisdoc.pages;
 
+import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
+import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
+import com.greenjon902.hisdoc.sql.results.EventLink;
+import com.greenjon902.hisdoc.sql.results.TagInfo;
+import com.greenjon902.hisdoc.sql.results.UserInfo;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 
 import java.sql.SQLException;
 import java.util.Map;
+
+import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
 public class TagPageRenderer extends PageRenderer {
 	private final Dispatcher dispatcher;
@@ -19,8 +26,58 @@ public class TagPageRenderer extends PageRenderer {
 			return "No id given :(";
 		}
 
-		int tagId = Integer.parseInt(query.get("id"));
+		int tagId;
+		try {
+			tagId = Integer.parseInt(query.get("id"));
+		} catch (NumberFormatException e) {
+			return "Malformed tag id :(\nTID: " + query.get("id");
+		}
+		TagInfo tagInfo = dispatcher.getTagInfo(tagId);
 
-		return "Tag for " + tagId;
+		if (tagInfo == null) {
+			return "No tag found :(\nTID: " + tagId + " (" + query.get("id") + ")";
+		}
+
+		PageBuilder pageBuilder = new PageBuilder();
+		pageBuilder.add(new LogoBuilder());
+		pageBuilder.add(new SeparatorBuilder(0.3));
+
+		ContainerWidgetBuilder titleContainer = new ContainerWidgetBuilder("tag-page-title", "--circle-color: #" + String.format("%06x", tagInfo.color()));
+		TextBuilder titleBuilder = new TextBuilder(TITLE);
+		titleBuilder.add(tagInfo.name());
+		titleContainer.add(titleBuilder);
+		pageBuilder.add(titleContainer);
+
+		TextBuilder idTextBuilder = new TextBuilder(MISC);
+		idTextBuilder.add("TID: " + tagInfo.tid());
+		pageBuilder.add(idTextBuilder);
+
+		TextBuilder descriptionTitleBuilder = new TextBuilder(SUBTITLE);
+		descriptionTitleBuilder.add("Description");
+		pageBuilder.add(descriptionTitleBuilder);
+		TextBuilder descriptionTextBuilder = new TextBuilder(NORMAL);
+		descriptionTextBuilder.add(tagInfo.description());
+		pageBuilder.add(descriptionTextBuilder);
+
+		TextBuilder recentEventsTitle = new TextBuilder(SUBTITLE);
+		recentEventsTitle.add("Recent Events");
+		pageBuilder.add(recentEventsTitle);
+		WidgetBuilder recentEvents = makeRecentEventContents(tagInfo);
+		pageBuilder.add(recentEvents);
+
+		return pageBuilder.render();
+	}
+
+	private WidgetBuilder makeRecentEventContents(TagInfo tagInfo) {
+		TextBuilder recentEvents = new TextBuilder(NORMAL);
+
+		for (EventLink eventLink : tagInfo.recentEvents()) {
+			recentEvents.add(EventPageRenderer.formatDateString(eventLink.dateInfo()));
+			recentEvents.add(" - ");
+			recentEvents.add(eventLink.name(), "event?id=" + eventLink.id());
+			recentEvents.add("\n");
+		}
+
+		return recentEvents;
 	}
 }

@@ -1,5 +1,8 @@
 INSERT INTO {prefix}User (uid, userInfo)
-VALUES (1, 'Ajballistic'), (2, 'jackaboi1'), (3, "GreenJon"), (4, "Omegadestroy400");
+VALUES (1, 'Ajballistic'),
+(2, 'jackaboi1'),
+(3, "GreenJon"),
+(4, "Omegadestroy400");
 
 INSERT INTO {prefix}Tag (tid, name, description, color)
 VALUES (1, 'Base', 'An event that relates to someones base.', 65280),
