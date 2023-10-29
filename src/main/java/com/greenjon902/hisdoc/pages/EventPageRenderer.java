@@ -47,8 +47,7 @@ public class EventPageRenderer extends PageRenderer {
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
 		pageBuilder.addScript(lazyLoadAccountNameScript);
 
-		pageBuilder.add(new LogoBuilder());
-		pageBuilder.add(new SeparatorBuilder(0.3));
+		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		ContainerWidgetBuilder left = makeLeft(eventInfo);
 		ContainerWidgetBuilder right = makeRight(eventInfo, lazyLoadAccountNameScript, pageBuilder);

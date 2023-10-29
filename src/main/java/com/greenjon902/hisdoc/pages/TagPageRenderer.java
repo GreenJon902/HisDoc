@@ -5,7 +5,6 @@ import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.EventLink;
 import com.greenjon902.hisdoc.sql.results.TagInfo;
-import com.greenjon902.hisdoc.sql.results.UserInfo;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 
 import java.sql.SQLException;
@@ -39,8 +38,7 @@ public class TagPageRenderer extends PageRenderer {
 		}
 
 		PageBuilder pageBuilder = new PageBuilder();
-		pageBuilder.add(new LogoBuilder());
-		pageBuilder.add(new SeparatorBuilder(0.3));
+		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		ContainerWidgetBuilder titleContainer = new ContainerWidgetBuilder("tag-page-title", "--circle-color: #" + String.format("%06x", tagInfo.color()));
 		TextBuilder titleBuilder = new TextBuilder(TITLE);

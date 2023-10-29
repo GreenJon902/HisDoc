@@ -33,8 +33,9 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 		}
 		stream.write("<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap\">");
 		stream.write("<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Roboto\">");
+		stream.write("<link rel=\"stylesheet\" href=\"https://unpkg.com/css.gg@2.0.0/icons/css/sun.css\" >");
 		stream.write("<link href=\"themes?name=general\" rel=\"stylesheet\">");
-		stream.write("<link href=\"themes?name=light\" rel=\"stylesheet\">");
+		stream.write("<link id=\"theme\" href=\"themes?name=light\" rel=\"stylesheet\">");  // Modified by the theme switcher
 		stream.write("</head>");
 	}
 

@@ -84,3 +84,8 @@ body {
 .tag-page-title:after {
 
 }
+
+.theme-switcher-button {
+    --next-stylesheet: dark;
+    --icon-class: gg-sun;
+}

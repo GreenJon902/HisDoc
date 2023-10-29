@@ -134,3 +134,7 @@ body {
     border: 1em solid var(--circle-color);
     margin-left: 1em;
 }
+
+.theme-switcher-button {  /* See theme buttons file */
+
+}

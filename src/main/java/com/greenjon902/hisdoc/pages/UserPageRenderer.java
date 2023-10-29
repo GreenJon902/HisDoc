@@ -48,8 +48,7 @@ public class UserPageRenderer extends PageRenderer {
 		PageVariable accountNameVar = pageBuilder.addVariable("account-name");
 		pageBuilder.addScript(new LazyLoadAccountNameScript(userInfo.userInfo(), accountNameVar));
 
-		pageBuilder.add(new LogoBuilder());
-		pageBuilder.add(new SeparatorBuilder(0.3));
+		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		ContainerWidgetBuilder left = makeLeft(userInfo, accountNameVar);
 		ContainerWidgetBuilder right = makeRight(userInfo, accountNameVar);
