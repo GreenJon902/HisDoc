@@ -27,7 +27,7 @@ public class EventPageRenderer extends PageRenderer {
 		this.dispatcher = dispatcher;
 	}
 
-	public String render(Map<String, String> query, String fragment, Session session) throws SQLException {  // TODO: Posted date and eid
+	public String render(Map<String, String> query, String fragment, Session session) throws SQLException {
 		if (!query.containsKey("id")) {
 			return "No id given :(";
 		}
