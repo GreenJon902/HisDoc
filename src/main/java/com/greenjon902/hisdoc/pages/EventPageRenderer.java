@@ -136,7 +136,7 @@ public class EventPageRenderer extends PageRenderer {
 
 	private WidgetBuilder makeChangelogContents(EventInfo eventInfo) {
 		String postedBy = "Unknown";
-		if (eventInfo.postedDate() != null) {
+		if (eventInfo.postedBy() != null) {
 			postedBy = eventInfo.postedBy().userInfo();
 		}
 

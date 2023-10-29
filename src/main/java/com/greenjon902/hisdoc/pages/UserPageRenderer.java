@@ -18,7 +18,7 @@ import java.util.Map;
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
 // TODO: User info needs to be a UUID, which needs to then convert itself to a username on the client
-
+// TODO: User page should be specific to user info prefix
 
 public class UserPageRenderer extends PageRenderer {
 	private final Dispatcher dispatcher;
