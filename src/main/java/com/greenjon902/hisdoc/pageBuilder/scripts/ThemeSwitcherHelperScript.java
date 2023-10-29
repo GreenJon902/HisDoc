@@ -5,8 +5,6 @@ import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 
 import java.io.IOException;
 
-// TODO: Save the theme
-
 public class ThemeSwitcherHelperScript extends Script {
     public ThemeSwitcherHelperScript(PageBuilder pageBuilder) {
         pageBuilder.addScript(new CookieHelperScript());
