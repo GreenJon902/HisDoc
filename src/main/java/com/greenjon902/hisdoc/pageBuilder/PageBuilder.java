@@ -1,19 +1,26 @@
 package com.greenjon902.hisdoc.pageBuilder;
 
+import com.greenjon902.hisdoc.pageBuilder.scripts.Script;
 import com.greenjon902.hisdoc.pageBuilder.widgets.AbstractContainerWidgetBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PageBuilder extends AbstractContainerWidgetBuilder {
 	private String title;
+	private final Set<PageVariable> pageVariables = new HashSet<>();
+	private final Set<Script> scripts = new HashSet<>();
 
 
 	public void render(HtmlOutputStream stream) throws IOException {
+		stream.write("<!doctype html>");
 		stream.write("<html>");
 		renderHead(stream);
 		renderBody(stream);
+		renderScripts(stream);
 		stream.write("</html>");
 	}
 
@@ -39,6 +46,12 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 		}
 	}
 
+	protected void renderScripts(HtmlOutputStream stream) throws IOException {
+		for (Script script : scripts) {
+			script.writeTo(stream);
+		}
+	}
+
 	public void render(OutputStream stream) throws IOException {
 		render(new HtmlOutputStream(stream));
 	}
@@ -55,5 +68,19 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 
 	public void title(String title) {
 		this.title = title;
+	}
+
+	public PageVariable addVariable(String id) {
+		PageVariable pageVariable;
+		do {
+			pageVariable = new PageVariable(id);
+		} while (pageVariables.contains(pageVariable));  // So we don't accidentally have duplicates
+
+		pageVariables.add(pageVariable);
+		return pageVariable;
+	}
+
+	public void addScript(Script script) {
+		this.scripts.add(script);
 	}
 }

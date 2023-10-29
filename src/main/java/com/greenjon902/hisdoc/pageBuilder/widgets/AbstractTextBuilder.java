@@ -3,6 +3,7 @@ package com.greenjon902.hisdoc.pageBuilder.widgets;
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public abstract class AbstractTextBuilder extends AbstractContainerWidgetBuilder {
 	private String delimiter;
@@ -21,6 +22,10 @@ public abstract class AbstractTextBuilder extends AbstractContainerWidgetBuilder
 
 	public void add(String text) {
 		super.add(new SimpleText(text + delimiter));
+	}
+
+	public void add(Object text) {
+		add(String.valueOf(text));
 	}
 
 	public void add(WidgetBuilder widgetBuilder) {

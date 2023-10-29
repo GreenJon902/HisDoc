@@ -1,6 +1,8 @@
 package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
+import com.greenjon902.hisdoc.pageBuilder.PageVariable;
+import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.*;
@@ -13,6 +15,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
+
+// TODO: Format account names from uuids into descriptions and stuffs
 
 public class EventPageRenderer extends PageRenderer {
 
@@ -40,11 +44,14 @@ public class EventPageRenderer extends PageRenderer {
 		}
 
 		PageBuilder pageBuilder = new PageBuilder();
+		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
+		pageBuilder.addScript(lazyLoadAccountNameScript);
+
 		pageBuilder.add(new LogoBuilder());
 		pageBuilder.add(new SeparatorBuilder(0.3));
 
 		ContainerWidgetBuilder left = makeLeft(eventInfo);
-		ContainerWidgetBuilder right = makeRight(eventInfo);
+		ContainerWidgetBuilder right = makeRight(eventInfo, lazyLoadAccountNameScript, pageBuilder);
 
 
 		ColumnLayoutBuilder columnLayoutBuilder = new ColumnLayoutBuilder();
@@ -82,7 +89,7 @@ public class EventPageRenderer extends PageRenderer {
 		return left;
 	}
 
-	private ContainerWidgetBuilder makeRight(EventInfo eventInfo) {
+	private ContainerWidgetBuilder makeRight(EventInfo eventInfo, LazyLoadAccountNameScript lazyLoadAccountNameScript, PageBuilder pageBuilder) {
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
 
 		TextBuilder date = new TextBuilder(MISC);
@@ -118,7 +125,9 @@ public class EventPageRenderer extends PageRenderer {
 		right.add(relatedUserTitles);
 		TextBuilder relatedUsers = new TextBuilder(NORMAL, "\n");
 		for (UserLink userLink : eventInfo.relatedPlayerInfos()) {
-			relatedUsers.add(userLink.userInfo(), "user?id=" + userLink.id());
+			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + userLink.userInfo());
+			lazyLoadAccountNameScript.add(userLink.userInfo(), pageVariable);
+			relatedUsers.add(pageVariable.toString(), "user?id=" + userLink.id());
 		}
 		right.add(relatedUsers);
 

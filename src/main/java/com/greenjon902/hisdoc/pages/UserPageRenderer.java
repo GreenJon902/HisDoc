@@ -1,9 +1,10 @@
 package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
+import com.greenjon902.hisdoc.pageBuilder.PageVariable;
+import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
-import com.greenjon902.hisdoc.sql.results.EventInfo;
 import com.greenjon902.hisdoc.sql.results.EventLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
 import com.greenjon902.hisdoc.sql.results.UserInfo;
@@ -14,9 +15,9 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
-import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
 // TODO: User info needs to be a UUID, which needs to then convert itself to a username on the client
+
 
 public class UserPageRenderer extends PageRenderer {
 	private final Dispatcher dispatcher;
@@ -44,11 +45,14 @@ public class UserPageRenderer extends PageRenderer {
 		}
 
 		PageBuilder pageBuilder = new PageBuilder();
+		PageVariable accountNameVar = pageBuilder.addVariable("account-name");
+		pageBuilder.addScript(new LazyLoadAccountNameScript(userInfo.userInfo(), accountNameVar));
+
 		pageBuilder.add(new LogoBuilder());
 		pageBuilder.add(new SeparatorBuilder(0.3));
 
-		ContainerWidgetBuilder left = makeLeft(userInfo);
-		ContainerWidgetBuilder right = makeRight(userInfo);
+		ContainerWidgetBuilder left = makeLeft(userInfo, accountNameVar);
+		ContainerWidgetBuilder right = makeRight(userInfo, accountNameVar);
 
 		ColumnLayoutBuilder columnLayoutBuilder = new ColumnLayoutBuilder();
 		columnLayoutBuilder.add(left);
@@ -58,11 +62,11 @@ public class UserPageRenderer extends PageRenderer {
 		return pageBuilder.render();
 	}
 
-	private ContainerWidgetBuilder makeLeft(UserInfo userInfo) {
+	private ContainerWidgetBuilder makeLeft(UserInfo userInfo, PageVariable accountNameVar) {
 		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
 
 		TextBuilder titleBuilder = new TextBuilder(TITLE);
-		titleBuilder.add(userInfo.userInfo());
+		titleBuilder.add(accountNameVar);
 		left.add(titleBuilder);
 
 		TextBuilder idTextBuilder = new TextBuilder(MISC);
@@ -127,15 +131,15 @@ public class UserPageRenderer extends PageRenderer {
 		return new ImageBuilder(url);
 	}
 
-	private ContainerWidgetBuilder makeRight(UserInfo userInfo) {
+	private ContainerWidgetBuilder makeRight(UserInfo userInfo, PageVariable accountNameVar) {
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
 
-		IframeBuilder iframeBuilder = new IframeBuilder("https://minerender.org/embed/skin/?skin=" + userInfo.userInfo());
+		IframeBuilder iframeBuilder = new IframeBuilder("https://minerender.org/embed/skin/?skin=" + accountNameVar);
 		right.add(iframeBuilder);
 
 		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
 		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + userInfo.userInfo());
-		miscInfo.add("UUID: " + userInfo.userInfo());
+		miscInfo.add("Info: " + userInfo.userInfo());
 		miscInfo.add("Post Count: " + userInfo.postCount());
 		miscInfo.add("Event Count: " + userInfo.eventCount());
 		right.add(miscInfo);

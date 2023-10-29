@@ -1,8 +1,8 @@
 INSERT INTO {prefix}User (uid, userInfo)
-VALUES (1, 'Ajballistic'),
-(2, 'jackaboi1'),
-(3, "GreenJon"),
-(4, "Omegadestroy400");
+VALUES (1, 'MC|a6f2f5da-5773-4432-b7b4-8ec0b34a104a'),
+(2, 'jackaboi1'),  -- Test just name (not linked to an account)
+(3, "MC|86f5d3d8-0d4b-4230-9852-77a40baf39bd"),
+(4, "MC|0dbffb6c-6165-40e4-b0f6-0fab4dcd5511");
 
 INSERT INTO {prefix}Tag (tid, name, description, color)
 VALUES (1, 'Base', 'An event that relates to someones base.', 65280),
