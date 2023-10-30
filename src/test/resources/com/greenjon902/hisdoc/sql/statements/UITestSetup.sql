@@ -28,39 +28,40 @@ VALUES
     (12, 'MC|6a482beb-7b13-411e-b5c3-31f57aa9b5c7');
 
 
--- TODO: Add "between dates" in events
 INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDatePrecision, eventDateDiff, eventDateDiffType, postedDate, description, postedUid)
 VALUES
-    (1, 'Mining Expedition', 'c', TIMESTAMP('2023-01-15', '10:30:00'), 'm', 0, 'h', TIMESTAMP('2023-01-16', '08:45:00'), 'A group of miners explored a deep cave system.', 3),
-    (2, 'Base Construction', 'c', TIMESTAMP('2023-02-02', '14:15:00'), 'm', 0, 'h', NULL, 'Started building a new base near the river.', 4),
-    (3, 'Village Raid', 'c', TIMESTAMP('2023-02-10', '19:00:00'), 'h', 0, 'h', TIMESTAMP('2023-02-11', '09:30:00'), 'Village was attacked by hostile mobs.', NULL),
+    (1, 'Mining Expedition', 'c', TIMESTAMP('2023-01-15', '10:30:00'), 'm', 3, 'h', TIMESTAMP('2023-01-16', '08:45:00'), 'A group of miners explored a deep cave system.', 3),
+    (2, 'Base Construction', 'c', TIMESTAMP('2023-02-02', '14:15:00'), 'm', 4, 'm', NULL, 'Started building a new base near the river.', 4),
+    (3, 'Village Raid', 'c', TIMESTAMP('2023-02-10', '19:00:00'), 'h', 5, 'd', TIMESTAMP('2023-02-11', '09:30:00'), 'Village was attacked by hostile mobs.', NULL),
     (4, 'Nether Portal Activation', 'c', TIMESTAMP('2023-03-05', '22:20:00'), 'm', 0, 'h', NULL, 'Successfully activated the Nether portal.', NULL),
     (5, 'Crop Harvest', 'c', TIMESTAMP('2023-03-10', '16:45:00'), 'd', 0, 'h', TIMESTAMP('2023-03-11', '07:10:00'), 'Harvested wheat, carrots, and potatoes.', 5),
-    (6, 'Dungeon Exploration', 'c', TIMESTAMP('2023-04-02', '11:00:00'), 'd', 0, 'h', NULL, 'Explored a nearby dungeon and found loot.', NULL),
-    (7, 'Enderman Encounter', 'c', TIMESTAMP('2023-04-15', '23:30:00'), 'd', 0, 'h', TIMESTAMP('2023-04-16', '08:20:00'), 'Encountered and defeated an Enderman.', 4),
+    (6, 'Dungeon Exploration', 'c', TIMESTAMP('2023-04-02', '11:00:00'), 'd', 2, 'h', NULL, 'Explored a nearby dungeon and found loot.', NULL),
+    (7, 'Enderman Encounter', 'c', TIMESTAMP('2023-04-15', '23:30:00'), 'd', 4, 'h', TIMESTAMP('2023-04-16', '08:20:00'), 'Encountered and defeated an Enderman.', 4),
     (8, 'Nether Fortress Raid', 'c', TIMESTAMP('2023-05-08', '13:45:00'), 'd', 0, 'h', NULL, 'Conquered a Nether Fortress for resources.', 11),
-    (9, 'Ocean Monument Expedition', 'c', TIMESTAMP('2023-05-20', '15:15:00'), 'd', 0, 'h', NULL, 'Explored an ocean monument for treasure.', 12),
+    (9, 'Ocean Monument Expedition', 'c', TIMESTAMP('2023-05-20', '15:15:00'), 'd', 5, 'm', NULL, 'Explored an ocean monument for treasure.', 12),
     (10, 'Cave-In Disaster', 'c', TIMESTAMP('2023-06-10', '09:10:00'), 'd', 0, 'h', TIMESTAMP('2023-06-11', '11:30:00'), 'A cave-in trapped some miners; rescue mission initiated.', NULL),
-    (11, 'Treehouse Construction', 'c', TIMESTAMP('2023-07-01', '17:00:00'), 'd', 0, 'h', NULL, 'Started building a treehouse in the forest.', NULL),
+    (11, 'Treehouse Construction', 'c', TIMESTAMP('2023-07-01', '17:00:00'), 'd', 6, 'h', NULL, 'Started building a treehouse in the forest.', NULL),
     (12, 'Horse Taming', 'c', TIMESTAMP('2023-07-15', '08:40:00'), 'd', 0, 'h', TIMESTAMP('2023-07-16', '10:25:00'), 'Successfully tamed a wild horse.', NULL),
     (13, 'Underwater Ruin Discovery', 'c', TIMESTAMP('2023-08-05', '14:20:00'), 'd', 0, 'h', NULL, 'Found an underwater ruin and explored it.', 2),
-    (14, 'Ender Dragon Defeat', 'c', TIMESTAMP('2023-09-03', '20:00:00'), 'm', 0, 'h', NULL, 'Defeated the Ender Dragon in the End dimension.', 4),
-    (15, 'Enchanting Room Setup', 'c', TIMESTAMP('2023-09-20', '12:30:00'), 'h', 0, 'h', TIMESTAMP('2023-09-21', '09:45:00'), 'Set up an enchanting room in the base.', NULL),
+    (14, 'Ender Dragon Defeat', 'c', TIMESTAMP('2023-09-03', '20:00:00'), 'm', 2, 'm', NULL, 'Defeated the Ender Dragon in the End dimension.', 4),
+    (15, 'Enchanting Room Setup', 'c', TIMESTAMP('2023-09-20', '12:30:00'), 'h', 1, 'h', TIMESTAMP('2023-09-21', '09:45:00'), 'Set up an enchanting room in the base.', NULL),
     (16, 'Potion Brewing', 'c', TIMESTAMP('2023-10-12', '11:15:00'), 'h', 0, 'h', NULL, 'Brewed various potions for upcoming adventures.', 3),
-    (17, 'Desert Temple Raid', 'c', TIMESTAMP('2023-10-28', '18:45:00'), 'h', 0, 'h', NULL, 'Explored a desert temple and collected treasures.', 5),
-    (18, 'Villager Trading', 'c', TIMESTAMP('2023-11-10', '14:00:00'), 'h', 0, 'h', TIMESTAMP('2023-11-11', '10:10:00'), 'Engaged in trading with villagers.', 6),
-    (19, 'Ender Pearl Hunt', 'c', TIMESTAMP('2023-11-25', '22:30:00'), 'd', 0, 'h', NULL, 'Hunted Endermen for Ender Pearls.', 3),
-    (20, 'Nether Hub Construction', 'c', TIMESTAMP('2023-12-08', '16:20:00'), 'd', 0, 'h', TIMESTAMP('2023-12-09', '07:55:00'), 'Built a Nether hub for fast travel.', 4),
-    (21, 'Jungle Temple Discovery', 'c', TIMESTAMP('2024-01-05', '19:10:00'), 'd', 0, 'h', NULL, 'Found a jungle temple and explored its traps.', 5),
-    (22, 'Exploring the Mesa', 'c', TIMESTAMP('2024-01-20', '10:50:00'), 'h', 0, 'h', NULL, 'Ventured into the mesa biome for unique resources.', 4),
-    (23, 'Witch Hut Conquest', 'c', TIMESTAMP('2024-02-10', '21:30:00'), 'h', 0, 'h', NULL, 'Conquered a witch hut and collected supplies.', 6),
-    (24, 'Snow Golem Creation', 'c', TIMESTAMP('2024-02-25', '13:15:00'), 'm', 0, 'h', TIMESTAMP('2024-02-26', '08:40:00'), 'Created snow golems for added protection.', 12),
-    (25, 'Enderman Farm Setup', 'c', TIMESTAMP('2024-03-12', '12:25:00'), 'm', 0, 'h', NULL, 'Set up an Enderman farm for XP and resources.', 4),
-    (26, 'Mushroom Biome Expedition', 'c', TIMESTAMP('2024-03-28', '17:55:00'), 'd', 0, 'h', NULL, 'Explored a mushroom biome for mycelium and mushrooms.', 10),
-    (27, 'Cursed Villager Cure', 'c', TIMESTAMP('2024-04-15', '09:10:00'), 'd', 0, 'h', TIMESTAMP('2024-04-16', '11:25:00'), 'Cured a cursed villager and got discounts.', 3),
-    (28, 'Nether Wart Farming', 'c', TIMESTAMP('2024-05-03', '14:40:00'), 'd', 0, 'h', NULL, 'Started farming Nether Warts for potion making.', NULL),
-    (29, 'Ice Spikes Biome Discovery', 'c', TIMESTAMP('2024-05-20', '20:20:00'), 'd', 0, 'h', NULL, 'Found an ice spikes biome for packed ice.', 5),
-    (30, 'End Portal Activation', 'c', TIMESTAMP('2024-06-08', '08:10:00'), 'd', 0, 'h', NULL, 'Activated the End Portal for the final journey.', 6);
+    (17, 'Desert Temple Raid', 'c', TIMESTAMP('2023-10-28', '18:45:00'), 'h', 1, 'd', NULL, 'Explored a desert temple and collected treasures.', 5),
+    (18, 'Villager Trading', 'c', TIMESTAMP('2023-11-10', '14:00:00'), 'h', 0, 'h', TIMESTAMP('2023-11-11', '10:10:00'), 'Engaged in trading with villagers.', 6);
+INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDate2, postedDate, description, postedUid)
+VALUES
+    (19, 'Ender Pearl Hunt', 'b', TIMESTAMP('2023-11-25', '22:30:00'), DATE('2023-11-26'), TIMESTAMP('2023-12-09', '07:55:00'), 'Hunted Endermen for Ender Pearls.', 3),
+    (20, 'Nether Hub Construction', 'b', TIMESTAMP('2023-12-08', '16:20:00'), DATE('2023-12-18'),  TIMESTAMP('2023-12-09', '07:55:00'), 'Built a Nether hub for fast travel.', 4),
+    (21, 'Jungle Temple Discovery', 'b', TIMESTAMP('2024-01-05', '19:10:00'), DATE('2024-02-04'), NULL, 'Found a jungle temple and explored its traps.', 5),
+    (22, 'Exploring the Mesa', 'b', TIMESTAMP('2024-01-20', '10:50:00'), DATE('2024-02-20'), NULL, 'Ventured into the mesa biome for unique resources.', 4),
+    (23, 'Witch Hut Conquest', 'b', TIMESTAMP('2024-02-10', '21:30:00'), DATE('2024-03-15'), NULL, 'Conquered a witch hut and collected supplies.', 6),
+    (24, 'Snow Golem Creation', 'b', TIMESTAMP('2024-02-25', '13:15:00'), DATE('2024-03-30'), TIMESTAMP('2024-02-26', '08:40:00'), 'Created snow golems for added protection.', 12),
+    (25, 'Enderman Farm Setup', 'b', TIMESTAMP('2024-03-12', '12:25:00'), DATE('2025-09-12'), NULL, 'Set up an Enderman farm for XP and resources.', 4),
+    (26, 'Mushroom Biome Expedition', 'b', TIMESTAMP('2024-03-28', '17:55:00'), DATE('2024-04-29'), NULL, 'Explored a mushroom biome for mycelium and mushrooms.', 10),
+    (27, 'Cursed Villager Cure', 'b', TIMESTAMP('2024-04-15', '09:10:00'), DATE('2024-05-05'), TIMESTAMP('2024-04-16', '11:25:00'), 'Cured a cursed villager and got discounts.', 3),
+    (28, 'Nether Wart Farming', 'b', TIMESTAMP('2024-05-03', '14:40:00'), DATE('2024-08-04'), NULL, 'Started farming Nether Warts for potion making.', NULL),
+    (29, 'Ice Spikes Biome Discovery', 'b', TIMESTAMP('2024-05-20', '20:20:00'), DATE('2024-06-17'), NULL, 'Found an ice spikes biome for packed ice.', 5),
+    (30, 'End Portal Activation', 'b', TIMESTAMP('2024-06-08', '08:10:00'), DATE('2024-06-21'), NULL, 'Activated the End Portal for the final journey.', 6);
 
 
 INSERT INTO {prefix}EventTagRelation (eid, tid)

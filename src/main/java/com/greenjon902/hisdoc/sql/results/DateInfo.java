@@ -3,6 +3,7 @@ package com.greenjon902.hisdoc.sql.results;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+// TODO: Convert some types to enums
 public record DateInfo(String type, Timestamp date1, String precision, Integer diff, String diffType, Date date2) {
 
 	public static DateInfo centered(Timestamp center, String precision, int diff, String diffType) {

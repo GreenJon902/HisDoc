@@ -162,16 +162,17 @@ public class EventPageRenderer extends PageRenderer {
 
 	public static String formatDateString(DateInfo dateInfo) {
 		if (Objects.equals(dateInfo.type(), "c")) {
-			String pattern = "";
+			String pattern =
 			switch (dateInfo.precision()) {
-				case "d": pattern += "yyyy-MM-dd";
-				case "h": pattern += " hh";
-				case "m": pattern += ":mm";
-			}
+				case "m" -> "yyyy-MM-dd hh:mm";
+				case "h" -> "yyyy-MM-dd hh:??";
+				case "d" -> "yyyy-MM-dd";
+				default -> throw new IllegalStateException("Unexpected value: " + dateInfo.precision());
+			};
 			String center = dateInfo.date1().toLocalDateTime().format(DateTimeFormatter.ofPattern(pattern));
 			String diff = "";
 			if (dateInfo.diff() != 0) {
-				diff = " &plusmn;" + String.format("%02d", dateInfo.diff()) + dateInfo.diffType().toUpperCase(Locale.ROOT);
+				diff = " ±" + dateInfo.diff() + dateInfo.diffType().toUpperCase(Locale.ROOT);
 			}
 			return center + diff;
 		} else {
