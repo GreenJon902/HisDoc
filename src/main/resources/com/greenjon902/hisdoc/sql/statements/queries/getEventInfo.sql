@@ -8,6 +8,20 @@ FROM {prefix}EventUserRelation
 INNER JOIN {prefix}User ON {prefix}EventUserRelation.uid={prefix}User.uid
 WHERE {prefix}EventUserRelation.eid = {eid};
 
+
+SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.eventDateType, {prefix}Event.eventDate1,
+                                            {prefix}Event.eventDatePrecision, {prefix}Event.eventDateDiff, {prefix}Event.eventDateDiffType,
+                                            {prefix}Event.eventDate2 FROM {prefix}Event
+RIGHT JOIN (
+   (SELECT {prefix}EventEventRelation.eid2 as eid
+    FROM {prefix}EventEventRelation
+    WHERE {prefix}EventEventRelation.eid1 = {eid})
+   UNION
+   (SELECT {prefix}EventEventRelation.eid1 as eid
+    FROM {prefix}EventEventRelation
+    WHERE {prefix}EventEventRelation.eid2 = {eid})
+) OurEER ON OurEER.eid={prefix}Event.eid;
+
 SELECT {prefix}ChangeLog.description, {prefix}ChangeLog.authorUid, {prefix}User.userInfo as authorInfo, {prefix}ChangeLog.date
 FROM {prefix}ChangeLog
 LEFT JOIN {prefix}User ON {prefix}User.uid={prefix}ChangeLog.authorUid

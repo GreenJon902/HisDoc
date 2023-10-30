@@ -55,7 +55,8 @@ public class TestGetEvent {
 						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
 						Collections.emptySet(),
 						Collections.emptySet(),
-						Collections.emptyList()
+						Collections.emptyList(),
+						Collections.emptySet()
 						),
 				eventInfo);
 	}
@@ -81,7 +82,53 @@ public class TestGetEvent {
 						DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)),
 						Collections.emptySet(),
 						Collections.emptySet(),
-						Collections.emptyList()
+						Collections.emptyList(),
+						Collections.emptySet()
+				),
+				eventInfo);
+	}
+
+	@Test
+	public void should_returnTheEventWithARelation_when_bothEventsExist_and_areRelated() throws SQLException {
+		Connection conn = makeInMemoryConnection();
+		Dispatcher dispatcher = new Dispatcher(conn);
+		dispatcher.createTables();
+
+		dispatcher.prepare("testGetEvent/makeUsers").execute();  // Requires this beforehand
+		dispatcher.prepare("testGetEvent/makeEvent1").execute();
+		dispatcher.prepare("testGetEvent/makeEvent2").execute();
+		dispatcher.prepare("testGetEvent/makeEventRelation").execute();
+
+
+		//waitForNewline();
+
+		// Check both to ensure relation goes both ways
+
+		EventInfo eventInfo = dispatcher.getEventInfo(1);
+
+		Assertions.assertEquals(
+				new EventInfo(1,
+						"testing", "i was testing",
+						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
+						Collections.emptySet(),
+						Collections.emptySet(),
+						Collections.emptyList(),
+						Set.of(new EventLink(2, "testing", DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L))))
+				),
+				eventInfo);
+
+
+		eventInfo = dispatcher.getEventInfo(2);
+
+		Assertions.assertEquals(
+				new EventInfo(2,
+						"testing", "i was testing",
+						new Timestamp(1696767960000L), new UserLink(1, "User1"),
+						DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)),
+						Collections.emptySet(),
+						Collections.emptySet(),
+						Collections.emptyList(),
+						Set.of(new EventLink(1, "testing", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")))
 				),
 				eventInfo);
 	}
@@ -108,7 +155,8 @@ public class TestGetEvent {
 						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
 						Collections.emptySet(),
 						Collections.emptySet(),
-						Collections.emptyList()
+						Collections.emptyList(),
+						Collections.emptySet()
 						),
 				eventInfo);
 	}
@@ -137,7 +185,8 @@ public class TestGetEvent {
 						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
 						Set.of(new TagLink(2, "Tag2", 321)),
 						Set.of(new UserLink(2, "User2")),
-						List.of(new ChangeInfo(new Timestamp(1500811811000L), new UserLink(2, "User2"), "I did you"))
+						List.of(new ChangeInfo(new Timestamp(1500811811000L), new UserLink(2, "User2"), "I did you")),
+						Collections.emptySet()
 						),
 				eventInfo);
 	}

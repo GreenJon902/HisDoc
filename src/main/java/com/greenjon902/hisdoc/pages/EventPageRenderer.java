@@ -112,11 +112,9 @@ public class EventPageRenderer extends PageRenderer {
 		relatedEventTitles.add("Related Events");
 		right.add(relatedEventTitles);
 		TextBuilder relatedEvents = new TextBuilder(NORMAL, "\n");
-		// TODO: Make these
-		relatedEvents.add("a", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-		relatedEvents.add("bcdefghijklmnopqrstuvplaw", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-		relatedEvents.add("3w4aet gaerta eraerhyg a", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-		relatedEvents.add("3w4aet gaerta eraerhyg awawer g", "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+		for (EventLink eventLink : eventInfo.relatedEventLinks()) {
+			relatedEvents.add(eventLink.name(), "event?id=" + eventLink.id());
+		}
 		right.add(relatedEvents);
 		right.add(new BreakBuilder());
 

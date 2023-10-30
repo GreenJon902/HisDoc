@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public record EventInfo(int eid, String name, String description, Timestamp postedDate, UserLink postedBy, DateInfo eventDateInfo, Set<TagLink> tagLinks, Set<UserLink> relatedPlayerInfos, List<ChangeInfo> changeInfos) {
-	public EventInfo(int eid, String name, String description, Timestamp postedDate, UserLink postedBy, DateInfo eventDateInfo, Set<TagLink> tagLinks, Set<UserLink> relatedPlayerInfos, List<ChangeInfo> changeInfos) {
+public record EventInfo(int eid, String name, String description, Timestamp postedDate, UserLink postedBy, DateInfo eventDateInfo, Set<TagLink> tagLinks, Set<UserLink> relatedPlayerInfos, List<ChangeInfo> changeInfos, Set<EventLink> relatedEventLinks) {
+	public EventInfo(int eid, String name, String description, Timestamp postedDate, UserLink postedBy, DateInfo eventDateInfo, Set<TagLink> tagLinks, Set<UserLink> relatedPlayerInfos, List<ChangeInfo> changeInfos, Set<EventLink> relatedEventLinks) {
 		this.eid = eid;
 		this.name = name;
 		this.description = description;
@@ -16,9 +16,10 @@ public record EventInfo(int eid, String name, String description, Timestamp post
 		this.changeInfos = Collections.unmodifiableList(changeInfos);
 		this.postedDate = postedDate;
 		this.postedBy = postedBy;
+		this.relatedEventLinks = relatedEventLinks;
 	}
 
-	public EventInfo(int eid, String name, String description, DateInfo eventDateInfo, Set<TagLink> tagLinks, Set<UserLink> userLinks, List<ChangeInfo> changeInfos) {
-		this(eid,name, description, null, null, eventDateInfo, tagLinks, userLinks, changeInfos);
+	public EventInfo(int eid, String name, String description, DateInfo eventDateInfo, Set<TagLink> tagLinks, Set<UserLink> userLinks, List<ChangeInfo> changeInfos, Set<EventLink> relatedEventLinks) {
+		this(eid,name, description, null, null, eventDateInfo, tagLinks, userLinks, changeInfos, relatedEventLinks);
 	}
 }

@@ -90,6 +90,23 @@ public class Dispatcher {
 			throw new RuntimeException("Could not find third results");
 		}
 		result = ps.getResultSet();
+		Set<EventLink> eventLinks = new HashSet<>();
+		while (result.next()) {
+			DateInfo eventDateInfo = new DateInfo(
+					result.getString("eventDateType"),
+					result.getTimestamp("eventDate1"),
+					result.getString("eventDatePrecision"),
+					getInteger(result, "eventDateDiff"),
+					result.getString("eventDateDiffType"),
+					result.getDate("eventDate2")
+			);
+			eventLinks.add(new EventLink(result.getInt("eid"), result.getString("name"), eventDateInfo));
+		}
+
+		if (!ps.getMoreResults()) {
+			throw new RuntimeException("Could not find fourth results");
+		}
+		result = ps.getResultSet();
 		List<ChangeInfo> changeInfos = new ArrayList<>();
 		while (result.next()) {
 			changeInfos.add(new ChangeInfo(result.getTimestamp("date"),
@@ -98,11 +115,11 @@ public class Dispatcher {
 		}
 
 		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find fourth results");
+			throw new RuntimeException("Could not find fifth results");
 		}
 		result = ps.getResultSet();
 		if (!result.next()) {  // No event found
-			if (!tagLinks.isEmpty() || !userLinks.isEmpty() || !changeInfos.isEmpty()) {
+			if (!tagLinks.isEmpty() || !userLinks.isEmpty() || !changeInfos.isEmpty() || !eventLinks.isEmpty()) {
 				throw new RuntimeException("Found no event but found some info relating to the event with id " + eid);
 			}
 			return null;
@@ -131,7 +148,8 @@ public class Dispatcher {
 				eventDateInfo,
 				tagLinks,
 				userLinks,
-				changeInfos
+				changeInfos,
+				eventLinks
 		);
 
 		if (result.next()) {
