@@ -71,67 +71,34 @@ public class Dispatcher {
 		PreparedStatement ps = prepareWithArgs("queries/getEventInfo", "eid", eid);
 		ps.execute();
 
-		ResultSet result = ps.getResultSet();
-		Set<TagLink> tagLinks = new HashSet<>();
-		while (result.next()) {
-			tagLinks.add(new TagLink(result.getInt("tid"), result.getString("name"), result.getInt("color")));
-		}
+		Set<TagLink> tagLinks = TagLink.fromResultSet(ps.getResultSet());
 
 		if (!ps.getMoreResults()) {
 			throw new RuntimeException("Could not find second results");
 		}
-		result = ps.getResultSet();
-		Set<UserLink> userLinks = new HashSet<>();
-		while (result.next()) {
-			userLinks.add(new UserLink(result.getInt("uid"), result.getString("userInfo")));
-		}
+		Set<UserLink> userLinks = UserLink.fromResultSet(ps.getResultSet());
 
 		if (!ps.getMoreResults()) {
 			throw new RuntimeException("Could not find third results");
 		}
-		result = ps.getResultSet();
-		Set<EventLink> eventLinks = new HashSet<>();
-		while (result.next()) {
-			DateInfo eventDateInfo = new DateInfo(
-					result.getString("eventDateType"),
-					result.getTimestamp("eventDate1"),
-					result.getString("eventDatePrecision"),
-					getInteger(result, "eventDateDiff"),
-					result.getString("eventDateDiffType"),
-					result.getDate("eventDate2")
-			);
-			eventLinks.add(new EventLink(result.getInt("eid"), result.getString("name"), eventDateInfo));
-		}
+		Set<EventLink> eventLinks = Set.copyOf(EventLink.fromResultSet(ps.getResultSet()));
 
 		if (!ps.getMoreResults()) {
 			throw new RuntimeException("Could not find fourth results");
 		}
-		result = ps.getResultSet();
-		List<ChangeInfo> changeInfos = new ArrayList<>();
-		while (result.next()) {
-			changeInfos.add(new ChangeInfo(result.getTimestamp("date"),
-					new UserLink(result.getInt("authorUid"), result.getString("authorInfo")),
-					result.getString("description")));
-		}
+		List<ChangeInfo> changeInfos = ChangeInfo.fromResultSet(ps.getResultSet());
 
 		if (!ps.getMoreResults()) {
 			throw new RuntimeException("Could not find fifth results");
 		}
-		result = ps.getResultSet();
+		ResultSet result = ps.getResultSet();
 		if (!result.next()) {  // No event found
 			if (!tagLinks.isEmpty() || !userLinks.isEmpty() || !changeInfos.isEmpty() || !eventLinks.isEmpty()) {
 				throw new RuntimeException("Found no event but found some info relating to the event with id " + eid);
 			}
 			return null;
 		}
-		DateInfo eventDateInfo = new DateInfo(
-				result.getString("eventDateType"),
-				result.getTimestamp("eventDate1"),
-				result.getString("eventDatePrecision"),
-				getInteger(result, "eventDateDiff"),
-				result.getString("eventDateDiffType"),
-				result.getDate("eventDate2")
-		);
+		DateInfo eventDateInfo = DateInfo.oneFromResultSet(result);
 
 		Integer postedUid;
 		UserLink postedUser = null;
@@ -204,19 +171,7 @@ public class Dispatcher {
 		if (!ps.getMoreResults()) {
 			throw new RuntimeException("Could not find fourth results");
 		}
-		result = ps.getResultSet();
-		List<EventLink> recentEventLinks = new ArrayList<>(10);  // This is likely how long it will be
-		while (result.next()) {
-			DateInfo eventDateInfo = new DateInfo(
-					result.getString("eventDateType"),
-					result.getTimestamp("eventDate1"),
-					result.getString("eventDatePrecision"),
-					getInteger(result, "eventDateDiff"),
-					result.getString("eventDateDiffType"),
-					result.getDate("eventDate2")
-			);
-			recentEventLinks.add(new EventLink(result.getInt("eid"), result.getString("name"), eventDateInfo));
-		}
+		List<EventLink> recentEventLinks = EventLink.fromResultSet(ps.getResultSet());
 
 		// --------------------------------------------------------------
 		if (!ps.getMoreResults()) {
@@ -254,25 +209,13 @@ public class Dispatcher {
 		PreparedStatement ps = prepareWithArgs("queries/getTagInfo", "tid", tid);
 		ps.execute();
 
-		ResultSet result = ps.getResultSet();
-		List<EventLink> recentEventLinks = new ArrayList<>(10);  // This is likely how long it will be
-		while (result.next()) {
-			DateInfo eventDateInfo = new DateInfo(
-					result.getString("eventDateType"),
-					result.getTimestamp("eventDate1"),
-					result.getString("eventDatePrecision"),
-					getInteger(result, "eventDateDiff"),
-					result.getString("eventDateDiffType"),
-					result.getDate("eventDate2")
-			);
-			recentEventLinks.add(new EventLink(result.getInt("eid"), result.getString("name"), eventDateInfo));
-		}
+		List<EventLink> recentEventLinks = EventLink.fromResultSet(ps.getResultSet());
 
 		// --------------------------------------------------------------
 		if (!ps.getMoreResults()) {
 			throw new RuntimeException("Could not find second results");
 		}
-		result = ps.getResultSet();
+		ResultSet result = ps.getResultSet();
 		if (!result.next()) {  // No event found
 			if (!recentEventLinks.isEmpty()) {
 				throw new RuntimeException("Found no tag but found some info relating to the tid with id " + tid);
@@ -286,7 +229,6 @@ public class Dispatcher {
 				result.getString("description"),
 				result.getInt("color"),
 				recentEventLinks
-
 		);
 
 		// --------------------------------------------------------------
@@ -300,7 +242,7 @@ public class Dispatcher {
 		return tagInfo;
 	}
 
-	private Integer getInteger(ResultSet result, String name) throws SQLException {
+	public static Integer getInteger(ResultSet result, String name) throws SQLException {
 		Integer integer = result.getInt(name);
 		if (result.wasNull()) {
 			integer = null;
