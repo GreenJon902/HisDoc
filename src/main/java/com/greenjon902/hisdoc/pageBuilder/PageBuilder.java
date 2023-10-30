@@ -21,6 +21,7 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 		stream.write("<html>");
 		renderHead(stream, session);
 		renderBody(stream, session);
+		renderScripts(stream);
 		stream.write("</html>");
 	}
 
@@ -63,7 +64,6 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 		stream.write("<link href=\"themes?name=general\" rel=\"stylesheet\">");
 		renderThemes(stream, session, "dark", "light");
 
-		renderScripts(stream);
 		stream.write("</head>");
 	}
 
