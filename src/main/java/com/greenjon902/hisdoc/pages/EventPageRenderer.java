@@ -50,7 +50,7 @@ public class EventPageRenderer extends PageRenderer {
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
-		ContainerWidgetBuilder left = makeLeft(eventInfo);
+		ContainerWidgetBuilder left = makeLeft(eventInfo, lazyLoadAccountNameScript, pageBuilder);
 		ContainerWidgetBuilder right = makeRight(eventInfo, lazyLoadAccountNameScript, pageBuilder);
 
 
@@ -62,7 +62,7 @@ public class EventPageRenderer extends PageRenderer {
 		return pageBuilder.render(session);
 	}
 
-	private ContainerWidgetBuilder makeLeft(EventInfo eventInfo) {
+	private ContainerWidgetBuilder makeLeft(EventInfo eventInfo, LazyLoadAccountNameScript lazyLoadAccountNameScript, PageBuilder pageBuilder) {
 		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
 
 		TextBuilder titleBuilder = new TextBuilder(TITLE);
@@ -83,7 +83,7 @@ public class EventPageRenderer extends PageRenderer {
 		TextBuilder changelogTitleBuilder = new TextBuilder(SUBTITLE);
 		changelogTitleBuilder.add("Changelog");
 		left.add(changelogTitleBuilder);
-		WidgetBuilder changelogTextBuilder = makeChangelogContents(eventInfo);
+		WidgetBuilder changelogTextBuilder = makeChangelogContents(eventInfo, lazyLoadAccountNameScript, pageBuilder);
 		left.add(changelogTextBuilder);
 
 		return left;
@@ -132,18 +132,12 @@ public class EventPageRenderer extends PageRenderer {
 		return right;
 	}
 
-	private WidgetBuilder makeChangelogContents(EventInfo eventInfo) {
+	private WidgetBuilder makeChangelogContents(EventInfo eventInfo, LazyLoadAccountNameScript lazyLoadAccountNameScript, PageBuilder pageBuilder) {
 		String postedBy = "Unknown";
 		if (eventInfo.postedBy() != null) {
-			postedBy = eventInfo.postedBy().userInfo();
-		}
-
-		int maxSpace = postedBy.length();
-		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
-			int space;
-			if ((space = changeInfo.author().userInfo().length()) > maxSpace) {
-				maxSpace = space;
-			}
+			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + eventInfo.postedBy().userInfo());
+			lazyLoadAccountNameScript.add(eventInfo.postedBy().userInfo(), pageVariable);
+			postedBy = pageVariable.toString();
 		}
 
 		TextBuilder changelog = new TextBuilder(NORMAL);
@@ -152,11 +146,13 @@ public class EventPageRenderer extends PageRenderer {
 		if (eventInfo.postedDate() != null) {
 			postedDate = eventInfo.postedDate().toString();
 		}
-		changelog.add(postedDate + " " + String.format("%1$" + maxSpace + "s", postedBy) + ": ");
+		changelog.add(postedDate + " " + postedBy + ": ");
 		changelog.add("This event was created!\n", 0xaaaaaa, 0);
 
 		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
-			changelog.add(changeInfo.date() + " " + String.format("%1$" + maxSpace + "s", changeInfo.author()) + ": ");
+			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + changeInfo.author().userInfo());
+			lazyLoadAccountNameScript.add(changeInfo.author().userInfo(), pageVariable);
+			changelog.add(changeInfo.date() + " " + pageVariable + ": ");
 			changelog.add(changeInfo.description() + "\n", 0xaaaaaa, 0);
 		}
 
