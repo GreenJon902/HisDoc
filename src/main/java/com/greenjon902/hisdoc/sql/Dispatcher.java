@@ -1,11 +1,16 @@
 package com.greenjon902.hisdoc.sql;
 
-import com.greenjon902.hisdoc.sql.results.*;
+import com.greenjon902.hisdoc.sql.results.EventInfo;
+import com.greenjon902.hisdoc.sql.results.TagInfo;
+import com.greenjon902.hisdoc.sql.results.UserInfo;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 // TODO: Warn on sets and maps having duplicates
 
@@ -68,185 +73,27 @@ public class Dispatcher {
 	}
 
 	public EventInfo getEventInfo(int eid) throws SQLException {
+		System.out.println("Getting event info for event with eid " + eid + " -----------------");
 		PreparedStatement ps = prepareWithArgs("queries/getEventInfo", "eid", eid);
 		ps.execute();
 
-		Set<TagLink> tagLinks = TagLink.fromResultSet(ps.getResultSet());
-
-		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find second results");
-		}
-		Set<UserLink> userLinks = UserLink.fromResultSet(ps.getResultSet());
-
-		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find third results");
-		}
-		Set<EventLink> eventLinks = Set.copyOf(EventLink.fromResultSet(ps.getResultSet()));
-
-		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find fourth results");
-		}
-		List<ChangeInfo> changeInfos = ChangeInfo.fromResultSet(ps.getResultSet());
-
-		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find fifth results");
-		}
-		ResultSet result = ps.getResultSet();
-		if (!result.next()) {  // No event found
-			if (!tagLinks.isEmpty() || !userLinks.isEmpty() || !changeInfos.isEmpty() || !eventLinks.isEmpty()) {
-				throw new RuntimeException("Found no event but found some info relating to the event with id " + eid);
-			}
-			return null;
-		}
-		DateInfo eventDateInfo = DateInfo.oneFromResultSet(result);
-
-		Integer postedUid;
-		UserLink postedUser = null;
-		if ((postedUid = getInteger(result, "postedUid")) != null) {
-			postedUser = new UserLink(postedUid, result.getString("postedInfo"));
-		}
-
-		EventInfo eventInfo = new EventInfo(
-				eid,
-				result.getString("name"),
-				result.getString("description"),
-				result.getTimestamp("postedDate"),
-				postedUser,
-				eventDateInfo,
-				tagLinks,
-				userLinks,
-				changeInfos,
-				eventLinks
-		);
-
-		if (result.next()) {
-			throw new RuntimeException("Multiple events were returned for id " + eid + ", when only one is expected");
-		}
-		if (ps.getMoreResults()) {
-			throw new RuntimeException("Too many results were returned for id " + eid);
-		}
-
-		return eventInfo;
+		return UnpackHelper.getEventInfo(ps, eid);
 	}
 
 	public UserInfo getUserInfo(int uid) throws SQLException {
+		System.out.println("Getting user info for user with uid " + uid + " -----------------");
 		PreparedStatement ps = prepareWithArgs("queries/getUserInfo", "uid", uid);
 		ps.execute();
 
-		ResultSet result = ps.getResultSet();
-		Map<TagLink, Integer> countedTagLinks = new HashMap<>();
-		while (result.next()) {
-			TagLink tagLink = new TagLink(result.getInt("tid"), result.getString("name"), result.getInt("color"));
-			int count = result.getInt("count");
-			countedTagLinks.put(tagLink, count);
-		}
-
-		// --------------------------------------------------------------
-		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find second results");
-		}
-		result = ps.getResultSet();
-		if (!result.next()) {
-			throw new RuntimeException("Could not find post count for user with id " + uid);
-		}
-		int postCount = result.getInt("count");
-		if (result.next()) {
-			throw new RuntimeException("Too many post counts for user with id " + uid);
-		}
-
-		// --------------------------------------------------------------
-		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find third results");
-		}
-		result = ps.getResultSet();
-		if (!result.next()) {
-			throw new RuntimeException("Could not find event count for user with id " + uid);
-		}
-		int eventCount = result.getInt("count");
-		if (result.next()) {
-			throw new RuntimeException("Too many event counts for user with id " + uid);
-		}
-
-		// --------------------------------------------------------------
-		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find fourth results");
-		}
-		List<EventLink> recentEventLinks = EventLink.fromResultSet(ps.getResultSet());
-
-		// --------------------------------------------------------------
-		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find fifth results");
-		}
-		result = ps.getResultSet();
-		if (!result.next()) {  // No event found
-			if (!countedTagLinks.isEmpty() && !recentEventLinks.isEmpty()) {
-				throw new RuntimeException("Found no user but found some info relating to the user with id " + uid);
-			}
-			return null;
-		}
-
-		UserInfo userInfo = new UserInfo(
-				uid,
-				result.getString("userInfo"),
-				countedTagLinks,
-				postCount, eventCount, recentEventLinks
-
-		);
-
-		// --------------------------------------------------------------
-		if (result.next()) {
-			throw new RuntimeException("Multiple users were returned for id " + uid + ", when only one is expected");
-		}
-		if (ps.getMoreResults()) {
-			throw new RuntimeException("Too many results were returned for id " + uid);
-		}
-
-		return userInfo;
+		return UnpackHelper.getUserInfo(ps, uid);
 	}
 
 
 	public TagInfo getTagInfo(int tid) throws SQLException {
+		System.out.println("Getting tag info for tag with tid " + tid + " -----------------");
 		PreparedStatement ps = prepareWithArgs("queries/getTagInfo", "tid", tid);
 		ps.execute();
 
-		List<EventLink> recentEventLinks = EventLink.fromResultSet(ps.getResultSet());
-
-		// --------------------------------------------------------------
-		if (!ps.getMoreResults()) {
-			throw new RuntimeException("Could not find second results");
-		}
-		ResultSet result = ps.getResultSet();
-		if (!result.next()) {  // No event found
-			if (!recentEventLinks.isEmpty()) {
-				throw new RuntimeException("Found no tag but found some info relating to the tid with id " + tid);
-			}
-			return null;
-		}
-
-		TagInfo tagInfo = new TagInfo(
-				tid,
-				result.getString("name"),
-				result.getString("description"),
-				result.getInt("color"),
-				recentEventLinks
-		);
-
-		// --------------------------------------------------------------
-		if (result.next()) {
-			throw new RuntimeException("Multiple tags were returned for id " + tid + ", when only one is expected");
-		}
-		if (ps.getMoreResults()) {
-			throw new RuntimeException("Too many results were returned for id " + tid);
-		}
-
-		return tagInfo;
-	}
-
-	public static Integer getInteger(ResultSet result, String name) throws SQLException {
-		Integer integer = result.getInt(name);
-		if (result.wasNull()) {
-			integer = null;
-		}
-		return integer;
+		return UnpackHelper.getTagInfo(ps, tid);
 	}
 }

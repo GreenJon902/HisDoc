@@ -1,12 +1,15 @@
 package com.greenjon902.hisdoc.sql.results;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 public record EventInfo(int eid, String name, String description, Timestamp postedDate, UserLink postedBy, DateInfo eventDateInfo, Set<TagLink> tagLinks, Set<UserLink> relatedPlayerInfos, List<ChangeInfo> changeInfos, Set<EventLink> relatedEventLinks) {
-	public EventInfo(int eid, String name, String description, Timestamp postedDate, UserLink postedBy, DateInfo eventDateInfo, Set<TagLink> tagLinks, Set<UserLink> relatedPlayerInfos, List<ChangeInfo> changeInfos, Set<EventLink> relatedEventLinks) {
+	public EventInfo(int eid, @NotNull String name, @NotNull String description, @Nullable Timestamp postedDate, @Nullable UserLink postedBy, @NotNull DateInfo eventDateInfo, @NotNull Set<TagLink> tagLinks, @NotNull Set<UserLink> relatedPlayerInfos, @NotNull List<ChangeInfo> changeInfos, @NotNull Set<EventLink> relatedEventLinks) {
 		this.eid = eid;
 		this.name = name;
 		this.description = description;
