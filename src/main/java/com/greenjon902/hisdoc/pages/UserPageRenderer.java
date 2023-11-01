@@ -88,17 +88,19 @@ public class UserPageRenderer extends PageRenderer {
 		return left;
 	}
 
+	// TODO: Combind this with the version in TagPageRendeer
 	private WidgetBuilder makeRecentEventContents(UserInfo userInfo) {
-		TextBuilder recentEvents = new TextBuilder(NORMAL);
+		// Contents means not title, it does not mean only create table contents. (so we will use the <table> tag)
+
+		TableBuilder table = new TableBuilder(2, false);  // Date, Event
+
 
 		for (EventLink eventLink : userInfo.recentEventLinks()) {
-			recentEvents.add(EventPageRenderer.formatDateString(eventLink.dateInfo()));
-			recentEvents.add(" - ");
-			recentEvents.add(eventLink.name(), "event?id=" + eventLink.id());
-			recentEvents.add("\n");
+			table.add(new TextBuilder(NORMAL) {{ add(EventPageRenderer.formatDateString(eventLink.dateInfo()) + " -"); }});
+			table.add(new TextBuilder(NORMAL) {{ add(eventLink.name(), "event?id=" + eventLink.id()); }});
 		}
 
-		return recentEvents;
+		return table;
 	}
 
 	private WidgetBuilder makeTagStatsContents(UserInfo userInfo) {

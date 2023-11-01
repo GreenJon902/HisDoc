@@ -133,30 +133,33 @@ public class EventPageRenderer extends PageRenderer {
 	}
 
 	private WidgetBuilder makeChangelogContents(EventInfo eventInfo, LazyLoadAccountNameScript lazyLoadAccountNameScript, PageBuilder pageBuilder) {
-		String postedBy = "Unknown";
-		if (eventInfo.postedBy() != null) {
+		// Contents means not title, it does not mean only create table contents. (so we will use the <table> tag)
+
+		TableBuilder table = new TableBuilder(3, true);  // Date, Author, Description
+
+		// First we add the event author
+		if (eventInfo.postedDate() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown"); }});
+		else table.add(new TextBuilder(NORMAL) {{ add(eventInfo.postedDate().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))); }});
+
+		if (eventInfo.postedBy() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown:"); }});
+		else {
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + eventInfo.postedBy().userInfo());
 			lazyLoadAccountNameScript.add(eventInfo.postedBy().userInfo(), pageVariable);
-			postedBy = pageVariable.toString();
+			table.add(new TextBuilder(NORMAL) {{ add(pageVariable + ":"); }});
 		}
+		table.add(new TextBuilder(MISC) {{ add("This event was created!"); }});
 
-		TextBuilder changelog = new TextBuilder(NORMAL);
-
-		String postedDate = "Unknown";
-		if (eventInfo.postedDate() != null) {
-			postedDate = eventInfo.postedDate().toString();
-		}
-		changelog.add(postedDate + " " + postedBy + ": ");
-		changelog.add("This event was created!\n", 0xaaaaaa, 0);
-
+		// Then we add any changes
 		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + changeInfo.author().userInfo());
 			lazyLoadAccountNameScript.add(changeInfo.author().userInfo(), pageVariable);
-			changelog.add(changeInfo.date() + " " + pageVariable + ": ");
-			changelog.add(changeInfo.description() + "\n", 0xaaaaaa, 0);
+
+			table.add(new TextBuilder(NORMAL) {{ add(changeInfo.date().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))); }});
+			table.add(new TextBuilder(NORMAL) {{ add(pageVariable + ":"); }});
+			table.add(new TextBuilder(MISC) {{ add(changeInfo.description()); }});
 		}
 
-		return changelog;
+		return table;
 	}
 
 
