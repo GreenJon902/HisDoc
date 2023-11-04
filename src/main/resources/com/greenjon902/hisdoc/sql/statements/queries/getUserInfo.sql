@@ -7,6 +7,7 @@ RIGHT JOIN (
         WHERE {prefix}EventUserRelation.uid={uid}
     ) OurEUR ON OurEUR.eid={prefix}EventTagRelation.eid
 ) OurETR ON OurETR.tid={prefix}Tag.tid
+WHERE {prefix}Tag.tid IS NOT NULL
 GROUP BY {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.color;
 
 SELECT COUNT(*) as count FROM {prefix}Event
