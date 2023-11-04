@@ -4,12 +4,15 @@ import com.greenjon902.hisdoc.sql.results.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.greenjon902.hisdoc.sql.Utils.*;
+import static com.greenjon902.hisdoc.sql.Utils.makeInMemoryConnection;
 
 public class TestGetEvent {
 	@Test
@@ -113,7 +116,7 @@ public class TestGetEvent {
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
-						Set.of(new EventLink(2, "testing", DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L))))
+						Set.of(new EventLink(2, "testing", DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)), "i was testing"))
 				),
 				eventInfo);
 
@@ -128,7 +131,7 @@ public class TestGetEvent {
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
-						Set.of(new EventLink(1, "testing", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h")))
+						Set.of(new EventLink(1, "testing", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"), "i was testing"))
 				),
 				eventInfo);
 	}

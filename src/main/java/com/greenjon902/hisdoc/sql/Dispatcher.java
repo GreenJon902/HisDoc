@@ -2,6 +2,7 @@ package com.greenjon902.hisdoc.sql;
 
 import com.greenjon902.hisdoc.sql.results.EventInfo;
 import com.greenjon902.hisdoc.sql.results.TagInfo;
+import com.greenjon902.hisdoc.sql.results.TimelineInfo;
 import com.greenjon902.hisdoc.sql.results.UserInfo;
 
 import java.io.IOException;
@@ -95,5 +96,13 @@ public class Dispatcher {
 		ps.execute();
 
 		return UnpackHelper.getTagInfo(ps, tid);
+	}
+
+	public TimelineInfo getTimelineInfo() throws SQLException {
+		System.out.println("Getting timeline info -----------------");
+		PreparedStatement ps = prepareWithArgs("queries/getTimelineInfo");
+		ps.execute();
+
+		return UnpackHelper.getTimelineInfo(ps);
 	}
 }

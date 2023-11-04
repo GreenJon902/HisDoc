@@ -44,7 +44,8 @@ public class UnpackHelper {
 	 * This looks at the columns eid, name.
 	 */
 	public static EventLink getEventLink(ResultSet result) throws SQLException {
-		return new EventLink(result.getInt("eid"), result.getString("name"), getDateInfo(result));
+		return new EventLink(result.getInt("eid"), result.getString("name"), getDateInfo(result),
+				result.getString("description"));
 	}
 
 	/**
@@ -233,6 +234,17 @@ public class UnpackHelper {
 			integer = null;
 		}
 		return integer;
+	}
+
+	/**
+	 * Unpacks multiple {@link EventInfo} from a {@link PreparedStatement}, this expects the current result set to be the
+	 * first item to be unpacked, this also expects the next result to be the one we are
+	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
+	 */
+	public static TimelineInfo getTimelineInfo(PreparedStatement ps) throws SQLException {
+		List<EventLink> eventLinks = getList(ps.getResultSet(), UnpackHelper::getEventLink);
+
+		return new TimelineInfo(eventLinks);
 	}
 }
 
