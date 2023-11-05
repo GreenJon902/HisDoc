@@ -4,6 +4,15 @@ import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
 
 import java.io.IOException;
 
+/**
+ * A script that creates the utility functions `setCookie`, and `getCookie`. <br>
+ * <br>
+ * `setCookie` takes the arguments `cname` - the name of the cookie -
+ * and `cvalue` - the value to set for that cookie. Note that these cookies have no expiration date, and have `SameSite`
+ * set to `Strict`.<br>
+ * <br>
+ * `getCookie` takes the argument `cname` - the name of the cookie.
+ */
 public class CookieHelperScript extends Script {
 	@Override
 	protected void writeScriptContents(HtmlOutputStream stream) throws IOException {
@@ -24,7 +33,6 @@ public class CookieHelperScript extends Script {
 				"      return c.substring(name.length, c.length);\n" +
 				"    }\n" +
 				"  }\n" +
-				"  return \"\";\n" +
 				"}");
 	}
 }

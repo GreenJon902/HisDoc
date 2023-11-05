@@ -9,6 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This script provides the functionality to lazy load account names on the client side.
+ * This works by replacing any instances of the page variable in the whole document with the correct value that was
+ * loaded using the user info.
+ */
 public class LazyLoadAccountNameScript extends Script {
 	private final List<PageVariable> accountNameVars = new ArrayList<>();
 	private final List<String> userInfos = new ArrayList<>();
@@ -19,6 +24,11 @@ public class LazyLoadAccountNameScript extends Script {
 
 	public LazyLoadAccountNameScript() {}
 
+	/**
+	 * Adds a userInfo to replace a {@link PageVariable} once it has been loaded on the client side.
+	 * @param userInfo The user info to use
+	 * @param accountNameVar The page variable
+	 */
 	public void add(String userInfo, PageVariable accountNameVar) {
 		userInfos.add(userInfo);
 		accountNameVars.add(accountNameVar);

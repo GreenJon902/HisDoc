@@ -5,6 +5,14 @@ import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 
 import java.io.IOException;
 
+/**
+ * A script to help with theme switching, this provides the functions to assign the
+ * {@link com.greenjon902.hisdoc.pageBuilder.widgets.ThemeSwitcherBuilder} the correct icon, store the current theme in
+ * the cookies, and switch between themes using the css properties.<br>
+ * <br>
+ * This requires an element with the id `theme-switcher-button` to have the css values `--next-stylesheet` - the next
+ * stylesheet to use - and `--icon-class` - the class that the elements with the id `theme-switcher-icon` should have.
+ */
 public class ThemeSwitcherHelperScript extends Script {
     public ThemeSwitcherHelperScript(PageBuilder pageBuilder) {
         pageBuilder.addScript(new CookieHelperScript());
