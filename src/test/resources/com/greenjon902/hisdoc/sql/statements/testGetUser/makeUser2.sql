@@ -8,8 +8,8 @@
     The user has created 2 events.
 */
 
-INSERT INTO {prefix}User (uid, userInfo)
-VALUES (2, 'User2');
+INSERT INTO {prefix}User (uid, userType, userData)
+VALUES (2, 'misc', 'User2');
 
 
 INSERT INTO {prefix}Event (eid, name, description, postedUid, postedDate, eventDateType, eventDate1,

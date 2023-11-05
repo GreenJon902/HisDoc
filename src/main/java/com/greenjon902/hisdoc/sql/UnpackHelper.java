@@ -10,15 +10,23 @@ import java.util.concurrent.Callable;
 
 public class UnpackHelper {
 	/**
+	 * Unpacks a singular {@link UserData} from a {@link ResultSet}, this expects the current result to be the one we are
+	 * getting (meaning we do not use {@link ResultSet#next()}).
+	 * This looks at the columns userType, and userData.
+	 */
+	public static UserData getUserData(ResultSet result) throws SQLException {
+		return new UserData(result.getString("userType"), result.getString("userData"));
+	}
+
+	/**
 	 * Unpacks a singular {@link ChangeInfo} from a {@link ResultSet}, this expects the current result to be the one we are
 	 * getting (meaning we do not use {@link ResultSet#next()}).
 	 * This looks at the columns date, authorUid, authorInfo, and description.
 	 */
 	public static ChangeInfo getChangeInfo(ResultSet result) throws SQLException {
 		return new ChangeInfo(result.getTimestamp("date"),
-				new UserLink(result.getInt("authorUid"), result.getString("authorInfo")),
+				new UserLink(result.getInt("authorUid"), getUserData(result)),
 				result.getString("description"));
-
 	}
 
 	/**
@@ -63,7 +71,7 @@ public class UnpackHelper {
 	 * This looks at the columns uid, userInfo.
 	 */
 	public static UserLink getUserLink(ResultSet result) throws SQLException {
-		return new UserLink(result.getInt("uid"), result.getString("userInfo"));
+		return new UserLink(result.getInt("uid"), getUserData(result));
 	}
 
 	/**
@@ -103,7 +111,7 @@ public class UnpackHelper {
 		Integer postedUid;
 		UserLink postedUser = null;
 		if ((postedUid = getInteger(result, "postedUid")) != null) {
-			postedUser = new UserLink(postedUid, result.getString("postedInfo"));
+			postedUser = new UserLink(postedUid, getUserData(result));
 		}
 
 		return new EventInfo(
@@ -150,7 +158,7 @@ public class UnpackHelper {
 
 		return new UserInfo(
 				uid,
-				result.getString("userInfo"),
+				getUserData(result),
 				countedTagLinks,
 				postCount, eventCount, recentEventLinks);
 	}

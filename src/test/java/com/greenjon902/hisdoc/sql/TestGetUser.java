@@ -1,9 +1,6 @@
 package com.greenjon902.hisdoc.sql;
 
-import com.greenjon902.hisdoc.sql.results.DateInfo;
-import com.greenjon902.hisdoc.sql.results.EventLink;
-import com.greenjon902.hisdoc.sql.results.TagLink;
-import com.greenjon902.hisdoc.sql.results.UserInfo;
+import com.greenjon902.hisdoc.sql.results.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -58,7 +55,7 @@ public class TestGetUser {
 		UserInfo userInfo = dispatcher.getUserInfo(1);
 
 		Assertions.assertEquals(
-				new UserInfo(1, "User1", Collections.emptyMap(), 0, 0, Collections.emptyList()),
+				new UserInfo(1, UserData.miscellaneous("User1"), Collections.emptyMap(), 0, 0, Collections.emptyList()),
 				userInfo);
 	}
 
@@ -75,7 +72,7 @@ public class TestGetUser {
 		//waitForNewline();
 
 		Assertions.assertEquals(
-				new UserInfo(2, "User2",
+				new UserInfo(2, UserData.miscellaneous("User2"),
 						Map.of(
 							new TagLink(1, "Tag1", 123), 2,
 							new TagLink(2, "Tag2", 321), 1
@@ -97,12 +94,12 @@ public class TestGetUser {
 
 		UserInfo userInfo = dispatcher.getUserInfo(1);
 		Assertions.assertEquals(
-				new UserInfo(1, "User1", Collections.emptyMap(), 0, 0, Collections.emptyList()),
+				new UserInfo(1, UserData.miscellaneous("User1"), Collections.emptyMap(), 0, 0, Collections.emptyList()),
 				userInfo);
 
 		userInfo = dispatcher.getUserInfo(2);
 		Assertions.assertEquals(
-				new UserInfo(2, "User2",
+				new UserInfo(2, UserData.miscellaneous("User2"),
 						Map.of(
 								new TagLink(1, "Tag1", 123), 2,
 								new TagLink(2, "Tag2", 321), 1

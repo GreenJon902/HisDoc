@@ -2,10 +2,10 @@ package com.greenjon902.hisdoc.pageBuilder.scripts;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
+import com.greenjon902.hisdoc.sql.results.UserData;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,39 +15,39 @@ import java.util.Objects;
  * loaded using the user info.
  */
 public class LazyLoadAccountNameScript extends Script {
-	private final List<PageVariable> accountNameVars = new ArrayList<>();
-	private final List<String> userInfos = new ArrayList<>();
+	private final List<PageVariable> accountNameVars = new ArrayList<>();  // Index of accountNameVars corresponds to index of userDatas
+	private final List<UserData> userDatas = new ArrayList<>();
 
-	public LazyLoadAccountNameScript(String userInfo, PageVariable accountNameVar) {  // Quick method for when only one
-		add(userInfo, accountNameVar);
+	public LazyLoadAccountNameScript(UserData userData, PageVariable accountNameVar) {  // Quick method for when only one
+		add(userData, accountNameVar);
 	}
 
 	public LazyLoadAccountNameScript() {}
 
 	/**
 	 * Adds a userInfo to replace a {@link PageVariable} once it has been loaded on the client side.
-	 * @param userInfo The user info to use
+	 * @param userData The user data to use
 	 * @param accountNameVar The page variable
 	 */
-	public void add(String userInfo, PageVariable accountNameVar) {
-		userInfos.add(userInfo);
+	public void add(UserData userData, PageVariable accountNameVar) {
+		userDatas.add(userData);
 		accountNameVars.add(accountNameVar);
 	}
 
 	@Override
 	protected void writeScriptContents(HtmlOutputStream stream) throws IOException {
-		assert userInfos.size() == accountNameVars.size();
+		assert userDatas.size() == accountNameVars.size();
 
 		// Declare all the loading functions
 		// Name format is "load" + prefix + "AccountName"
 		StringBuilder js = new StringBuilder("""
-			async function loadAccountName(info, accountNameVarName) {  // When has no prefix (not connected to anything)
+			async function loadMISCELLANEOUSAccountName(info, accountNameVarName) {
 				const name = info;
 				console.log("Name: " +  name);
-				document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
+				//document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
 			};
 			
-			async function loadMCAccountName(info, accountNameVarName) {
+			async function loadMINECRAFTAccountName(info, accountNameVarName) {
 				url = "https://playerdb.co/api/player/minecraft/" + info;
 				console.log("Url: " + url);
 				
@@ -69,20 +69,9 @@ public class LazyLoadAccountNameScript extends Script {
 			""");
 
 		// Run functions for any users
-		for (int i=0; i < userInfos.size(); i++) {
-			String[] parts = userInfos.get(i).split("\\|", 2);
-			String prefix;
-			String info;
-			if (parts.length == 1) {
-				prefix = "";
-				info = parts[0];
-			} else if (parts.length == 2) {
-				prefix = parts[0];
-				info = parts[1];
-			} else {
-				throw new RuntimeException("Unknown prefix for user info \"" + userInfos.get(i) + "\" with parts " + Arrays.toString(parts));
-			}
-
+		for (int i=0; i < userDatas.size(); i++) {
+			String prefix = userDatas.get(i).type().toString();
+			String info = userDatas.get(i).userData();
 			js.append("load").append(prefix).append("AccountName(\"").append(info).append("\", \"").append(accountNameVars.get(i)).append("\");");
 		}
 
@@ -96,11 +85,11 @@ public class LazyLoadAccountNameScript extends Script {
 		if (object == null || getClass() != object.getClass()) return false;
 		if (!super.equals(object)) return false;
 		LazyLoadAccountNameScript that = (LazyLoadAccountNameScript) object;
-		return Objects.equals(accountNameVars, that.accountNameVars) && Objects.equals(userInfos, that.userInfos);
+		return Objects.equals(accountNameVars, that.accountNameVars) && Objects.equals(userDatas, that.userDatas);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(accountNameVars, userInfos);
+		return Objects.hash(accountNameVars, userDatas);
 	}
 }

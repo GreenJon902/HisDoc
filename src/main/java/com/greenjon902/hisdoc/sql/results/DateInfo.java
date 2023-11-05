@@ -31,8 +31,9 @@ public record DateInfo(@NotNull Type type, @NotNull Timestamp date1, @Nullable P
 			assert date2 != null;
 		}
 	}
+
 	public DateInfo(@NotNull String type, @NotNull Timestamp date1, @Nullable String precision, @Nullable Integer diff, @Nullable String diffType, @Nullable Date date2) {
-		this(Type.decodeMap.get(type), date1, Precision.decodeMap.get(precision), diff, Precision.decodeMap.get(diffType), date2);
+		this(Type.decode(type), date1, Precision.decode(precision), diff, Precision.decode(diffType), date2);
 	}
 
 	public static DateInfo centered(Timestamp center, Precision precision, int diff, Precision diffType) {
@@ -46,13 +47,18 @@ public record DateInfo(@NotNull Type type, @NotNull Timestamp date1, @Nullable P
 	public enum Type {
 		CENTERED("c"), BETWEEN("b");
 
-		public static final Map<String, Type> decodeMap;
+		private static final Map<String, Type> decodeMap;
 		static {
 			HashMap<String, Type> mutDecodeMap = new HashMap<>();
 			for (Type dateType : values()) {
-				mutDecodeMap.put(dateType.sqlId, dateType);
+				mutDecodeMap.put(dateType.sqlId.toLowerCase(), dateType);
 			}
 			decodeMap = Collections.unmodifiableMap(mutDecodeMap);
+		}
+
+		public static Type decode(String string) {
+			if (string == null) return null;
+			return decodeMap.get(string.toLowerCase());
 		}
 
 		private final String sqlId;
@@ -65,13 +71,18 @@ public record DateInfo(@NotNull Type type, @NotNull Timestamp date1, @Nullable P
 	public enum Precision {
 		DAY("d"), HOUR("h"), MINUTE("m");
 
-		public static final Map<String, Precision> decodeMap;
+		private static final Map<String, Precision> decodeMap;
 		static {
 			HashMap<String, Precision> mutDecodeMap = new HashMap<>();
-			for (Precision dateType : values()) {
-				mutDecodeMap.put(dateType.sqlId, dateType);
+			for (Precision precision : values()) {
+				mutDecodeMap.put(precision.sqlId.toLowerCase(), precision);
 			}
 			decodeMap = Collections.unmodifiableMap(mutDecodeMap);
+		}
+
+		public static Precision decode(String string) {
+			if (string == null) return null;
+			return decodeMap.get(string.toLowerCase());
 		}
 
 		private final String sqlId;

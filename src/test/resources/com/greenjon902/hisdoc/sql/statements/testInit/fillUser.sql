@@ -1,2 +1,2 @@
-INSERT INTO {prefix}User (userInfo)
-VALUES ('testingInfo');
+INSERT INTO {prefix}User (userType, userData)
+VALUES ('misc', 'testingInfo');

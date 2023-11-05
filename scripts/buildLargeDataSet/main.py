@@ -7,23 +7,23 @@ event_text_file = "./event_text.txt"
 date_c_max_diff = 100
 max_date = datetime.now()
 max_date_days_since_min = 1000
-eventeventrelation_val = 0.1
+eventeventrelation_val = 0.01
 eventeventrelation_step_val = (1, 100)
 eventtagrelation_val = 0.5
 eventuserrelation_val = 0.5
 
-users = ('MC|a6f2f5da-5773-4432-b7b4-8ec0b34a104a',
-         'MC|86f5d3d8-0d4b-4230-9852-77a40baf39bd',
-         'MC|0dbffb6c-6165-40e4-b0f6-0fab4dcd5511',
-         'MC|16ad067c-2be5-44e3-8218-58ba4ffba574',
-         'MC|a7ddc940-7137-46b4-af8d-b30e3b64af03',
-         'MC|0acde9a4-cdc4-474b-8612-09c3020597af',
-         'MC|e017d6cd-8265-4641-ab4f-206f1000aa34',
-         'MC|6b88f6eb-94cd-40d4-ae9d-58ff1a5a01dc',
-         'MC|6b54dfbc-582b-4c65-9261-b01068030f13',
-         'jackaboi1',
-         'MC|b93b5bd7-234c-4f48-a139-9b0fffec9089',
-         'MC|6a482beb-7b13-411e-b5c3-31f57aa9b5c7')
+users = (('mc', 'a6f2f5da-5773-4432-b7b4-8ec0b34a104a'),
+         ('mc', '86f5d3d8-0d4b-4230-9852-77a40baf39bd'),
+         ('mc', '0dbffb6c-6165-40e4-b0f6-0fab4dcd5511'),
+         ('mc', '16ad067c-2be5-44e3-8218-58ba4ffba574'),
+         ('mc', 'a7ddc940-7137-46b4-af8d-b30e3b64af03'),
+         ('mc', '0acde9a4-cdc4-474b-8612-09c3020597af'),
+         ('mc', 'e017d6cd-8265-4641-ab4f-206f1000aa34'),
+         ('mc', '6b88f6eb-94cd-40d4-ae9d-58ff1a5a01dc'),
+         ('mc', '6b54dfbc-582b-4c65-9261-b01068030f13'),
+         ('misc', 'jackaboi1'),
+         ('mc', 'b93b5bd7-234c-4f48-a139-9b0fffec9089'),
+         ('mc', '6a482beb-7b13-411e-b5c3-31f57aa9b5c7'))
 
 tags = (('Base', 'An event related to someone''s base', 65280),
         ('Mining', 'An event related to mining activities', 16711680),
@@ -94,10 +94,10 @@ def make_event_list():
 
 
 def make_user_list():
-    string = "INSERT INTO {prefix}User (uid, meta) VALUES \n"
+    string = "INSERT INTO {prefix}User (uid, userType, userData) VALUES \n"
 
     for n, user in enumerate(users):
-        string += f"({n + 1}, '{user}'), \n"
+        string += f"({n + 1}, '{user[0]}', '{user[1]}'), \n"
 
     string = string.rstrip(", \n")
     string += ";\n"

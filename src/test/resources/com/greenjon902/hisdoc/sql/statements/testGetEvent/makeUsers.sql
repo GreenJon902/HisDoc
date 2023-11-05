@@ -1,2 +1,2 @@
-INSERT INTO {prefix}User (uid, userInfo)
-VALUES (1, 'User1'), (2, 'User2');
+INSERT INTO {prefix}User (uid, userType, userInfo)
+VALUES (1, 'misc', 'User1'), (2, 'misc', 'User2');

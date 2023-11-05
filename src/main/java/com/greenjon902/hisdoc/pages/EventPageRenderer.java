@@ -127,8 +127,8 @@ public class EventPageRenderer extends PageRenderer {
 		right.add(relatedUserTitles);
 		TextBuilder relatedUsers = new TextBuilder(NORMAL, "\n");
 		for (UserLink userLink : eventInfo.relatedPlayerInfos()) {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + userLink.userInfo());
-			lazyLoadAccountNameScript.add(userLink.userInfo(), pageVariable);
+			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + userLink.data().userData());
+			lazyLoadAccountNameScript.add(userLink.data(), pageVariable);
 			relatedUsers.add(pageVariable.toString(), "user?id=" + userLink.id());
 		}
 		right.add(relatedUsers);
@@ -147,16 +147,16 @@ public class EventPageRenderer extends PageRenderer {
 
 		if (eventInfo.postedBy() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown:"); }});
 		else {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + eventInfo.postedBy().userInfo());
-			lazyLoadAccountNameScript.add(eventInfo.postedBy().userInfo(), pageVariable);
+			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + eventInfo.postedBy().data().userData());
+			lazyLoadAccountNameScript.add(eventInfo.postedBy().data(), pageVariable);
 			table.add(new TextBuilder(NORMAL) {{ add(pageVariable + ":"); }});
 		}
 		table.add(new TextBuilder(MISC) {{ add("This event was created!"); }});
 
 		// Then we add any changes
 		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + changeInfo.author().userInfo());
-			lazyLoadAccountNameScript.add(changeInfo.author().userInfo(), pageVariable);
+			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + changeInfo.author().data().userData());
+			lazyLoadAccountNameScript.add(changeInfo.author().data(), pageVariable);
 
 			table.add(new TextBuilder(NORMAL) {{ add(changeInfo.date().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))); }});
 			table.add(new TextBuilder(NORMAL) {{ add(pageVariable + ":"); }});

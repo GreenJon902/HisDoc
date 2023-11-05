@@ -28,6 +28,6 @@ LIMIT 10;
 -- TODO: Test this limit
 -- TODO: Order by posted date, or event date
 
-SELECT {prefix}User.uid, {prefix}User.userInfo
+SELECT {prefix}User.uid, {prefix}User.userType, {prefix}User.userData
 FROM {prefix}User
 WHERE {prefix}User.uid = {uid};

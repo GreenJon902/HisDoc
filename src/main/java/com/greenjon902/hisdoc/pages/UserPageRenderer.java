@@ -47,7 +47,7 @@ public class UserPageRenderer extends PageRenderer {
 
 		PageBuilder pageBuilder = new PageBuilder();
 		PageVariable accountNameVar = pageBuilder.addVariable("account-name");
-		pageBuilder.addScript(new LazyLoadAccountNameScript(userInfo.userInfo(), accountNameVar));
+		pageBuilder.addScript(new LazyLoadAccountNameScript(userInfo.data(), accountNameVar));
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
@@ -140,8 +140,8 @@ public class UserPageRenderer extends PageRenderer {
 		right.add(iframeBuilder);
 
 		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
-		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + userInfo.userInfo());
-		miscInfo.add("Info: " + userInfo.userInfo());
+		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + userInfo.data().userData());
+		miscInfo.add("Info: " + userInfo.data().userData());
 		miscInfo.add("Post Count: " + userInfo.postCount());
 		miscInfo.add("Event Count: " + userInfo.eventCount());
 		right.add(miscInfo);
