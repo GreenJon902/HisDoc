@@ -29,7 +29,6 @@ public class LazyLoadAccountNameScript extends Script {
 		assert userInfos.size() == accountNameVars.size();
 
 		// Declare all the loading functions
-		// TODO: Load these from a file or somin, plugin style
 		// Name format is "load" + prefix + "AccountName"
 		StringBuilder js = new StringBuilder("""
 			async function loadAccountName(info, accountNameVarName) {  // When has no prefix (not connected to anything)
@@ -79,10 +78,7 @@ public class LazyLoadAccountNameScript extends Script {
 
 		// Write to the stream
 		stream.write(js.toString());
-
 	}
-
-	// TODO: Some system of if there are two lazy load account name scripts, combind them into one?
 
 	@Override
 	public boolean equals(Object object) {
