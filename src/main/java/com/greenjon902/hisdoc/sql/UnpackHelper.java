@@ -95,7 +95,9 @@ public class UnpackHelper {
 
 		nextResultSet(ps, "event");
 		ResultSet result = ps.getResultSet();
-		next(result, "event", "the");
+		if (!result.next()) {
+			return null;
+		}
 		DateInfo eventDateInfo = getDateInfo(result);
 
 		Integer postedUid;
@@ -141,7 +143,9 @@ public class UnpackHelper {
 
 		nextResultSet(ps, "user");
 		result = ps.getResultSet();
-		next(result, "user", "the");
+		if (!result.next()) {
+			return null;
+		}
 
 		return new UserInfo(
 				uid,
@@ -159,7 +163,9 @@ public class UnpackHelper {
 		List<EventLink> recentEventLinks = getList(ps.getResultSet(), UnpackHelper::getEventLink);
 		nextResultSet(ps, "tagInfo");
 		ResultSet result = ps.getResultSet();
-		next(result, "tagInfo", "the");
+		if (!result.next()) {
+			return null;
+		}
 
 		return new TagInfo(
 				tid,
