@@ -17,3 +17,9 @@ so like as names and stuffs change we would like to store uuid and get from api.
 So user info can be a prefixed uuid, e.g. `MC|0dbffb6c-6165-40e4-b0f6-0fab4dcd5511` to say 
 that this is a minecraft account with that uuid, so the program can then load the name afterwards.
 Or just put any random text in there (obvi excluding prefix) to say its not linked to anything, e.g. `Dave123`
+
+
+# Prepared statements and sql safety
+for integers, we can just replace which also helps incase info has to be repeated.
+However for anything else, we theoretically only actually want to have it once anyway (especisally inserts),
+so use ? instead
