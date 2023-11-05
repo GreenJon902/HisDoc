@@ -94,7 +94,7 @@ def make_event_list():
 
 
 def make_user_list():
-    string = "INSERT INTO {prefix}User (uid, userInfo) VALUES \n"
+    string = "INSERT INTO {prefix}User (uid, meta) VALUES \n"
 
     for n, user in enumerate(users):
         string += f"({n + 1}, '{user}'), \n"
