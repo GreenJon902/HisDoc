@@ -11,9 +11,7 @@ import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
@@ -170,18 +168,17 @@ public class EventPageRenderer extends PageRenderer {
 
 
 	public static String formatDateString(DateInfo dateInfo) {
-		if (Objects.equals(dateInfo.type(), "c")) {
+		if (dateInfo.type() == DateInfo.Type.CENTERED) {
 			String pattern =
 			switch (dateInfo.precision()) {
-				case "m" -> "yyyy-MM-dd hh:mm";
-				case "h" -> "yyyy-MM-dd hh:??";
-				case "d" -> "yyyy-MM-dd";
-				default -> throw new IllegalStateException("Unexpected value: " + dateInfo.precision());
+				case MINUTE -> "yyyy-MM-dd hh:mm";
+				case HOUR -> "yyyy-MM-dd hh:??";
+				case DAY -> "yyyy-MM-dd";
 			};
 			String center = dateInfo.date1().toLocalDateTime().format(DateTimeFormatter.ofPattern(pattern));
 			String diff = "";
 			if (dateInfo.diff() != 0) {
-				diff = " ±" + dateInfo.diff() + dateInfo.diffType().toUpperCase(Locale.ROOT);
+				diff = " ±" + dateInfo.diff() + dateInfo.diffType().toString().charAt(0);
 			}
 			return center + diff;
 		} else {

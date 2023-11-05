@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.greenjon902.hisdoc.sql.Utils.makeInMemoryConnection;
+import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.DAY;
+import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.HOUR;
 
 public class TestGetTag {
 	@Test
@@ -73,8 +75,8 @@ public class TestGetTag {
 		Assertions.assertEquals(
 				new TagInfo(2, "Tag2", "This is another tag with a color that i dont quite know", 123,
 						List.of(
-								new EventLink(4, "testing4", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), "d", 4, "h"), "im bord of testing"),
-								new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2012-07-24 13:10:11"), "d", 4, "h"), "i was testing"),
+								new EventLink(4, "testing4", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "im bord of testing"),
+								new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2012-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 								new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2010-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
 						)),
 				tagInfo);
@@ -98,8 +100,8 @@ public class TestGetTag {
 		Assertions.assertEquals(
 				new TagInfo(2, "Tag2", "This is another tag with a color that i dont quite know", 123,
 						List.of(
-								new EventLink(4, "testing4", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), "d", 4, "h"), "im bord of testing"),
-								new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2012-07-24 13:10:11"), "d", 4, "h"), "i was testing"),
+								new EventLink(4, "testing4", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "im bord of testing"),
+								new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2012-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 								new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2010-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
 						)),
 				tagInfo);

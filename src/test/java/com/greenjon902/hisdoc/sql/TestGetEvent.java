@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.greenjon902.hisdoc.sql.Utils.makeInMemoryConnection;
+import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.DAY;
+import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.HOUR;
 
 public class TestGetEvent {
 	@Test
@@ -55,7 +57,7 @@ public class TestGetEvent {
 		Assertions.assertEquals(
 				new EventInfo(1,
 						"testing", "i was testing",
-						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
+						DateInfo.centered(new Timestamp(1500811811000L), DAY, 4, HOUR),
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
@@ -114,7 +116,7 @@ public class TestGetEvent {
 		Assertions.assertEquals(
 				new EventInfo(1,
 						"testing", "i was testing",
-						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
+						DateInfo.centered(new Timestamp(1500811811000L), DAY, 4, HOUR),
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
@@ -134,7 +136,7 @@ public class TestGetEvent {
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
-						Set.of(new EventLink(1, "testing", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"), "i was testing")),
+						Set.of(new EventLink(1, "testing", DateInfo.centered(new Timestamp(1500811811000L), DAY, 4, HOUR), "i was testing")),
 						null
 				),
 				eventInfo);
@@ -159,7 +161,7 @@ public class TestGetEvent {
 		Assertions.assertEquals(
 				new EventInfo(1,
 						"testing", "i was testing",
-						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
+						DateInfo.centered(new Timestamp(1500811811000L), DAY, 4, HOUR),
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
@@ -190,7 +192,7 @@ public class TestGetEvent {
 		Assertions.assertEquals(
 				new EventInfo(1,
 						"testing", "i was testing",
-						DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"),
+						DateInfo.centered(new Timestamp(1500811811000L), DAY, 4, HOUR),
 						Set.of(new TagLink(2, "Tag2", 321)),
 						Set.of(new UserLink(2, "User2")),
 						List.of(new ChangeInfo(new Timestamp(1500811811000L), new UserLink(2, "User2"), "I did you")),

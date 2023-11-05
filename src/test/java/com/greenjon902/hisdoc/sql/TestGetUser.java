@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.greenjon902.hisdoc.sql.Utils.makeInMemoryConnection;
+import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.DAY;
+import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.HOUR;
 
 public class TestGetUser {
 	@Test
@@ -78,7 +80,7 @@ public class TestGetUser {
 							new TagLink(1, "Tag1", 123), 2,
 							new TagLink(2, "Tag2", 321), 1
 						), 2, 2, List.of(
-						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), "d", 4, "h"), "i was testing"),
+						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
 				)),
 				userInfo);
@@ -105,7 +107,7 @@ public class TestGetUser {
 								new TagLink(1, "Tag1", 123), 2,
 								new TagLink(2, "Tag2", 321), 1
 						), 2, 2, List.of(
-						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), "d", 4, "h"), "i was testing"),
+						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
 				)),
 				userInfo);
