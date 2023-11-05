@@ -25,8 +25,14 @@ RIGHT JOIN (
 ) OurEUR ON OurEUR.eid={prefix}Event.eid
 ORDER BY eventDate1 DESC
 LIMIT 10;
--- TODO: Test this limit
--- TODO: Order by posted date, or event date
+
+SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.eventDateType, {prefix}Event.eventDate1,
+                                            {prefix}Event.eventDatePrecision, {prefix}Event.eventDateDiff, {prefix}Event.eventDateDiffType,
+                                            {prefix}Event.eventDate2, {prefix}Event.description FROM {prefix}Event
+WHERE {prefix}Event.postedUid = {uid}
+ORDER BY eventDate1 DESC
+LIMIT 10;
+
 
 SELECT {prefix}User.uid, {prefix}User.userType, {prefix}User.userData
 FROM {prefix}User

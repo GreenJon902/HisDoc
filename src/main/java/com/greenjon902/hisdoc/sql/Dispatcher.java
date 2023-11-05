@@ -13,8 +13,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-// TODO: Warn on sets and maps having duplicates
-
 public class Dispatcher {
 	Map<String, String> statements = new HashMap<>();
 	Connection conn;

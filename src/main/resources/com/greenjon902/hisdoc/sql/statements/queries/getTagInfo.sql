@@ -7,8 +7,6 @@ RIGHT JOIN (
 ) OurEUR ON OurEUR.eid={prefix}Event.eid
 ORDER BY {prefix}Event.eventDate1 DESC
 LIMIT 10;
--- TODO: Test this limit
--- TODO: Order by posted date, or event date
 
 SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.description, {prefix}Tag.color
 FROM {prefix}Tag

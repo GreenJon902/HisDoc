@@ -72,8 +72,14 @@ public class UserPageRenderer extends PageRenderer {
 		TextBuilder recentEventsTitle = new TextBuilder(SUBTITLE);
 		recentEventsTitle.add("Recent Events");
 		left.add(recentEventsTitle);
-		WidgetBuilder recentEvents = EventPageRenderer.makeRecentEventContents(userInfo.recentEventLinks());
+		WidgetBuilder recentEvents = EventPageRenderer.makeRecentEventContents(userInfo.recentEvents());
 		left.add(recentEvents);
+
+		TextBuilder recentPostsTitle = new TextBuilder(SUBTITLE);
+		recentPostsTitle.add("Recent Posts");
+		left.add(recentPostsTitle);
+		WidgetBuilder recentPosts = EventPageRenderer.makeRecentEventContents(userInfo.recentPosts());
+		left.add(recentPosts);
 
 		TextBuilder tagTitle = new TextBuilder(SUBTITLE);
 		tagTitle.add("Tags");

@@ -147,8 +147,11 @@ public class UnpackHelper {
 		next(result, "eventCount", "the");
 		int eventCount = ps.getResultSet().getInt("count");
 
-		nextResultSet(ps, "recentEventLinks");
-		List<EventLink> recentEventLinks = getList(ps.getResultSet(), UnpackHelper::getEventLink);
+		nextResultSet(ps, "recentEvents");
+		List<EventLink> recentEvents = getList(ps.getResultSet(), UnpackHelper::getEventLink);
+
+		nextResultSet(ps, "recentPosts");
+		List<EventLink> recentPosts = getList(ps.getResultSet(), UnpackHelper::getEventLink);
 
 		nextResultSet(ps, "user");
 		result = ps.getResultSet();
@@ -160,7 +163,7 @@ public class UnpackHelper {
 				uid,
 				getUserData(result),
 				countedTagLinks,
-				postCount, eventCount, recentEventLinks);
+				postCount, eventCount, recentEvents, recentPosts);
 	}
 
 	/**
@@ -212,7 +215,7 @@ public class UnpackHelper {
 		}
 
 		while (result.next()) {
-			collection.add(getter.apply(result));
+			if (!collection.add(getter.apply(result))) throw new RuntimeException("Unexpected return of false from adding to collection, this could be duplicate in a set?");
 		}
 		return collection;
 	}

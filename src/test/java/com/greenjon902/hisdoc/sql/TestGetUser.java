@@ -55,7 +55,7 @@ public class TestGetUser {
 		UserInfo userInfo = dispatcher.getUserInfo(1);
 
 		Assertions.assertEquals(
-				new UserInfo(1, UserData.miscellaneous("User1"), Collections.emptyMap(), 0, 0, Collections.emptyList()),
+				new UserInfo(1, UserData.miscellaneous("User1"), Collections.emptyMap(), 0, 0, Collections.emptyList(), Collections.emptyList()),
 				userInfo);
 	}
 
@@ -79,7 +79,7 @@ public class TestGetUser {
 						), 2, 2, List.of(
 						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
-				)),
+				), Collections.emptyList()),
 				userInfo);
 	}
 
@@ -94,7 +94,7 @@ public class TestGetUser {
 
 		UserInfo userInfo = dispatcher.getUserInfo(1);
 		Assertions.assertEquals(
-				new UserInfo(1, UserData.miscellaneous("User1"), Collections.emptyMap(), 0, 0, Collections.emptyList()),
+				new UserInfo(1, UserData.miscellaneous("User1"), Collections.emptyMap(), 0, 0, Collections.emptyList(), Collections.emptyList()),
 				userInfo);
 
 		userInfo = dispatcher.getUserInfo(2);
@@ -106,7 +106,7 @@ public class TestGetUser {
 						), 2, 2, List.of(
 						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
-				)),
+				), Collections.emptyList()),
 				userInfo);
 	}
 }
