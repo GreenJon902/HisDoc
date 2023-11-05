@@ -44,7 +44,7 @@ public class LazyLoadAccountNameScript extends Script {
 			async function loadMISCELLANEOUSAccountName(info, accountNameVarName) {
 				const name = info;
 				console.log("Name: " +  name);
-				//document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
+				document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
 			};
 			
 			async function loadMINECRAFTAccountName(info, accountNameVarName) {
