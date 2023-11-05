@@ -59,7 +59,8 @@ public class TestGetEvent {
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
-						Collections.emptySet()
+						Collections.emptySet(),
+						null
 						),
 				eventInfo);
 	}
@@ -86,7 +87,8 @@ public class TestGetEvent {
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
-						Collections.emptySet()
+						Collections.emptySet(),
+						null
 				),
 				eventInfo);
 	}
@@ -116,7 +118,8 @@ public class TestGetEvent {
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
-						Set.of(new EventLink(2, "testing", DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)), "i was testing"))
+						Set.of(new EventLink(2, "testing", DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)), "i was testing")),
+						null
 				),
 				eventInfo);
 
@@ -131,7 +134,8 @@ public class TestGetEvent {
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
-						Set.of(new EventLink(1, "testing", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"), "i was testing"))
+						Set.of(new EventLink(1, "testing", DateInfo.centered(new Timestamp(1500811811000L), "d", 4, "h"), "i was testing")),
+						null
 				),
 				eventInfo);
 	}
@@ -159,7 +163,8 @@ public class TestGetEvent {
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
-						Collections.emptySet()
+						Collections.emptySet(),
+						null
 						),
 				eventInfo);
 	}
@@ -189,7 +194,8 @@ public class TestGetEvent {
 						Set.of(new TagLink(2, "Tag2", 321)),
 						Set.of(new UserLink(2, "User2")),
 						List.of(new ChangeInfo(new Timestamp(1500811811000L), new UserLink(2, "User2"), "I did you")),
-						Collections.emptySet()
+						Collections.emptySet(),
+						null
 						),
 				eventInfo);
 	}

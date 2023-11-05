@@ -5,6 +5,7 @@ public enum TextType {
 	SUBTITLE("h2", "subtitle", true),
 	AUX_INFO_TITLE("h2", "auxiliary-info-title", false),
 	NORMAL("p", "text", false),
+	WARNING("p", "warning-text fas", false),
 	MISC("p", "misc-text", false);
 
 	public final String tagType;

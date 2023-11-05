@@ -58,6 +58,10 @@ body {
 
 }
 
+.column-container>*:not(:last-child) {
+
+}
+
 .tag-container {
 
 }
@@ -101,5 +105,14 @@ iframe {
 }
 
 .paddedTableColumn {
+
+}
+
+.warning-text {
+    background: #fff3bd;
+    border-color: #c4b674;
+}
+
+.warning-text:before {
 
 }

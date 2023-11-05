@@ -116,7 +116,8 @@ public class UnpackHelper {
 				tagLinks,
 				userLinks,
 				changeInfos,
-				eventLinks
+				eventLinks,
+				result.getString("details")
 		);
 	}
 

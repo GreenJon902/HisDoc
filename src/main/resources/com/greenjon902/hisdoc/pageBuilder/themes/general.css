@@ -82,6 +82,10 @@ body {
     float: left;
 }
 
+.column-container>*:not(:last-child) {
+    margin-right: 1em;
+}
+
 .tag-container {
     overflow: auto;
 }
@@ -154,4 +158,13 @@ iframe {
 
 .paddedTableColumn {
     padding-right: 1em;
+}
+
+.warning-text {
+    border: 1px solid;
+    padding: 0.1em;
+}
+
+.warning-text:before {
+    content: "\26A0";
 }
