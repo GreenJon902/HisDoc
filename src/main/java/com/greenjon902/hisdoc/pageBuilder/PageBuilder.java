@@ -61,7 +61,6 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 		stream.write("<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Roboto\">");
 		stream.write("<link rel=\"stylesheet\" href=\"https://unpkg.com/css.gg@2.0.0/icons/css/sun.css\" >");
 		stream.write("<link rel=\"stylesheet\" href=\"https://unpkg.com/css.gg@2.0.0/icons/css/moon.css\" >");
-		stream.write("<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>");
 		stream.write("<link href=\"themes?name=general\" rel=\"stylesheet\">");
 		renderThemes(stream, session, "dark", "light");
 
