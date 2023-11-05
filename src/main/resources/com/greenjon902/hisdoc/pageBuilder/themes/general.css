@@ -80,6 +80,7 @@ body {
 
 .column-container>* {
     float: left;
+    display: unset;
 }
 
 .column-container>*:not(:last-child) {
@@ -167,4 +168,34 @@ iframe {
 
 .warning-text:before {
     content: "\26A0";
+}
+
+.timeline-filter[type=radio] {
+  position: absolute;
+  visibility: hidden;
+  display: none;
+}
+
+.timeline-filter {
+  display: inline-block;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 5px 20px;
+  font-family: "Roboto", sans-serif;
+}
+
+.timeline-filter[type=radio]:checked + .timeline-filter {
+
+}
+
+.timeline-filter:not(:first-of-type) {
+  border-left: solid 1px;
+}
+
+.timeline-filter-holder {
+  border: solid 1px;
+  display: inline-block;
+  border-radius: 10px;
+  overflow: hidden;
+  white-space: nowrap;
 }

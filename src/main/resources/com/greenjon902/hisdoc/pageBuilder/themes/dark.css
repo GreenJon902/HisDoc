@@ -116,3 +116,24 @@ iframe {
 .warning-text:before {
 
 }
+
+.timeline-filter[type=radio] {
+
+}
+
+.timeline-filter {
+    color: #ffffff;
+}
+
+.timeline-filter[type=radio]:checked + .timeline-filter {
+    background-color: #aaaaaa;
+    color: #000000;
+}
+
+.timeline-filter:not(:first-of-type) {
+    border-left-color: #ffffff;
+}
+
+.timeline-filter-holder {
+    border-color: #ffffff;
+}

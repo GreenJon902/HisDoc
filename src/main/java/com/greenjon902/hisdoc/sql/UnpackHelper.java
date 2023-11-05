@@ -261,8 +261,12 @@ public class UnpackHelper {
 	 */
 	public static TimelineInfo getTimelineInfo(PreparedStatement ps) throws SQLException {
 		List<EventLink> eventLinks = getList(ps.getResultSet(), UnpackHelper::getEventLink);
+		nextResultSet(ps, "tagLinks");
+		Set<TagLink> tagLinks = getSet(ps.getResultSet(), UnpackHelper::getTagLink);
+		nextResultSet(ps, "userLinks");
+		Set<UserLink> userLinks = getSet(ps.getResultSet(), UnpackHelper::getUserLink);
 
-		return new TimelineInfo(eventLinks);
+		return new TimelineInfo(eventLinks, tagLinks, userLinks);
 	}
 }
 
