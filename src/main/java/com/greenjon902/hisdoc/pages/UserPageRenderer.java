@@ -16,9 +16,6 @@ import java.util.Map;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
-// TODO: User info needs to be a UUID, which needs to then convert itself to a username on the client
-// TODO: User page should be specific to user info prefix
-
 public class UserPageRenderer extends PageRenderer {
 	private final Dispatcher dispatcher;
 
@@ -118,6 +115,13 @@ public class UserPageRenderer extends PageRenderer {
 	}
 
 	private ContainerWidgetBuilder makeRight(UserInfo userInfo, PageVariable accountNameVar) {
+		return switch (userInfo.data().type()) {
+			case MINECRAFT -> makeMcRight(userInfo, accountNameVar);
+			case MISCELLANEOUS -> makeMiscRight(userInfo);
+		};
+	}
+
+	private ContainerWidgetBuilder makeMcRight(UserInfo userInfo, PageVariable accountNameVar) {
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
 
 		IframeBuilder iframeBuilder = new IframeBuilder("https://minerender.org/embed/skin/?skin=" + accountNameVar);
@@ -125,7 +129,18 @@ public class UserPageRenderer extends PageRenderer {
 
 		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
 		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + userInfo.data().userData());
-		miscInfo.add("Info: " + userInfo.data().userData());
+		miscInfo.add("UUID: " + userInfo.data().userData());
+		miscInfo.add("Post Count: " + userInfo.postCount());
+		miscInfo.add("Event Count: " + userInfo.eventCount());
+		right.add(miscInfo);
+
+		return right;
+	}
+
+	private ContainerWidgetBuilder makeMiscRight(UserInfo userInfo) {
+		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
+
+		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
 		miscInfo.add("Post Count: " + userInfo.postCount());
 		miscInfo.add("Event Count: " + userInfo.eventCount());
 		right.add(miscInfo);
