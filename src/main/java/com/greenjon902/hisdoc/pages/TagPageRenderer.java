@@ -1,9 +1,11 @@
 package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
-import com.greenjon902.hisdoc.pageBuilder.widgets.*;
+import com.greenjon902.hisdoc.pageBuilder.widgets.ContainerWidgetBuilder;
+import com.greenjon902.hisdoc.pageBuilder.widgets.NavBarBuilder;
+import com.greenjon902.hisdoc.pageBuilder.widgets.TextBuilder;
+import com.greenjon902.hisdoc.pageBuilder.widgets.WidgetBuilder;
 import com.greenjon902.hisdoc.sql.Dispatcher;
-import com.greenjon902.hisdoc.sql.results.EventLink;
 import com.greenjon902.hisdoc.sql.results.TagInfo;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.Session;
@@ -61,24 +63,9 @@ public class TagPageRenderer extends PageRenderer {
 		TextBuilder recentEventsTitle = new TextBuilder(SUBTITLE);
 		recentEventsTitle.add("Recent Events");
 		pageBuilder.add(recentEventsTitle);
-		WidgetBuilder recentEvents = makeRecentEventContents(tagInfo);
+		WidgetBuilder recentEvents = EventPageRenderer.makeRecentEventContents(tagInfo.recentEvents());
 		pageBuilder.add(recentEvents);
 
 		return pageBuilder.render(session);
-	}
-
-	// TODO: Combind this with the version in UserPageRenderer
-	private WidgetBuilder makeRecentEventContents(TagInfo tagInfo) {
-		// Contents means not title, it does not mean only create table contents. (so we will use the <table> tag)
-
-		TableBuilder table = new TableBuilder(2, false);  // Date, Event
-
-
-		for (EventLink eventLink : tagInfo.recentEvents()) {
-			table.add(new TextBuilder(NORMAL) {{ add(EventPageRenderer.formatDateString(eventLink.dateInfo()) + " -"); }});
-			table.add(new TextBuilder(NORMAL) {{ add(eventLink.name(), "event?id=" + eventLink.id()); }});
-		}
-
-		return table;
 	}
 }

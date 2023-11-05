@@ -11,6 +11,7 @@ import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
@@ -185,5 +186,18 @@ public class EventPageRenderer extends PageRenderer {
 			return "Somewhere between " + dateInfo.date1().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) +
 					" and " + dateInfo.date2().toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		}
+	}
+
+	public static WidgetBuilder makeRecentEventContents(List<EventLink> recentEvents) {
+		// Contents means not title, it does not mean only create table contents. (so we will use the <table> tag)
+
+		TableBuilder table = new TableBuilder(2, false);  // Date, Event
+
+		for (EventLink eventLink : recentEvents) {
+			table.add(new TextBuilder(NORMAL) {{ add(EventPageRenderer.formatDateString(eventLink.dateInfo()) + " -"); }});
+			table.add(new TextBuilder(NORMAL) {{ add(eventLink.name(), "event?id=" + eventLink.id()); }});
+		}
+
+		return table;
 	}
 }

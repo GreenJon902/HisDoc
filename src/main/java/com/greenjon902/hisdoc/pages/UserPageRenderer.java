@@ -5,7 +5,6 @@ import com.greenjon902.hisdoc.pageBuilder.PageVariable;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
-import com.greenjon902.hisdoc.sql.results.EventLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
 import com.greenjon902.hisdoc.sql.results.UserInfo;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
@@ -76,7 +75,7 @@ public class UserPageRenderer extends PageRenderer {
 		TextBuilder recentEventsTitle = new TextBuilder(SUBTITLE);
 		recentEventsTitle.add("Recent Events");
 		left.add(recentEventsTitle);
-		WidgetBuilder recentEvents = makeRecentEventContents(userInfo);
+		WidgetBuilder recentEvents = EventPageRenderer.makeRecentEventContents(userInfo.recentEventLinks());
 		left.add(recentEvents);
 
 		TextBuilder tagTitle = new TextBuilder(SUBTITLE);
@@ -86,21 +85,6 @@ public class UserPageRenderer extends PageRenderer {
 		left.add(tag);
 
 		return left;
-	}
-
-	// TODO: Combind this with the version in TagPageRendeer
-	private WidgetBuilder makeRecentEventContents(UserInfo userInfo) {
-		// Contents means not title, it does not mean only create table contents. (so we will use the <table> tag)
-
-		TableBuilder table = new TableBuilder(2, false);  // Date, Event
-
-
-		for (EventLink eventLink : userInfo.recentEventLinks()) {
-			table.add(new TextBuilder(NORMAL) {{ add(EventPageRenderer.formatDateString(eventLink.dateInfo()) + " -"); }});
-			table.add(new TextBuilder(NORMAL) {{ add(eventLink.name(), "event?id=" + eventLink.id()); }});
-		}
-
-		return table;
 	}
 
 	private WidgetBuilder makeTagStatsContents(UserInfo userInfo) {
