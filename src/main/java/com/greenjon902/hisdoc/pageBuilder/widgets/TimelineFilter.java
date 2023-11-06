@@ -12,17 +12,19 @@ import java.io.IOException;
  */
 public class TimelineFilter implements WidgetBuilder {
 	private final String groupName;
+	private final String defaultValue;  // TODO: Enum this?
 
-	public TimelineFilter(String groupName) {
+	public TimelineFilter(String groupName, String defaultValue) {
 		this.groupName = groupName;
+		this.defaultValue = (defaultValue == null ? "" : defaultValue);
 	}
 
 	@Override
 	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<div class=\"timeline-filter-holder\">");
-		renderButton(stream, "Exclude", false);
-		renderButton(stream, "Ignore", true);
-		renderButton(stream, "Include", false);
+		renderButton(stream, "Exclude", defaultValue.equals("Exclude"));
+		renderButton(stream, "Ignore", !(defaultValue.equals("Exclude") || defaultValue.equals("Include")));
+		renderButton(stream, "Include", defaultValue.equals("Include"));
 		stream.write("</div>");
 	}
 
@@ -30,7 +32,7 @@ public class TimelineFilter implements WidgetBuilder {
 		// defaultActive is whether it is the default thing to be selected
 		stream.write("<input type=\"radio\" class=\"timeline-filter\" " +
 				"id=\"" + groupName + "-" + name + "\" " +
-				"value=\"" + groupName + "-" + name + "\" " +
+				"value=\"" + name + "\" " +
 				"name=\"" + groupName + "\"" + (defaultActive ? " checked" : "") + ">" +
 				"<label class=\"timeline-filter\" for=\"" + groupName + "-" + name + "\">" + name + "</label>");
 	}

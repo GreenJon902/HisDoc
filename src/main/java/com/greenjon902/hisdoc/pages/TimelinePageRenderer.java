@@ -42,7 +42,7 @@ public class TimelinePageRenderer extends PageRenderer {
 
 		ColumnLayoutBuilder column = new ColumnLayoutBuilder();
 		column.add(makeLeft(timelineInfo));
-		column.add(makeRight(timelineInfo, pageBuilder, lazyLoadAccountNameScript));
+		column.add(makeRight(timelineInfo, pageBuilder, lazyLoadAccountNameScript, query));
 		pageBuilder.add(column);
 
 
@@ -68,19 +68,23 @@ public class TimelinePageRenderer extends PageRenderer {
 		return left;
 	}
 
-	private WidgetBuilder makeRight(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript) {
-		TableBuilder right = new TableBuilder(2, false);
+	private WidgetBuilder makeRight(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript, Map<String, String> query) {
+		Form right = new Form("timeline-filters");
+		TableBuilder table = new TableBuilder(2, false);
 
-		right.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Tags");}});
-		right.add(new TimelineFilter("all-tags"));
+		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Tags");}});
+		table.add(new BreakBuilder());
 
 		for (TagLink tagLink : timelineInfo.tagLinks()) {
-			right.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
-			right.add(new TimelineFilter(tagLink.name()));
+			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
+			table.add(new TimelineFilter(tagLink.name(), query.get(tagLink.name())));
 		}
 
-		right.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Users");}});
-		right.add(new TimelineFilter("all-users"));
+		table.add(new BreakBuilder());
+		table.add(new BreakBuilder());
+
+		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Users");}});
+		table.add(new BreakBuilder());
 
 		for (UserLink userLink : timelineInfo.userLinks()) {
 			TextBuilder userNameText = new TextBuilder(NORMAL, "\n");
@@ -88,9 +92,16 @@ public class TimelinePageRenderer extends PageRenderer {
 			lazyLoadAccountNameScript.add(userLink.data(), pageVariable);
 			userNameText.add(pageVariable.toString(), "user?id=" + userLink.id());
 
-			right.add(userNameText);
-			right.add(new TimelineFilter(pageVariable.toString()));
+			table.add(userNameText);
+			table.add(new TimelineFilter(userLink.data().userData(), query.get(userLink.data().userData())));
 		}
+
+		right.add(table);
+		right.add(new DateRangeSlider(timelineInfo.eventLinks().get(0).dateInfo().date1(),
+				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1()));
+
+		right.add(new BreakBuilder());
+		right.add(new SubmitButton());
 
 		return right;
 	}
