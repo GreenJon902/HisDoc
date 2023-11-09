@@ -92,7 +92,7 @@ public class UnpackHelper {
 	 * first item to be unpacked, this also expects the next result to be the one we are
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 */
-	public static EventInfo getEventInfo(PreparedStatement ps, int eid) throws SQLException {
+	public static EventInfo getEventInfo(PreparedStatement ps) throws SQLException {
 		Set<TagLink> tagLinks = getSet(ps.getResultSet(), UnpackHelper::getTagLink);
 		nextResultSet(ps, "userLinks");
 		Set<UserLink> userLinks = getSet(ps.getResultSet(), UnpackHelper::getUserLink);
@@ -115,7 +115,7 @@ public class UnpackHelper {
 		}
 
 		return new EventInfo(
-				eid,
+				result.getInt("eid"),
 				result.getString("name"),
 				result.getString("description"),
 				result.getTimestamp("postedDate"),
@@ -134,7 +134,7 @@ public class UnpackHelper {
 	 * first item to be unpacked, this also expects the next result to be the one we are
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 */
-	public static UserInfo getUserInfo(PreparedStatement ps, int uid) throws SQLException {
+	public static UserInfo getUserInfo(PreparedStatement ps) throws SQLException {
 		Map<TagLink, Integer> countedTagLinks = getCountedTagLinks(ps.getResultSet());
 
 		nextResultSet(ps, "postCount");
@@ -160,7 +160,7 @@ public class UnpackHelper {
 		}
 
 		return new UserInfo(
-				uid,
+				result.getInt("uid"),
 				getUserData(result),
 				countedTagLinks,
 				postCount, eventCount, recentEvents, recentPosts);
@@ -171,7 +171,7 @@ public class UnpackHelper {
 	 * first item to be unpacked, this also expects the next result to be the one we are
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 */
-	public static TagInfo getTagInfo(PreparedStatement ps, int tid) throws SQLException {
+	public static TagInfo getTagInfo(PreparedStatement ps) throws SQLException {
 		List<EventLink> recentEventLinks = getList(ps.getResultSet(), UnpackHelper::getEventLink);
 		nextResultSet(ps, "tagInfo");
 		ResultSet result = ps.getResultSet();
@@ -180,7 +180,7 @@ public class UnpackHelper {
 		}
 
 		return new TagInfo(
-				tid,
+				result.getInt("tid"),
 				result.getString("name"),
 				result.getString("description"),
 				result.getInt("color"),
@@ -265,8 +265,34 @@ public class UnpackHelper {
 		Set<TagLink> tagLinks = getSet(ps.getResultSet(), UnpackHelper::getTagLink);
 		nextResultSet(ps, "userLinks");
 		Set<UserLink> userLinks = getSet(ps.getResultSet(), UnpackHelper::getUserLink);
+		nextResultSet(ps, "eventTagRelations");
+		HashMap<EventLink, ArrayList<TagLink>> eventTagRelations = getRelationsFromRaw(ps.getResultSet(), "eid", "tid", eventLinks, tagLinks);
+		nextResultSet(ps, "eventUserRelations");
+		HashMap<EventLink, ArrayList<UserLink>> eventUserRelations = getRelationsFromRaw(ps.getResultSet(), "eid", "uid", eventLinks, userLinks);
 
-		return new TimelineInfo(eventLinks, tagLinks, userLinks);
+
+		return new TimelineInfo(eventLinks, tagLinks, userLinks, eventTagRelations, eventUserRelations);
+	}
+
+	/**
+	 * Unpacks multiple id sets from a {@link ResultSet}, this expects the next result to be the one we are
+	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
+	 * This returns a hash map, where the key is the first id, and the value is a list of all the values for the given key.
+	 */
+	public static <K extends Idable, V extends Idable> HashMap<K, ArrayList<V>> getRelationsFromRaw(ResultSet resultSet, String keyName, String valueName, Collection<K> keyValues, Collection<V> valueValues) throws SQLException {
+		HashMap<Integer, K> keyMap = new HashMap<>();
+		keyValues.forEach(k -> keyMap.put(k.id(), k));
+		HashMap<Integer, V> valueMap = new HashMap<>();
+		valueValues.forEach(v -> valueMap.put(v.id(), v));
+
+		HashMap<K, ArrayList<V>> relations = new HashMap<>();
+		while (resultSet.next()) {
+			K key = keyMap.get(resultSet.getInt(keyName));
+			V value = valueMap.get(resultSet.getInt(valueName));
+			relations.putIfAbsent(key, new ArrayList<>());
+			relations.get(key).add(value);
+		}
+		return relations;
 	}
 }
 

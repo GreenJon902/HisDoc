@@ -8,14 +8,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public record EventInfo(int eid, String name, String description, Timestamp postedDate, UserLink postedBy,
+public record EventInfo(int id, String name, String description, Timestamp postedDate, UserLink postedBy,
 						DateInfo eventDateInfo, Set<TagLink> tagLinks, Set<UserLink> relatedPlayerInfos,
-						List<ChangeInfo> changeInfos, Set<EventLink> relatedEventLinks, String details) {
-	public EventInfo(int eid, @NotNull String name, @NotNull String description, @Nullable Timestamp postedDate,
+						List<ChangeInfo> changeInfos, Set<EventLink> relatedEventLinks, String details) implements Idable{
+	public EventInfo(int id, @NotNull String name, @NotNull String description, @Nullable Timestamp postedDate,
 					 @Nullable UserLink postedBy, @NotNull DateInfo eventDateInfo, @NotNull Set<TagLink> tagLinks,
 					 @NotNull Set<UserLink> relatedPlayerInfos, @NotNull List<ChangeInfo> changeInfos,
 					 @NotNull Set<EventLink> relatedEventLinks, @Nullable String details) {
-		this.eid = eid;
+		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.eventDateInfo = eventDateInfo;

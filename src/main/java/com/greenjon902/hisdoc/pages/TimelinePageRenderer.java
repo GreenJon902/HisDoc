@@ -3,6 +3,7 @@ package com.greenjon902.hisdoc.pages;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
+import com.greenjon902.hisdoc.pageBuilder.scripts.SearchFilterScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.EventLink;
@@ -13,7 +14,9 @@ import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
@@ -37,39 +40,49 @@ public class TimelinePageRenderer extends PageRenderer {
 		PageBuilder pageBuilder = new PageBuilder();
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
 		pageBuilder.addScript(lazyLoadAccountNameScript);
+		SearchFilterScript searchFilterScript = new SearchFilterScript();  // Variables added elsewhere
+		pageBuilder.addScript(searchFilterScript);
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		ColumnLayoutBuilder column = new ColumnLayoutBuilder();
-		column.add(makeLeft(timelineInfo));
-		column.add(makeRight(timelineInfo, pageBuilder, lazyLoadAccountNameScript, query));
+		column.add(makeLeft(timelineInfo, searchFilterScript));
+		column.add(makeRight(timelineInfo, pageBuilder, lazyLoadAccountNameScript, query, searchFilterScript));
 		pageBuilder.add(column);
 
 
 		return pageBuilder.render(session);
 	}
 
-	private ContainerWidgetBuilder makeLeft(TimelineInfo timelineInfo) {
+	private ContainerWidgetBuilder makeLeft(TimelineInfo timelineInfo, SearchFilterScript searchFilterScript) {
 		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
 
 		for (EventLink eventLink : timelineInfo.eventLinks()) {
+			FilterableEvent event = new FilterableEvent(eventLink.name(), false);
+
 			TextBuilder eventName = new TextBuilder(SUBTITLE);
 			eventName.add(eventLink.name(), "event?id=" + eventLink.id());
-			left.add(eventName);
+			event.add(eventName);
 
 			TextBuilder date = new TextBuilder(MISC);
 			date.add(EventPageRenderer.formatDateString(eventLink.dateInfo()));
-			left.add(date);
+			event.add(date);
 
 			TextBuilder eventDescription = new TextBuilder(NORMAL);
 			eventDescription.add(eventLink.description());
-			left.add(eventDescription);
+			event.add(eventDescription);
+
+			left.add(event);
+			searchFilterScript.add(event, Stream.concat(
+					timelineInfo.eventTagRelations().getOrDefault(eventLink, new ArrayList<>()).stream().map(TagLink::name),
+					timelineInfo.eventUserRelations().getOrDefault(eventLink, new ArrayList<>()).stream().map(user -> user.data().userData())
+			));
 		}
 		return left;
 	}
 
-	private WidgetBuilder makeRight(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript, Map<String, String> query) {
-		Form right = new Form("timeline-filters");
+	private WidgetBuilder makeRight(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript, Map<String, String> query, SearchFilterScript searchFilterScript) {
+		ContainerWidgetBuilder right = new ContainerWidgetBuilder("timeline-filters");
 		TableBuilder table = new TableBuilder(2, false);
 
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Tags");}});
@@ -77,7 +90,9 @@ public class TimelinePageRenderer extends PageRenderer {
 
 		for (TagLink tagLink : timelineInfo.tagLinks()) {
 			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
-			table.add(new TimelineFilter(tagLink.name(), query.get(tagLink.name())));
+			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(), query.get(tagLink.name()));
+			table.add(timelineFilter);
+			searchFilterScript.add(timelineFilter);
 		}
 
 		table.add(new BreakBuilder());
@@ -93,15 +108,14 @@ public class TimelinePageRenderer extends PageRenderer {
 			userNameText.add(pageVariable.toString(), "user?id=" + userLink.id());
 
 			table.add(userNameText);
-			table.add(new TimelineFilter(userLink.data().userData(), query.get(userLink.data().userData())));
+			TimelineFilter timelineFilter = new TimelineFilter(userLink.data().userData(), query.get(userLink.data().userData()));
+			table.add(timelineFilter);
+			searchFilterScript.add(timelineFilter);
 		}
 
 		right.add(table);
 		right.add(new DateRangeSlider(timelineInfo.eventLinks().get(0).dateInfo().date1(),
 				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1()));
-
-		right.add(new BreakBuilder());
-		right.add(new SubmitButton());
 
 		return right;
 	}

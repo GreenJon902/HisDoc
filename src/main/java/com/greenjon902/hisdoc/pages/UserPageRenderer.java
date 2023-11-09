@@ -66,7 +66,7 @@ public class UserPageRenderer extends PageRenderer {
 		left.add(titleBuilder);
 
 		TextBuilder idTextBuilder = new TextBuilder(MISC);
-		idTextBuilder.add("UID: " + userInfo.uid());
+		idTextBuilder.add("UID: " + userInfo.id());
 		left.add(idTextBuilder);
 
 		TextBuilder recentEventsTitle = new TextBuilder(SUBTITLE);

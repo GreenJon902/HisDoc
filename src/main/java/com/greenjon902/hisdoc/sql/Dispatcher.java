@@ -72,28 +72,28 @@ public class Dispatcher {
 	}
 
 	public EventInfo getEventInfo(int eid) throws SQLException {
-		System.out.println("Getting event info for event with eid " + eid + " -----------------");
+		System.out.println("Getting event info for event with id " + eid + " -----------------");
 		PreparedStatement ps = prepareWithArgs("queries/getEventInfo", "eid", eid);
 		ps.execute();
 
-		return UnpackHelper.getEventInfo(ps, eid);
+		return UnpackHelper.getEventInfo(ps);
 	}
 
 	public UserInfo getUserInfo(int uid) throws SQLException {
-		System.out.println("Getting user info for user with uid " + uid + " -----------------");
+		System.out.println("Getting user info for user with id " + uid + " -----------------");
 		PreparedStatement ps = prepareWithArgs("queries/getUserInfo", "uid", uid);
 		ps.execute();
 
-		return UnpackHelper.getUserInfo(ps, uid);
+		return UnpackHelper.getUserInfo(ps);
 	}
 
 
 	public TagInfo getTagInfo(int tid) throws SQLException {
-		System.out.println("Getting tag info for tag with tid " + tid + " -----------------");
+		System.out.println("Getting tag info for tag with id " + tid + " -----------------");
 		PreparedStatement ps = prepareWithArgs("queries/getTagInfo", "tid", tid);
 		ps.execute();
 
-		return UnpackHelper.getTagInfo(ps, tid);
+		return UnpackHelper.getTagInfo(ps);
 	}
 
 	public TimelineInfo getTimelineInfo() throws SQLException {

@@ -27,7 +27,7 @@ FROM {prefix}ChangeLog
 LEFT JOIN {prefix}User ON {prefix}User.uid={prefix}ChangeLog.authorUid
 WHERE {prefix}ChangeLog.eid = {eid};
 
-SELECT {prefix}Event.name, {prefix}Event.description, {prefix}Event.eventDateType, {prefix}Event.eventDate1,
+SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.description, {prefix}Event.eventDateType, {prefix}Event.eventDate1,
 {prefix}Event.eventDatePrecision, {prefix}Event.eventDateDiff, {prefix}Event.eventDateDiffType,
 {prefix}Event.eventDate2, {prefix}Event.postedUid, {prefix}User.userType, {prefix}User.userData, {prefix}Event.postedDate, {prefix}Event.details
 FROM {prefix}Event

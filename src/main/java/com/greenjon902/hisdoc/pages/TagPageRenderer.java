@@ -50,7 +50,7 @@ public class TagPageRenderer extends PageRenderer {
 		pageBuilder.add(titleContainer);
 
 		TextBuilder idTextBuilder = new TextBuilder(MISC);
-		idTextBuilder.add("TID: " + tagInfo.tid());
+		idTextBuilder.add("TID: " + tagInfo.id());
 		pageBuilder.add(idTextBuilder);
 
 		TextBuilder descriptionTitleBuilder = new TextBuilder(SUBTITLE);

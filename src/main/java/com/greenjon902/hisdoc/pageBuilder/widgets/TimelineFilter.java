@@ -9,6 +9,8 @@ import java.io.IOException;
  * Creates a timeline filter option selection, this consists of three buttons, "Exclude" - Do not allow events with this
  * property, "Ignore" - Ignore this property when finding events, "Include" - Include events with the property.
  * The name of the group is supplied, the IDs of the buttons created are {groupName}-{Exclude|Ignore|Include}.
+ *
+ * These are rigged up to the run the function `refilterEvents()` when they change.
  */
 public class TimelineFilter implements WidgetBuilder {
 	private final String groupName;
@@ -31,9 +33,14 @@ public class TimelineFilter implements WidgetBuilder {
 	private void renderButton(HtmlOutputStream stream, String name, boolean defaultActive) throws IOException {
 		// defaultActive is whether it is the default thing to be selected
 		stream.write("<input type=\"radio\" class=\"timeline-filter\" " +
-				"id=\"" + groupName + "-" + name + "\" " +
+				"id=\"" + id(name) + "\"" +
 				"value=\"" + name + "\" " +
-				"name=\"" + groupName + "\"" + (defaultActive ? " checked" : "") + ">" +
-				"<label class=\"timeline-filter\" for=\"" + groupName + "-" + name + "\">" + name + "</label>");
+				"name=\"" + groupName + "\"" + (defaultActive ? " checked" : "") +
+				" onchange=\"refilterEvents()\">" +
+				"<label class=\"timeline-filter\" for=\"" + id(name) + "\">" + name + "</label>");
+	}
+
+	public String id(String name) {
+		return groupName + "-" + name;
 	}
 }

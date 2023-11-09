@@ -42,8 +42,13 @@ out = open("./out.sql", "w")
 def parse_event_text_info():
     texts = open(event_text_file, "r").read().replace("?", "").replace("'", "").split("\n")  # TODO: Find fix for special characters
     i = 0
+    usedNames = []
     while i < len(texts):
-        yield texts[i], texts[i + 1]
+        if texts[i] in usedNames:
+            print("Tried to resuse name \"" + texts[i] + "\"")
+        else:
+            yield texts[i], texts[i + 1]
+            usedNames.append(texts[i])
         assert texts[i + 2] == "", "line should be empty at " + str(i)
         i += 3
 

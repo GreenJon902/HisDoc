@@ -1,10 +1,9 @@
 package com.greenjon902.hisdoc.pageBuilder;
 
-import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
-import javax.swing.text.html.HTML;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Objects;
+
+import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
 /** A wrapper for an output stream that makes writing html easier*/
 public class HtmlOutputStream {
@@ -21,6 +20,17 @@ public class HtmlOutputStream {
 	 */
 	public void write(String string) throws IOException {
 		outputStream.write(string.getBytes());
+	}
+
+	/**
+	 * Same as {@link #write(String)} but throws no errors.
+	 */
+	public void writeNoErr(String string) {
+		try {
+			write(string);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

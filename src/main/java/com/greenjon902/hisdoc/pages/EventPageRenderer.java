@@ -69,7 +69,7 @@ public class EventPageRenderer extends PageRenderer {
 		left.add(titleBuilder);
 
 		TextBuilder idTextBuilder = new TextBuilder(MISC);
-		idTextBuilder.add("EID: " + eventInfo.eid());
+		idTextBuilder.add("EID: " + eventInfo.id());
 		left.add(idTextBuilder);
 		System.out.println(eventInfo.details());
 		if (eventInfo.details() != null) {
