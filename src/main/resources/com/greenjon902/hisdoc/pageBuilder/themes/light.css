@@ -137,3 +137,21 @@ iframe {
 .timeline-filter-holder {
     border-color: #000000;
 }
+
+.timeline-filters-setall-holder>button {
+    background: none;
+    border-color: #000;
+    color: #000;
+}
+
+.timeline-filters-setall-holder>button:not(:last-of-type) {
+
+}
+
+.timeline-filters-setall-holder {
+
+}
+
+.timeline-filters-setall-holder>button:active {
+    background: rgba(0, 0, 0, 0.1);
+}

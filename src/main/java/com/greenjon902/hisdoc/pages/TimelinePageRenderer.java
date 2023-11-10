@@ -102,9 +102,6 @@ public class TimelinePageRenderer extends PageRenderer {
 			searchFilterScript.add(timelineFilter);
 		}
 
-		table.add(new BreakBuilder());
-		table.add(new BreakBuilder());
-
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Users");}});
 		table.add(new BreakBuilder());
 
