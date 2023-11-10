@@ -200,4 +200,24 @@ iframe {
   white-space: nowrap;
 }
 
+.timeline-filters-setall-holder>button {
+    background: none;
+      border: solid 1px;
+      border-radius: 10px;
+      padding: 5px 20px;
+      font-family: "Roboto", sans-serif;
+      font-weight: bold;
+      display: inline-block;
+      cursor: pointer;
+      font-size: 1em;
+}
+
+.timeline-filters-setall-holder>button:not(:last-of-type) {
+    margin-right: 0.2em;
+}
+
+.timeline-filters-setall-holder {
+    display: inline-flex;
+}
+
 /*--------------------------------------------------------------------------------------*/

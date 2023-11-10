@@ -1,6 +1,5 @@
 package com.greenjon902.hisdoc.webDriver;
 
-import com.greenjon902.hisdoc.Main;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -10,9 +9,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.InetSocketAddress;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
 public class WebDriver {
@@ -107,6 +104,7 @@ class HttpHandlerImpl implements HttpHandler {
 			cookies.addAll(Stream.of(cookieString.split(";")).map(String::trim).toList());
 		}
 
+		HashMap<String, String> otherCookies = new HashMap<>();
 		String theme = "";
 		for (String cookie : cookies) {
 			String[] parts = cookie.split("=", 2);
@@ -115,10 +113,10 @@ class HttpHandlerImpl implements HttpHandler {
 			}
 			switch (parts[0]) {
 				case "theme" -> theme = parts[1];
-				default -> System.out.println("Unknown cookie with key \"" + parts[0] + "\" and value \"" + parts[1] + "\"");
+				default -> otherCookies.put(parts[0], parts[1]);
 			}
 		}
-
-		return new Session(theme);
+		System.out.println(otherCookies);
+		return new Session(theme, otherCookies);
 	}
 }

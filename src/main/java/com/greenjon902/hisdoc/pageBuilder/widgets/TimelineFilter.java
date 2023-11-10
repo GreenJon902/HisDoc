@@ -25,8 +25,8 @@ public class TimelineFilter implements WidgetBuilder {
 	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<div class=\"timeline-filter-holder\">");
 		renderButton(stream, "Exclude", defaultValue.equals("Exclude"));
-		renderButton(stream, "Ignore", !(defaultValue.equals("Exclude") || defaultValue.equals("Include")));
-		renderButton(stream, "Include", defaultValue.equals("Include"));
+		renderButton(stream, "Ignore", defaultValue.equals("Ignore"));
+		renderButton(stream, "Include", !(defaultValue.equals("Exclude") || defaultValue.equals("Ignore")));
 		stream.write("</div>");
 	}
 
@@ -36,11 +36,15 @@ public class TimelineFilter implements WidgetBuilder {
 				"id=\"" + id(name) + "\"" +
 				"value=\"" + name + "\" " +
 				"name=\"" + groupName + "\"" + (defaultActive ? " checked" : "") +
-				" onchange=\"refilterEvents()\">" +
+				" onchange=\"filterChanged()\">" +
 				"<label class=\"timeline-filter\" for=\"" + id(name) + "\">" + name + "</label>");
 	}
 
 	public String id(String name) {
-		return groupName + "-" + name;
+		return id() + "-" + name;
+	}
+
+	public String id() {
+		return groupName;
 	}
 }

@@ -3,7 +3,7 @@ package com.greenjon902.hisdoc.pages;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
-import com.greenjon902.hisdoc.pageBuilder.scripts.SearchFilterScript;
+import com.greenjon902.hisdoc.pageBuilder.scripts.TimelineSearchFilterScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.EventLink;
@@ -40,21 +40,21 @@ public class TimelinePageRenderer extends PageRenderer {
 		PageBuilder pageBuilder = new PageBuilder();
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
 		pageBuilder.addScript(lazyLoadAccountNameScript);
-		SearchFilterScript searchFilterScript = new SearchFilterScript();  // Variables added elsewhere
+		TimelineSearchFilterScript searchFilterScript = new TimelineSearchFilterScript(pageBuilder);  // Variables added elsewhere
 		pageBuilder.addScript(searchFilterScript);
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		ColumnLayoutBuilder column = new ColumnLayoutBuilder();
 		column.add(makeLeft(timelineInfo, searchFilterScript));
-		column.add(makeRight(timelineInfo, pageBuilder, lazyLoadAccountNameScript, query, searchFilterScript));
+		column.add(makeRight(timelineInfo, pageBuilder, lazyLoadAccountNameScript, session, searchFilterScript));
 		pageBuilder.add(column);
 
 
 		return pageBuilder.render(session);
 	}
 
-	private ContainerWidgetBuilder makeLeft(TimelineInfo timelineInfo, SearchFilterScript searchFilterScript) {
+	private ContainerWidgetBuilder makeLeft(TimelineInfo timelineInfo, TimelineSearchFilterScript searchFilterScript) {
 		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
 
 		for (EventLink eventLink : timelineInfo.eventLinks()) {
@@ -81,16 +81,23 @@ public class TimelinePageRenderer extends PageRenderer {
 		return left;
 	}
 
-	private WidgetBuilder makeRight(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript, Map<String, String> query, SearchFilterScript searchFilterScript) {
+	private WidgetBuilder makeRight(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript, Session session, TimelineSearchFilterScript searchFilterScript) {
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder("timeline-filters");
 		TableBuilder table = new TableBuilder(2, false);
+
+		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("Set All To");}});
+		ContainerWidgetBuilder setAllContainer = new ContainerWidgetBuilder("timeline-filters-setall-holder");
+		setAllContainer.add(new Button("Exclude", "setAllFilters('Exclude');filterChanged()"));
+		setAllContainer.add(new Button("Ignore", "setAllFilters('Ignore');filterChanged()"));
+		setAllContainer.add(new Button("Include", "setAllFilters('Include');filterChanged()"));
+		table.add(setAllContainer);
 
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Tags");}});
 		table.add(new BreakBuilder());
 
 		for (TagLink tagLink : timelineInfo.tagLinks()) {
 			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
-			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(), query.get(tagLink.name()));
+			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(), session.otherCookies().get(tagLink.name()));
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}
@@ -108,7 +115,7 @@ public class TimelinePageRenderer extends PageRenderer {
 			userNameText.add(pageVariable.toString(), "user?id=" + userLink.id());
 
 			table.add(userNameText);
-			TimelineFilter timelineFilter = new TimelineFilter(userLink.data().userData(), query.get(userLink.data().userData()));
+			TimelineFilter timelineFilter = new TimelineFilter(userLink.data().userData(), session.otherCookies().get(userLink.data().userData()));
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}

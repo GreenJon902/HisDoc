@@ -1,13 +1,13 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
-import com.greenjon902.hisdoc.pageBuilder.scripts.SearchFilterScript;
+import com.greenjon902.hisdoc.pageBuilder.scripts.TimelineSearchFilterScript;
 import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.IOException;
 
 /**
- * An event on the timeline that can be filtered, see the {@link TimelineFilter} and the {@link SearchFilterScript}
+ * An event on the timeline that can be filtered, see the {@link TimelineFilter} and the {@link TimelineSearchFilterScript}
  */
 public class FilterableEvent extends AbstractContainerWidgetBuilder {
 	public final String eventName;
