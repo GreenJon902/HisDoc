@@ -137,10 +137,10 @@ public class TimelinePageRenderer extends PageRenderer {
 
 		table.add(new TextBuilder(NORMAL) {{add("Start Date:");}});
 		table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), true, "date1"));
+				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), true, "date1", "filterChanged()"));
 		table.add(new TextBuilder(NORMAL) {{add("End Date:");}});
 		table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), false, "date2"));
+				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), false, "date2", "filterChanged()"));
 		table.add(new TextBuilder(NORMAL) {{add("Selection Method:");}});
 		table.add(new RadioButton("dateSelectionMethod", "Inclusive", List.of("Exclusive", "Inclusive"), "filterChanged()"));
 

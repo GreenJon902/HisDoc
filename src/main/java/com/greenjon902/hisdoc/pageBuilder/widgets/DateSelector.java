@@ -2,6 +2,7 @@ package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
 import com.greenjon902.hisdoc.webDriver.Session;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -14,12 +15,14 @@ public class DateSelector implements WidgetBuilder {
 	private final Timestamp date2;
 	private final boolean defaultIsEarliest;
 	private final String id;
+	private final String updateFunc;
 
-	public DateSelector(Timestamp date1, Timestamp date2, boolean defaultIsEarliest, String id) {
+	public DateSelector(Timestamp date1, Timestamp date2, boolean defaultIsEarliest, String id, @Nullable String updateFunc) {
 		this.date1 = date1;
 		this.date2 = date2;
 		this.defaultIsEarliest = defaultIsEarliest;
 		this.id = id;
+		this.updateFunc = updateFunc;
 	}
 
 	@Override
@@ -35,6 +38,8 @@ public class DateSelector implements WidgetBuilder {
 
 		String defaultDate = defaultIsEarliest ? min : max;
 
-		stream.write("<input type=\"date\" id=\"" + id + "\" value=\"" + defaultDate + "\" min=\"" + min + "\" max=\"" + max + "\">");
+		stream.write("<input type=\"date\" id=\"" + id + "\" value=\"" + defaultDate + "\" " +
+				"min=\"" + min + "\" max=\"" + max + "\" " +
+				(updateFunc != null ? " onchange=\"" + updateFunc + "\"" : "") + ">");
 	}
 }
