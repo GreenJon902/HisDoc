@@ -100,7 +100,7 @@ body {
 
 .theme-switcher-button {
     --next-stylesheet: dark;
-    --icon-class: gg-moon;
+    --icon-class: fa-solid fa-moon;
     color: #000;
 }
 
@@ -172,4 +172,8 @@ input[type=date] {
 
 .filter-buttons-holder > * {
 
+}
+
+.icon {
+    color: #000;
 }

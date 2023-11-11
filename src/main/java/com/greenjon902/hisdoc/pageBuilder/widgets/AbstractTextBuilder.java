@@ -24,6 +24,10 @@ public abstract class AbstractTextBuilder extends AbstractContainerWidgetBuilder
 		super.add(new SimpleText(text + delimiter));
 	}
 
+	public void add(int id) {
+		super.add(new Element(id));
+	}
+
 	public void add(Object text) {
 		add(String.valueOf(text));
 	}
@@ -51,7 +55,10 @@ public abstract class AbstractTextBuilder extends AbstractContainerWidgetBuilder
 	}
 
 	public void add(String text, String href) {
-		add(new LinkedText(text, href));
+		add(new SimpleText(text), href);
+	}
+	public void add(WidgetBuilder widget, String href) {
+		add(new LinkedText(widget, href));
 	}
 }
 
@@ -67,15 +74,25 @@ record SimpleText(String text) implements WidgetBuilder {
 }
 
 /**
+ * A renderer for a html element.
+ */
+record Element(int id) implements WidgetBuilder {
+	@Override
+	public void render(HtmlOutputStream stream, Session session) throws IOException {
+		stream.write("&#" + id + ";");
+	}
+}
+
+/**
  * A piece of text that acts like a html &lt;a> attribute.
  */
-record LinkedText(String text, String href) implements WidgetBuilder {
+record LinkedText(WidgetBuilder widgetBuilder, String href) implements WidgetBuilder {
 	@Override
 	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<a class=\"text-link\" href=\"");
 		stream.writeSafe(href);
 		stream.write("\">");
-		stream.writeSafe(text);
+		widgetBuilder.render(stream, session);
 		stream.write("</a>");
 	}
 }

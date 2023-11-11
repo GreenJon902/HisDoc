@@ -6,15 +6,22 @@ import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.IOException;
 
+import static com.greenjon902.hisdoc.pageBuilder.widgets.IconBuilder.IconType.TIMELINE;
+
 public class NavBarBuilder implements WidgetBuilder {
 	private ContainerWidgetBuilder navBar = new ContainerWidgetBuilder();
 
 	public NavBarBuilder(PageBuilder pageBuilder) {
-		ColumnLayoutBuilder columnLayoutBuilder = new ColumnLayoutBuilder();
-		columnLayoutBuilder.add(new LogoBuilder());
-		columnLayoutBuilder.add(new ThemeSwitcherBuilder(pageBuilder));
+		ColumnLayoutBuilder columnLayoutBuilder1 = new ColumnLayoutBuilder();
+		ColumnLayoutBuilder columnLayoutBuilder2 = new ColumnLayoutBuilder();
 
-		navBar.add(columnLayoutBuilder);
+		columnLayoutBuilder2.add(new LogoBuilder());
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TIMELINE), "timeline");}});
+
+		columnLayoutBuilder1.add(columnLayoutBuilder2);
+		columnLayoutBuilder1.add(new ThemeSwitcherBuilder(pageBuilder));
+
+		navBar.add(columnLayoutBuilder1);
 		navBar.add(new SeparatorBuilder(0.3));
 	}
 

@@ -1,7 +1,6 @@
 @import "https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap";
 @import "https://fonts.googleapis.com/css?family=Roboto";
-@import "https://unpkg.com/css.gg@2.0.0/icons/css/sun.css";
-@import "https://unpkg.com/css.gg@2.0.0/icons/css/moon.css";
+@import "https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css";
 
 html {
 
@@ -163,6 +162,7 @@ body {
 
 .theme-switcher-button {  /* See theme buttons file */
     cursor: pointer;
+    font-size: 4em;
 }
 
 iframe {
@@ -261,4 +261,8 @@ input[type=date] {
   overflow-y: auto;
   height: 50vh;
   padding-right: 1em;
+}
+
+.icon {
+    font-size: 4em;
 }
