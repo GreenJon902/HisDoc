@@ -15,6 +15,7 @@ import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -83,6 +84,8 @@ public class TimelinePageRenderer extends PageRenderer {
 
 	private WidgetBuilder makeRight(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript, Session session, TimelineSearchFilterScript searchFilterScript) {
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder("timeline-filters");
+		right.add(new TextBuilder(SUBTITLE, "") {{add("Filters");}});
+
 		TableBuilder table = new TableBuilder(2, false);
 
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("Set All To");}});
@@ -97,7 +100,7 @@ public class TimelinePageRenderer extends PageRenderer {
 
 		for (TagLink tagLink : timelineInfo.tagLinks()) {
 			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
-			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(), session.otherCookies().get(tagLink.name()));
+			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(), session.otherCookies().get(tagLink.name()), "filterChanged()");
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}
@@ -112,15 +115,25 @@ public class TimelinePageRenderer extends PageRenderer {
 			userNameText.add(pageVariable.toString(), "user?id=" + userLink.id());
 
 			table.add(userNameText);
-			TimelineFilter timelineFilter = new TimelineFilter(userLink.data().userData(), session.otherCookies().get(userLink.data().userData()));
+			TimelineFilter timelineFilter = new TimelineFilter(userLink.data().userData(), session.otherCookies().get(userLink.data().userData()), "filterChanged()");
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}
 
-		right.add(table);
-		right.add(new DateRangeSlider(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1()));
+		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("Date Range");}});
+		table.add(new BreakBuilder());
 
+		table.add(new TextBuilder(NORMAL) {{add("Start Date: ");}});
+		table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
+				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), true));
+		table.add(new TextBuilder(NORMAL) {{add("End Date: ");}});
+		table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
+				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), false));
+		table.add(new TextBuilder(NORMAL) {{add("SelectionMethod: ");}});
+		table.add(new RadioButton("dateSelectionMethod", "Inclusive", List.of("Exclusive", "Inclusive"), "filterChanged()"));
+
+
+		right.add(table);
 		return right;
 	}
 }

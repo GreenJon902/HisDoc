@@ -9,13 +9,15 @@ import java.time.format.DateTimeFormatter;
 
 // TODO: Auto fill last values from post contents
 
-public class DateRangeSlider implements WidgetBuilder {
+public class DateSelector implements WidgetBuilder {
 	private final Timestamp date1;
 	private final Timestamp date2;
+	private final boolean defaultIsEarliest;
 
-	public DateRangeSlider(Timestamp date1, Timestamp date2) {
+	public DateSelector(Timestamp date1, Timestamp date2, boolean defaultIsEarliest) {
 		this.date1 = date1;
 		this.date2 = date2;
+		this.defaultIsEarliest = defaultIsEarliest;
 	}
 
 	@Override
@@ -29,10 +31,8 @@ public class DateRangeSlider implements WidgetBuilder {
 			min = t;
 		}
 
-		stream.write("<label for=\"start-date\">Date 1: </label>" +
-				"<input type=\"date\" id=\"start-date\" name=\"start-date\" value=\"" + min + "\" min=\"" + min + "\" max=\"" + max + "\">" +
-				"<br>" +
-				"<label for=\"end-date\">Date 2: </label>" +
-				"<input type=\"date\" id=\"end-date\" name=\"end-date\" value=\"" + max + "\" min=\"" + min + "\" max=\"" + max + "\">");
+		String defaultDate = defaultIsEarliest ? min : max;
+
+		stream.write("<input type=\"date\" id=\"start-date\" name=\"start-date\" value=\"" + defaultDate + "\" min=\"" + min + "\" max=\"" + max + "\">");
 	}
 }

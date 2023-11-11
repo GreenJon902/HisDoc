@@ -150,7 +150,7 @@ body {
 }
 
 .theme-switcher-button {  /* See theme buttons file */
-
+    cursor: pointer;
 }
 
 iframe {
@@ -170,13 +170,13 @@ iframe {
     content: "\26A0";
 }
 
-.timeline-filter[type=radio] {
+.radio-button[type=radio] {
   position: absolute;
   visibility: hidden;
   display: none;
 }
 
-.timeline-filter {
+.radio-button {
   display: inline-block;
   cursor: pointer;
   font-weight: bold;
@@ -184,15 +184,15 @@ iframe {
   font-family: "Roboto", sans-serif;
 }
 
-.timeline-filter[type=radio]:checked + .timeline-filter {
+.radio-button[type=radio]:checked + .radio-button {
 
 }
 
-.timeline-filter:not(:first-of-type) {
+.radio-button:not(:first-of-type) {
   border-left: solid 1px;
 }
 
-.timeline-filter-holder {
+.radio-button-holder {
   border: solid 1px;
   display: inline-block;
   border-radius: 10px;

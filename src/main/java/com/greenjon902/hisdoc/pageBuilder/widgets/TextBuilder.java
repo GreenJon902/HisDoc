@@ -16,6 +16,7 @@ public class TextBuilder extends AbstractTextBuilder {
 		super(delimiter);
 		this.type = type;
 	}
+
 	@Override
 	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		stream.write("<");

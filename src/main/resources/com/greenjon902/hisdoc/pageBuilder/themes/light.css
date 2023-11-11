@@ -117,24 +117,24 @@ iframe {
 
 }
 
-.timeline-filter[type=radio] {
+.radio-button[type=radio] {
 
 }
 
-.timeline-filter {
+.radio-button {
     color: #000000;
 }
 
-.timeline-filter[type=radio]:checked + .timeline-filter {
+.radio-button[type=radio]:checked + .radio-button {
     background-color: #aaaaaa;
     color: #ffffff;
 }
 
-.timeline-filter:not(:first-of-type) {
+.radio-button:not(:first-of-type) {
     border-left-color: #000000;
 }
 
-.timeline-filter-holder {
+.radio-button-holder {
     border-color: #000000;
 }
 
