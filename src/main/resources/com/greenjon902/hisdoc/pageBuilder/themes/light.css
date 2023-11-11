@@ -30,7 +30,7 @@ body {
 
 }
 
-.title, .subtitle, .auxiliary-info-title {
+.title, .subtitle, .auxiliary-info-title, .major-subtitle {
     color: #000;
 }
 
