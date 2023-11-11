@@ -250,17 +250,20 @@ input[type=date] {
     background: none;
 }
 
-.filter-buttons-holder {
-  justify-content: space-between;
-  display: flex;
-}
+@media only screen and (min-width: 82em) {
+    .filter-buttons-holder {
+        justify-content: space-between;
+        display: flex;
+    }
 
-.filter-buttons-holder > * {
-  float: left;
-  display: initial;
-  overflow-y: auto;
-  height: 50vh;
-  padding-right: 1em;
+
+    .filter-buttons-holder > * {
+      float: left;
+      display: initial;
+      overflow-y: auto;
+      height: 50vh;
+      padding-right: 1em;
+    }
 }
 
 .icon {
