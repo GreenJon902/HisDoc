@@ -2,8 +2,9 @@ package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 public enum TextType {
 	TITLE("h1", "title", false),
-	SUBTITLE("h2", "subtitle", true),
-	AUX_INFO_TITLE("h2", "auxiliary-info-title", false),
+	MAJOR_SUBTITLE("h2", "major-subtitle", true),
+	SUBTITLE("h3", "subtitle", true),
+	AUX_INFO_TITLE("h3", "auxiliary-info-title", false),
 	NORMAL("p", "text", false),
 	WARNING("p", "warning-text fas", false),
 	MISC("p", "misc-text", false);

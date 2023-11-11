@@ -18,6 +18,10 @@ body {
 
 }
 
+.major-subtitle {
+
+}
+
 .subtitle {
 
 }
@@ -154,4 +158,17 @@ iframe {
 
 .timeline-filters-setall-holder>button:active {
     background: rgba(238, 238, 255, 0.1);
+}
+
+input[type=date] {
+    border-color: #eef;
+    color: #eef;
+}
+
+.filter-buttons-holder {
+
+}
+
+.filter-buttons-holder > * {
+
 }

@@ -45,18 +45,17 @@ public class TimelinePageRenderer extends PageRenderer {
 		pageBuilder.addScript(searchFilterScript);
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
-
-		ColumnLayoutBuilder column = new ColumnLayoutBuilder();
-		column.add(makeLeft(timelineInfo, searchFilterScript));
-		column.add(makeRight(timelineInfo, pageBuilder, lazyLoadAccountNameScript, session, searchFilterScript));
-		pageBuilder.add(column);
+		pageBuilder.add(new TextBuilder(MAJOR_SUBTITLE) {{add("Filters");}});
+		pageBuilder.add(makeTop(timelineInfo, pageBuilder, lazyLoadAccountNameScript, session, searchFilterScript));
+		pageBuilder.add(new TextBuilder(MAJOR_SUBTITLE) {{add("Timeline");}});
+		pageBuilder.add(makeBottom(timelineInfo, searchFilterScript));
 
 
 		return pageBuilder.render(session);
 	}
 
-	private ContainerWidgetBuilder makeLeft(TimelineInfo timelineInfo, TimelineSearchFilterScript searchFilterScript) {
-		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
+	private ContainerWidgetBuilder makeBottom(TimelineInfo timelineInfo, TimelineSearchFilterScript searchFilterScript) {
+		ContainerWidgetBuilder bottom = new ContainerWidgetBuilder();
 
 		for (EventLink eventLink : timelineInfo.eventLinks()) {
 			FilterableEvent event = new FilterableEvent(eventLink.name(), false);
@@ -73,18 +72,19 @@ public class TimelinePageRenderer extends PageRenderer {
 			eventDescription.add(eventLink.description());
 			event.add(eventDescription);
 
-			left.add(event);
+			bottom.add(event);
 			searchFilterScript.add(event, Stream.concat(
 					timelineInfo.eventTagRelations().getOrDefault(eventLink, new ArrayList<>()).stream().map(TagLink::name),
 					timelineInfo.eventUserRelations().getOrDefault(eventLink, new ArrayList<>()).stream().map(user -> user.data().userData())
 			), eventLink.dateInfo());
 		}
-		return left;
+		return bottom;
 	}
 
-	private WidgetBuilder makeRight(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript, Session session, TimelineSearchFilterScript searchFilterScript) {
-		ContainerWidgetBuilder right = new ContainerWidgetBuilder("timeline-filters");
-		right.add(new TextBuilder(SUBTITLE, "") {{add("Filters");}});
+	private WidgetBuilder makeTop(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript, Session session, TimelineSearchFilterScript searchFilterScript) {
+		ContainerWidgetBuilder top = new ContainerWidgetBuilder();
+
+		ContainerWidgetBuilder filterButtons = new ContainerWidgetBuilder("filter-buttons-holder");
 
 		TableBuilder table = new TableBuilder(2, false);
 
@@ -95,6 +95,10 @@ public class TimelinePageRenderer extends PageRenderer {
 		setAllContainer.add(new Button("Include", "setAllFilters('Include');filterChanged()"));
 		table.add(setAllContainer);
 
+		top.add(table);
+
+		table = new TableBuilder(2, false);
+
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Tags");}});
 		table.add(new BreakBuilder());
 
@@ -104,6 +108,10 @@ public class TimelinePageRenderer extends PageRenderer {
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}
+
+		filterButtons.add(table);
+
+		table = new TableBuilder(2, false);
 
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Users");}});
 		table.add(new BreakBuilder());
@@ -120,6 +128,10 @@ public class TimelinePageRenderer extends PageRenderer {
 			searchFilterScript.add(timelineFilter);
 		}
 
+		filterButtons.add(table);
+
+		table = new TableBuilder(2, false);
+
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("Date Range");}});
 		table.add(new BreakBuilder());
 
@@ -132,8 +144,9 @@ public class TimelinePageRenderer extends PageRenderer {
 		table.add(new TextBuilder(NORMAL) {{add("Selection Method:");}});
 		table.add(new RadioButton("dateSelectionMethod", "Inclusive", List.of("Exclusive", "Inclusive"), "filterChanged()"));
 
+		filterButtons.add(table);
+		top.add(filterButtons);
 
-		right.add(table);
-		return right;
+		return top;
 	}
 }
