@@ -13,7 +13,9 @@ import com.greenjon902.hisdoc.sql.results.UserLink;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.Session;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +106,8 @@ public class TimelinePageRenderer extends PageRenderer {
 
 		for (TagLink tagLink : timelineInfo.tagLinks()) {
 			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
-			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(), session.otherCookies().get(tagLink.name()), "filterChanged()");
+			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(),
+					session.otherCookies().getOrDefault(tagLink.name(), "Include"), "filterChanged()");
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}
@@ -123,7 +126,8 @@ public class TimelinePageRenderer extends PageRenderer {
 			userNameText.add(pageVariable.toString(), "user?id=" + userLink.id());
 
 			table.add(userNameText);
-			TimelineFilter timelineFilter = new TimelineFilter(userLink.data().userData(), session.otherCookies().get(userLink.data().userData()), "filterChanged()");
+			TimelineFilter timelineFilter = new TimelineFilter(userLink.data().userData(),
+					session.otherCookies().getOrDefault(userLink.data().userData(), "Include"), "filterChanged()");
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}
@@ -136,14 +140,29 @@ public class TimelinePageRenderer extends PageRenderer {
 		table.add(new BreakBuilder());
 
 		table.add(new TextBuilder(NORMAL) {{add("Start Date:");}});
-		table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), true, "date1", "filterChanged()"));
+		if (session.otherCookies().containsKey("date1")) {
+			table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
+					timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(),
+					new Timestamp(Date.valueOf(session.otherCookies().get("date1")).getTime()), "date1", "filterChanged()"));
+		} else {
+			table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
+					timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(),
+					true, "date1", "filterChanged()"));
+		}
 		table.add(new TextBuilder(NORMAL) {{add("End Date:");}});
-		table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), false, "date2", "filterChanged()"));
+		if (session.otherCookies().containsKey("date1")) {
+			table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
+					timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(),
+					new Timestamp(Date.valueOf(session.otherCookies().get("date2")).getTime()), "date2", "filterChanged()"));
+		} else {
+			table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
+					timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(),
+					false, "date2", "filterChanged()"));
+		}
 		table.add(new TextBuilder(NORMAL) {{add("Selection Method:");}});
-		table.add(new RadioButton("dateSelectionMethod", "Inclusive", List.of("Exclusive", "Inclusive"), "filterChanged()"));
-
+		table.add(new RadioButton("dateSelectionMethod",
+				session.otherCookies().getOrDefault("dateSelectionMethod", "Inclusive"),
+				List.of("Exclusive", "Inclusive"), "filterChanged()"));
 		filterButtons.add(table);
 		top.add(filterButtons);
 

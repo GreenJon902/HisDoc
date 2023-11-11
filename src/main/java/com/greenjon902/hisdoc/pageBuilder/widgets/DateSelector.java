@@ -13,14 +13,34 @@ import java.time.format.DateTimeFormatter;
 public class DateSelector implements WidgetBuilder {
 	private final Timestamp date1;
 	private final Timestamp date2;
-	private final boolean defaultIsEarliest;
+	private final Timestamp defaultDate;
 	private final String id;
 	private final String updateFunc;
 
 	public DateSelector(Timestamp date1, Timestamp date2, boolean defaultIsEarliest, String id, @Nullable String updateFunc) {
+		if (date1.compareTo(date2) > 0) {
+			Timestamp t = date1;
+			date1 = date2;
+			date2 = t;
+		}
+
 		this.date1 = date1;
 		this.date2 = date2;
-		this.defaultIsEarliest = defaultIsEarliest;
+		this.defaultDate = defaultIsEarliest ? date1 : date2;
+		this.id = id;
+		this.updateFunc = updateFunc;
+	}
+
+	public DateSelector(Timestamp date1, Timestamp date2, Timestamp defaultDate, String id, @Nullable String updateFunc) {
+		if (date1.compareTo(date2) > 0) {
+			Timestamp t = date1;
+			date1 = date2;
+			date2 = t;
+		}
+
+		this.date1 = date1;
+		this.date2 = date2;
+		this.defaultDate = defaultDate;
 		this.id = id;
 		this.updateFunc = updateFunc;
 	}
@@ -29,14 +49,7 @@ public class DateSelector implements WidgetBuilder {
 	public void render(HtmlOutputStream stream, Session session) throws IOException {
 		String min = date1.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		String max = date2.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-		if (date1.compareTo(date2) > 0) {
-			String t = max;
-			max = min;
-			min = t;
-		}
-
-		String defaultDate = defaultIsEarliest ? min : max;
+		String defaultDate = this.defaultDate.toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
 		stream.write("<input type=\"date\" id=\"" + id + "\" value=\"" + defaultDate + "\" " +
 				"min=\"" + min + "\" max=\"" + max + "\" " +

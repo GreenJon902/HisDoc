@@ -6,8 +6,6 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.stream.Stream;
@@ -59,15 +57,7 @@ class HttpHandlerImpl implements HttpHandler {
 			rendered = pageRenderer.render(query, null, session);
 
 		} catch (Exception e) {
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			String error = sw.toString();
-
-			exchange.sendResponseHeaders(200, error.length());
-			OutputStream os = exchange.getResponseBody();
-			os.write(error.getBytes());
-			os.close();
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 
@@ -98,7 +88,7 @@ class HttpHandlerImpl implements HttpHandler {
 	}
 
 	public Session getSession(HttpExchange exchange) {
-		List<String> cookieStrings = exchange.getRequestHeaders().get("Cookie");
+		List<String> cookieStrings = exchange.getRequestHeaders().getOrDefault("Cookie", Collections.emptyList());
 		List<String> cookies = new ArrayList<>();
 		for (String cookieString : cookieStrings) {
 			cookies.addAll(Stream.of(cookieString.split(";")).map(String::trim).toList());

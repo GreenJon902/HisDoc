@@ -48,23 +48,28 @@ public class LazyLoadAccountNameScript extends Script {
 			};
 			
 			async function loadMINECRAFTAccountName(info, accountNameVarName) {
-				url = "https://playerdb.co/api/player/minecraft/" + info;
-				console.log("Url: " + url);
-				
-				url = "https://corsproxy.io/?" + encodeURIComponent(url);
-				console.log("Cors URL: " + url);
-				const response = await fetch(url);
-				
-				console.log("Response: ");
-				console.log(response);
-				const responseJson = await response.json();
-				console.log("Response Json: ");
-				console.log(responseJson);
-				
-				const name = responseJson.data.player.username;
-				console.log("Name: " +  name);
-				
-				document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
+				try {
+					url = "https://playerdb.co/api/player/minecraft/" + info;
+					console.log("Url: " + url);
+					
+					url = "https://corsproxy.io/?" + encodeURIComponent(url);
+					console.log("Cors URL: " + url);
+					const response = await fetch(url);
+					
+					console.log("Response: ");
+					console.log(response);
+					const responseJson = await (response.json());
+					console.log("Response Json: ");
+					console.log(responseJson);
+					
+					const name = responseJson.data.player.username;
+					console.log("Name: " +  name);
+					
+					document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
+				} catch(error) {
+					document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, "Unknown");
+					console.error(error);
+				}
 			};
 			""");
 

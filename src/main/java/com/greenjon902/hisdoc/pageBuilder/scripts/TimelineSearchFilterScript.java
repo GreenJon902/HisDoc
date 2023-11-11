@@ -88,6 +88,13 @@ public class TimelineSearchFilterScript extends Script {
 				"      setCookie(filterIds[i], \"Include\");\n" +
 				"    }\n" +
 				"  }\n" +
+				"  setCookie(\"date1\", document.getElementById(\"date1\").value);\n" +
+				"  setCookie(\"date2\", document.getElementById(\"date2\").value);\n" +
+				"  if (document.getElementById(\"dateSelectionMethod-Exclude\").checked) {\n" +
+				"    setCookie(\"dateSelectionMethod\", \"Exclude\");\n" +
+				"  } else if (document.getElementById(\"dateSelectionMethod-Ignore\").checked) {\n" +
+				"    setCookie(\"dateSelectionMethod\", \"Ignore\");\n" +
+				"  }" +
 				"}\n" +
 				"filterChanged()\n\n" +  // Run func by default
 

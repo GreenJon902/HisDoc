@@ -252,4 +252,7 @@ input[type=date] {
 .filter-buttons-holder > * {
   float: left;
   display: initial;
+  overflow-y: auto;
+  height: 50vh;
+  padding-right: 1em;
 }
