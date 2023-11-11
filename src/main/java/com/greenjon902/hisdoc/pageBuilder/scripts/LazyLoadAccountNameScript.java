@@ -12,7 +12,8 @@ import java.util.Objects;
 /**
  * This script provides the functionality to lazy load account names on the client side.
  * This works by replacing any instances of the page variable in the whole document with the correct value that was
- * loaded using the user info.
+ * loaded using the user info.<br>
+ * We also cache usernames in localStorage under the key "mcAccountNameCache_{UUID}".
  */
 public class LazyLoadAccountNameScript extends Script {
 	private final List<PageVariable> accountNameVars = new ArrayList<>();  // Index of accountNameVars corresponds to index of userDatas
@@ -48,28 +49,35 @@ public class LazyLoadAccountNameScript extends Script {
 			};
 			
 			async function loadMINECRAFTAccountName(info, accountNameVarName) {
-				try {
-					url = "https://playerdb.co/api/player/minecraft/" + info;
-					console.log("Url: " + url);
-					
-					url = "https://corsproxy.io/?" + encodeURIComponent(url);
-					console.log("Cors URL: " + url);
-					const response = await fetch(url);
-					
-					console.log("Response: ");
-					console.log(response);
-					const responseJson = await (response.json());
-					console.log("Response Json: ");
-					console.log(responseJson);
-					
-					const name = responseJson.data.player.username;
-					console.log("Name: " +  name);
-					
-					document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
-				} catch(error) {
-					document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, "Unknown");
-					console.error(error);
+				var name = localStorage["mcAccountNameCache_" + info];
+				
+				if (name == null) {
+					try {
+						url = "https://playerdb.co/api/player/minecraft/" + info;
+						console.log("Url: " + url);
+						
+						url = "https://corsproxy.io/?" + encodeURIComponent(url);
+						console.log("Cors URL: " + url);
+						const response = await fetch(url);
+						
+						console.log("Response: ");
+						console.log(response);
+						const responseJson = await (response.json());
+						console.log("Response Json: ");
+						console.log(responseJson);
+						
+						name = responseJson.data.player.username;
+						console.log("Name: " +  name);
+						
+						localStorage["mcAccountNameCache_" + info] = name;
+						
+					} catch(error) {
+						name = "Unknown";
+						console.error(error);
+					}
 				}
+				
+				document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
 			};
 			""");
 
@@ -77,7 +85,7 @@ public class LazyLoadAccountNameScript extends Script {
 		for (int i=0; i < userDatas.size(); i++) {
 			String prefix = userDatas.get(i).type().toString();
 			String info = userDatas.get(i).userData();
-			js.append("load").append(prefix).append("AccountName(\"").append(info).append("\", \"").append(accountNameVars.get(i)).append("\");");
+			js.append("load").append(prefix).append("AccountName(\"").append(info).append("\", \"").append(accountNameVars.get(i)).append("\");\n");
 		}
 
 		// Write to the stream
