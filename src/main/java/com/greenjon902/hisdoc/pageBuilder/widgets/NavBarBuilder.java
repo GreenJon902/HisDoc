@@ -6,7 +6,7 @@ import com.greenjon902.hisdoc.webDriver.Session;
 
 import java.io.IOException;
 
-import static com.greenjon902.hisdoc.pageBuilder.widgets.IconBuilder.IconType.TIMELINE;
+import static com.greenjon902.hisdoc.pageBuilder.widgets.IconBuilder.IconType.*;
 
 public class NavBarBuilder implements WidgetBuilder {
 	private ContainerWidgetBuilder navBar = new ContainerWidgetBuilder();
@@ -17,6 +17,8 @@ public class NavBarBuilder implements WidgetBuilder {
 
 		columnLayoutBuilder2.add(new LogoBuilder());
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TIMELINE), "timeline");}});
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(USERS), "users");}});
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TAGS), "tags");}});
 
 		columnLayoutBuilder1.add(columnLayoutBuilder2);
 		columnLayoutBuilder1.add(new ThemeSwitcherBuilder(pageBuilder));

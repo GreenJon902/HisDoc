@@ -19,7 +19,7 @@ public class IconBuilder implements WidgetBuilder {
 	}
 
 	public enum IconType {
-		TIMELINE("fa-light fa-timeline");
+		TIMELINE("fa-light fa-timeline"), USERS("fa-solid fa-users"), TAGS("fa-solid fa-tags");
 
 		private final String classes;
 

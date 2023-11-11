@@ -2,10 +2,7 @@ package com.greenjon902.hisdoc;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
-import com.greenjon902.hisdoc.pages.EventPageRenderer;
-import com.greenjon902.hisdoc.pages.TagPageRenderer;
-import com.greenjon902.hisdoc.pages.TimelinePageRenderer;
-import com.greenjon902.hisdoc.pages.UserPageRenderer;
+import com.greenjon902.hisdoc.pages.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.Session;
@@ -54,7 +51,9 @@ public class UITest {
 		
 		return Map.of("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher),
 				"/" + pageNamePrefix + "tag", new TagPageRenderer(dispatcher),
+				"/" + pageNamePrefix + "tags", new TagsPageRenderer(dispatcher),
 				"/" + pageNamePrefix + "user", new UserPageRenderer(dispatcher),
+				"/" + pageNamePrefix + "users", new UsersPageRenderer(dispatcher),
 				"/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher),
 				"/" + pageNamePrefix + "themes", new PageRenderer() {
 					@Override

@@ -95,7 +95,7 @@ body {
 }
 
 .column-container>*:not(:last-child) {
-    margin-right: 1em;
+    margin-right: 0.4em;
 }
 
 .tag-container {

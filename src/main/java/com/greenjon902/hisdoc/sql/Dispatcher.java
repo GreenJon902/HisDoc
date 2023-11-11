@@ -1,9 +1,6 @@
 package com.greenjon902.hisdoc.sql;
 
-import com.greenjon902.hisdoc.sql.results.EventInfo;
-import com.greenjon902.hisdoc.sql.results.TagInfo;
-import com.greenjon902.hisdoc.sql.results.TimelineInfo;
-import com.greenjon902.hisdoc.sql.results.UserInfo;
+import com.greenjon902.hisdoc.sql.results.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Dispatcher {
 	Map<String, String> statements = new HashMap<>();
@@ -102,5 +100,21 @@ public class Dispatcher {
 		ps.execute();
 
 		return UnpackHelper.getTimelineInfo(ps);
+	}
+
+	public Set<TagLink> getAllTagLinks() throws SQLException {
+		System.out.println("Getting all tag links -----------------");
+		PreparedStatement ps = prepareWithArgs("queries/getAllTagLinks");
+		ps.execute();
+
+		return UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getTagLink);
+	}
+
+	public Set<UserLink> getAllUserLinks() throws SQLException {
+		System.out.println("Getting all user links -----------------");
+		PreparedStatement ps = prepareWithArgs("queries/getAllUserLinks");
+		ps.execute();
+
+		return UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getUserLink);
 	}
 }
