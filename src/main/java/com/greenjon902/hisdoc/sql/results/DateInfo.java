@@ -1,10 +1,14 @@
 package com.greenjon902.hisdoc.sql.results;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +48,42 @@ public record DateInfo(@NotNull Type type, @NotNull Timestamp date1, @Nullable P
 		return new DateInfo(Type.BETWEEN, date1, null, null, null, date2);
 	}
 
+	/**
+	 * Calculates and returns the earliest possible date this can be, by using precision and date type etc.
+	 * This is a date, not a timestamp, so it goes down only to days.
+	 */
+	public String earliestDate() {
+		if (type == Type.BETWEEN) {
+			return date1().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		} else {
+			java.util.Date date = DateUtils.truncate(date1(), precision().calenderVersion);
+			date = switch (diffType()) {
+				case DAY -> DateUtils.addDays(date, -diff());
+				case HOUR -> DateUtils.addHours(date, -diff());
+				case MINUTE -> DateUtils.addMinutes(date, -diff());
+			};
+			return new SimpleDateFormat("yyyy-MM-dd").format(date);
+		}
+	}
+
+	/**
+	 * Calculates and returns the latest possible date this can be, by using precision and date type etc.
+	 * This is a date, not a timestamp, so it goes down only to days.
+	 */
+	public String latestDate() {
+		if (type == Type.BETWEEN) {
+			return date2().toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		} else {
+			java.util.Date date = DateUtils.ceiling(date1(), precision().calenderVersion);
+			date = switch (diffType()) {
+				case DAY -> DateUtils.addDays(date, diff());
+				case HOUR -> DateUtils.addHours(date, diff());
+				case MINUTE -> DateUtils.addMinutes(date, diff());
+			};
+			return new SimpleDateFormat("yyyy-MM-dd").format(date);
+		}
+	}
+
 	public enum Type {
 		CENTERED("c"), BETWEEN("b");
 
@@ -69,7 +109,7 @@ public record DateInfo(@NotNull Type type, @NotNull Timestamp date1, @Nullable P
 	}
 
 	public enum Precision {
-		DAY("d"), HOUR("h"), MINUTE("m");
+		DAY("d", Calendar.DAY_OF_MONTH), HOUR("h", Calendar.HOUR_OF_DAY), MINUTE("m", Calendar.MINUTE);
 
 		private static final Map<String, Precision> decodeMap;
 		static {
@@ -86,9 +126,11 @@ public record DateInfo(@NotNull Type type, @NotNull Timestamp date1, @Nullable P
 		}
 
 		private final String sqlId;
+		public final int calenderVersion;
 
-		Precision(String sqlId) {
+		Precision(String sqlId, int calenderVersion) {
 			this.sqlId = sqlId;
+			this.calenderVersion = calenderVersion;
 		}
 	}
 }

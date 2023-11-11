@@ -77,7 +77,7 @@ public class TimelinePageRenderer extends PageRenderer {
 			searchFilterScript.add(event, Stream.concat(
 					timelineInfo.eventTagRelations().getOrDefault(eventLink, new ArrayList<>()).stream().map(TagLink::name),
 					timelineInfo.eventUserRelations().getOrDefault(eventLink, new ArrayList<>()).stream().map(user -> user.data().userData())
-			));
+			), eventLink.dateInfo());
 		}
 		return left;
 	}
@@ -123,13 +123,13 @@ public class TimelinePageRenderer extends PageRenderer {
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("Date Range");}});
 		table.add(new BreakBuilder());
 
-		table.add(new TextBuilder(NORMAL) {{add("Start Date: ");}});
+		table.add(new TextBuilder(NORMAL) {{add("Start Date:");}});
 		table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), true));
-		table.add(new TextBuilder(NORMAL) {{add("End Date: ");}});
+				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), true, "date1"));
+		table.add(new TextBuilder(NORMAL) {{add("End Date:");}});
 		table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), false));
-		table.add(new TextBuilder(NORMAL) {{add("SelectionMethod: ");}});
+				timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(), false, "date2"));
+		table.add(new TextBuilder(NORMAL) {{add("Selection Method:");}});
 		table.add(new RadioButton("dateSelectionMethod", "Inclusive", List.of("Exclusive", "Inclusive"), "filterChanged()"));
 
 

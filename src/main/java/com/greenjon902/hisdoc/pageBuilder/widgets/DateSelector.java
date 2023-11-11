@@ -13,11 +13,13 @@ public class DateSelector implements WidgetBuilder {
 	private final Timestamp date1;
 	private final Timestamp date2;
 	private final boolean defaultIsEarliest;
+	private final String id;
 
-	public DateSelector(Timestamp date1, Timestamp date2, boolean defaultIsEarliest) {
+	public DateSelector(Timestamp date1, Timestamp date2, boolean defaultIsEarliest, String id) {
 		this.date1 = date1;
 		this.date2 = date2;
 		this.defaultIsEarliest = defaultIsEarliest;
+		this.id = id;
 	}
 
 	@Override
@@ -33,6 +35,6 @@ public class DateSelector implements WidgetBuilder {
 
 		String defaultDate = defaultIsEarliest ? min : max;
 
-		stream.write("<input type=\"date\" id=\"start-date\" name=\"start-date\" value=\"" + defaultDate + "\" min=\"" + min + "\" max=\"" + max + "\">");
+		stream.write("<input type=\"date\" id=\"" + id + "\" value=\"" + defaultDate + "\" min=\"" + min + "\" max=\"" + max + "\">");
 	}
 }
