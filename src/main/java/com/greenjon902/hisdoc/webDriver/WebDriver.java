@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -23,6 +24,7 @@ public class WebDriver {
 		for (String path : webDriverConfig.pageRenderers().keySet()) {
 			server.createContext(path, new HttpHandlerImpl(webDriverConfig.pageRenderers().get(path)));
 		}
+		server.createContext("/favicon.ico", new FaviconHandler(webDriverConfig.favicon()));
 	}
 
 	/**
@@ -37,6 +39,27 @@ public class WebDriver {
 	 */
 	public void stop() {
 		server.stop(webDriverConfig.stopDelay());
+	}
+}
+
+class FaviconHandler implements HttpHandler {
+	private final byte[] image;
+
+	public FaviconHandler(String path) {
+		try {
+			InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream(path);
+			image = fileInputStream.readAllBytes();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void handle(HttpExchange exchange) throws IOException {
+		exchange.sendResponseHeaders(200, image.length);
+		OutputStream os = exchange.getResponseBody();
+		os.write(image);
+		os.close();
 	}
 }
 

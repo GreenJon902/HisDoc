@@ -28,7 +28,7 @@ public class UITest {
 
 		WebDriver webDriver = new WebDriver(new WebDriverConfig(
 				map,
-				8080, 0, 0
+				8080, 0, 0, "com/greenjon902/hisdoc/logo.ico"
 		));
 		webDriver.start();
 	}

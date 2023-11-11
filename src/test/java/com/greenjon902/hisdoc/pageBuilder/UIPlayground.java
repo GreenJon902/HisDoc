@@ -1,6 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder;
 
-import com.greenjon902.hisdoc.pageBuilder.widgets.*;
+import com.greenjon902.hisdoc.pageBuilder.widgets.LogoBuilder;
+import com.greenjon902.hisdoc.pageBuilder.widgets.SeparatorBuilder;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.Session;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
@@ -38,8 +39,8 @@ public class UIPlayground {
 								}
 							}
 						}),
-				8080, 0, 0
-		));
+				8080, 0, 0,
+				"com/greenjon902/hisdoc/logo.ico"));
 		webDriver.start();
 	}
 }
