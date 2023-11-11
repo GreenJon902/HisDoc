@@ -4,13 +4,16 @@ from datetime import datetime, timedelta
 from random import randint, random
 
 event_text_file = "./event_text.txt"
+tags_text_file = "./tag_text.txt"
 date_c_max_diff = 100
 max_date = datetime.now()
 max_date_days_since_min = 1000
-eventeventrelation_val = 0.01
-eventeventrelation_step_val = (1, 100)
-eventtagrelation_val = 0.5
+eventeventrelation_val = 0.05
+eventeventrelation_step_val = (1, 50)
+eventtagrelation_val = 0.25
 eventuserrelation_val = 0.03
+tagColMin = 0
+tagColMax = 16581375
 
 users = (
         ('mc', '16ad067c-2be5-44e3-8218-58ba4ffba574'),
@@ -107,22 +110,11 @@ users = (
         ('mc', 'feeeed38-e869-4233-9c67-28e6f89c2234')
 )
 
-tags = (('Base', 'An event related to someone''s base', 65280),
-        ('Mining', 'An event related to mining activities', 16711680),
-        ('Exploration', 'An event related to exploring new areas', 65535),
-        ('Farming', 'An event related to farming and agriculture', 16777215),
-        ('PvP', 'An event related to player vs. player combat', 255),
-        ('Construction', 'An event related to building structures', 16776960),
-        ('Trading', 'An event related to player trading', 16711935),
-        ('Events', 'An event related to in-game events', 8323327),
-        ('Mob Farm', 'An event related to mob farming', 16777214),
-        ('Quest', 'An event related to in-game quests and challenges', 16764108))
-
 out = open("./out.sql", "w")
 
 
-def parse_event_text_info():
-    texts = open(event_text_file, "r").read().replace("?", "").replace("'", "").split("\n")  # TODO: Find fix for special characters
+def parse_text_info(path):
+    texts = open(path, "r").read().replace("?", "").replace("'", "").split("\n")  # TODO: Find fix for special characters
     i = 0
     usedNames = []
     while i < len(texts):
@@ -139,7 +131,8 @@ def format_timestamp(date):
     return f"TIMESTAMP('{date.strftime('%Y-%m-%d')}', '{date.strftime('%H:%M:%S')}')"
 
 
-event_texts = list(parse_event_text_info())
+event_texts = list(parse_text_info(event_text_file))
+tags = list(parse_text_info(tags_text_file))
 
 
 def make_event_list():
@@ -195,7 +188,7 @@ def make_tag_list():
     string = "INSERT INTO {prefix}Tag (tid, name, description, color) VALUES \n"
 
     for n, tag in enumerate(tags):
-        string += f"({n + 1}, '{tag[0]}', '{tag[1]}', {tag[2]}), \n"
+        string += f"({n + 1}, '{tag[0]}', '{tag[1]}', {randint(tagColMin, tagColMax)}), \n"
 
     string = string.rstrip(", \n")
     string += ";\n"

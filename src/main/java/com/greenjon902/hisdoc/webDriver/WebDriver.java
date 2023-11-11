@@ -106,7 +106,6 @@ class HttpHandlerImpl implements HttpHandler {
 				default -> otherCookies.put(parts[0], parts[1]);
 			}
 		}
-		System.out.println(otherCookies);
 		return new Session(theme, otherCookies);
 	}
 }
