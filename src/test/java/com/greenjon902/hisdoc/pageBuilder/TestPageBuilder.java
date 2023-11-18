@@ -1,6 +1,6 @@
 package com.greenjon902.hisdoc.pageBuilder;
 
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ public class TestPageBuilder {
 	@Test
 	public void testEmpty() throws IOException {
 		PageBuilder pageBuilder = new PageBuilder();
-		String rendered = pageBuilder.render(Session.empty());
+		String rendered = pageBuilder.render(User.empty());
 
 		Assertions.assertFalse(rendered.contains("title"));
 	}
@@ -19,7 +19,7 @@ public class TestPageBuilder {
 	public void testEmptyTitled() throws IOException {
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title("Empty Page");
-		String rendered = pageBuilder.render(Session.empty());
+		String rendered = pageBuilder.render(User.empty());
 
 		Assertions.assertTrue(rendered.contains("title"));
 		Assertions.assertTrue(rendered.contains("Empty Page"));

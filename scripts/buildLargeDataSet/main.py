@@ -11,11 +11,11 @@ max_date_days_since_min = 1000
 eventeventrelation_val = 0.05
 eventeventrelation_step_val = (1, 50)
 eventtagrelation_val = 0.25
-eventuserrelation_val = 0.03
+eventpersonrelation_val = 0.03
 tagColMin = 0
 tagColMax = 16581375
 
-users = (
+persons = (
         ('mc', '16ad067c-2be5-44e3-8218-58ba4ffba574'),
         ('mc', 'a7ddc940-7137-46b4-af8d-b30e3b64af03'),
         ('mc', '0acde9a4-cdc4-474b-8612-09c3020597af'),
@@ -149,7 +149,7 @@ def make_event_list():
         description = event_text[1]
         date1 = (max_date - timedelta(days=randint(0, max_date_days_since_min)))
         postedDate = (max_date - timedelta(days=randint(0, max_date_days_since_min)))
-        postedUid = randint(1, len(users))
+        postedUid = randint(1, len(persons))
 
         if randint(0, 1) == 0:  # C Date
             date_precision = ["d", "h", "m"][randint(0, 2)]
@@ -173,11 +173,11 @@ def make_event_list():
     out.write(b_dates)
 
 
-def make_user_list():
-    string = "INSERT INTO {prefix}User (uid, userType, userData) VALUES \n"
+def make_person_list():
+    string = "INSERT INTO {prefix}Person (uid, personType, personData) VALUES \n"
 
-    for n, user in enumerate(users):
-        string += f"({n + 1}, '{user[0]}', '{user[1]}'), \n"
+    for n, person in enumerate(persons):
+        string += f"({n + 1}, '{person[0]}', '{person[1]}'), \n"
 
     string = string.rstrip(", \n")
     string += ";\n"
@@ -213,15 +213,15 @@ def make_event_event_relation():
     out.write(string)
 
 
-def make_event_user_relation():
-    string = "INSERT INTO {prefix}EventUserRelation (eid, uid) VALUES \n"
+def make_event_person_relation():
+    string = "INSERT INTO {prefix}EventPersonRelation (eid, uid) VALUES \n"
 
     done = []  # To stop the same thing but the other way round
 
     for n1 in range(len(event_texts) - 1):
-        for n2 in range(len(users) - 1):
+        for n2 in range(len(persons) - 1):
             if (n2, n1) not in done:
-                if random() < eventuserrelation_val:
+                if random() < eventpersonrelation_val:
                     string += f"({n1 + 1}, {n2 + 1}), \n"
                     done.append((n1, n2))
 
@@ -247,8 +247,8 @@ def make_event_tag_relation():
     out.write(string)
 
 
-make_user_list()
-print("Made users")
+make_person_list()
+print("Made persons")
 make_event_list()
 print("Made events")
 make_tag_list()
@@ -257,6 +257,6 @@ make_event_event_relation()
 print("Made event event")
 make_event_tag_relation()
 print("Made event tag")
-make_event_user_relation()
-print("Made event user")
+make_event_person_relation()
+print("Made event person")
 out.close()

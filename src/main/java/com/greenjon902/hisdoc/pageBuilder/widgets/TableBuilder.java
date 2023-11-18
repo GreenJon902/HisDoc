@@ -1,7 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class TableBuilder implements WidgetBuilder {
 	}
 
 	@Override
-	public void render(HtmlOutputStream stream, Session session) throws IOException {
+	public void render(HtmlOutputStream stream, User user) throws IOException {
 		stream.write("<table>");
 		int n = 0;  // Column index on the current row
 		for (WidgetBuilder cellBuilder : data) {
@@ -34,7 +34,7 @@ public class TableBuilder implements WidgetBuilder {
 				stream.write(" class=\"paddedTableColumn\"");
 			}
 			stream.write(">");
-			cellBuilder.render(stream, session);
+			cellBuilder.render(stream, user);
 			stream.write("</td>");
 			n += 1;
 			if (n == columnCount) {

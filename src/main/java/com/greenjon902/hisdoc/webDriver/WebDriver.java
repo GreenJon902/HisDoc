@@ -72,12 +72,12 @@ class HttpHandlerImpl implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		Session session = getSession(exchange);
+		User user = getUser(exchange);
 
 		String rendered;
 		try {
 			Map<String, String> query = getQuery(exchange);
-			rendered = pageRenderer.render(query, null, session);
+			rendered = pageRenderer.render(query, null, user);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -110,7 +110,7 @@ class HttpHandlerImpl implements HttpHandler {
 		return query;
 	}
 
-	public Session getSession(HttpExchange exchange) {
+	public User getUser(HttpExchange exchange) {
 		List<String> cookieStrings = exchange.getRequestHeaders().getOrDefault("Cookie", Collections.emptyList());
 		List<String> cookies = new ArrayList<>();
 		for (String cookieString : cookieStrings) {
@@ -129,6 +129,6 @@ class HttpHandlerImpl implements HttpHandler {
 				default -> otherCookies.put(parts[0], parts[1]);
 			}
 		}
-		return new Session(theme, otherCookies);
+		return new User(theme, otherCookies);
 	}
 }

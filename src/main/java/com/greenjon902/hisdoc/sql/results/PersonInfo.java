@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public record UserInfo(int id, @NotNull UserData data, @NotNull java.util.Map<TagLink, Integer> countedTagLinks, int postCount,
+public record PersonInfo(int id, @NotNull PersonData data, @NotNull java.util.Map<TagLink, Integer> countedTagLinks, int postCount,
 					   int eventCount, @NotNull java.util.List<EventLink> recentEvents, @NotNull java.util.List<EventLink> recentPosts) implements Idable {
-	public UserInfo(int id, @NotNull UserData data, @NotNull Map<TagLink, Integer> countedTagLinks, int postCount, int eventCount, @NotNull List<EventLink> recentEvents, @NotNull List<EventLink> recentPosts) {
+	public PersonInfo(int id, @NotNull PersonData data, @NotNull Map<TagLink, Integer> countedTagLinks, int postCount, int eventCount, @NotNull List<EventLink> recentEvents, @NotNull List<EventLink> recentPosts) {
 		this.id = id;
 		this.data = data;
 		this.countedTagLinks = Collections.unmodifiableMap(countedTagLinks);

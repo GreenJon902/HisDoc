@@ -5,6 +5,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 
-public record ChangeInfo(@Nullable Timestamp date, @Nullable UserLink author, @NotNull String description) {
+public record ChangeInfo(@Nullable Timestamp date, @Nullable PersonLink author, @NotNull String description) {
 
 }

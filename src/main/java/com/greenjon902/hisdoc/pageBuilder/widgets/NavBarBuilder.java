@@ -2,7 +2,7 @@ package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ public class NavBarBuilder implements WidgetBuilder {
 
 		columnLayoutBuilder2.add(new LogoBuilder());
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TIMELINE), "timeline");}});
-		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(USERS), "users");}});
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(PERSONS), "persons");}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TAGS), "tags");}});
 
 		columnLayoutBuilder1.add(columnLayoutBuilder2);
@@ -28,7 +28,7 @@ public class NavBarBuilder implements WidgetBuilder {
 	}
 
 	@Override
-	public void render(HtmlOutputStream stream, Session session) throws IOException {
-		navBar.render(stream, session);
+	public void render(HtmlOutputStream stream, User user) throws IOException {
+		navBar.render(stream, user);
 	}
 }

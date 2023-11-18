@@ -2,7 +2,7 @@ package com.greenjon902.hisdoc.pageBuilder;
 
 import com.greenjon902.hisdoc.pageBuilder.scripts.Script;
 import com.greenjon902.hisdoc.pageBuilder.widgets.AbstractContainerWidgetBuilder;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,11 +16,11 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 	private final Set<Script> scripts = new HashSet<>();
 
 
-	public void render(HtmlOutputStream stream, Session session) throws IOException {
+	public void render(HtmlOutputStream stream, User user) throws IOException {
 		stream.write("<!doctype html>");
 		stream.write("<html>");
-		renderHead(stream, session);
-		renderBody(stream, session);
+		renderHead(stream, user);
+		renderBody(stream, user);
 		renderScripts(stream);
 		stream.write("</html>");
 	}
@@ -31,7 +31,7 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 	 * <p>
 	 * Last theme name is the default.
 	 */
-	private void renderThemes(HtmlOutputStream stream, Session session, String... names) throws IOException {
+	private void renderThemes(HtmlOutputStream stream, User user, String... names) throws IOException {
 		boolean hadEnabled = false;
 		for (int i=0; i < names.length; i++) {
 			String name = names[i];
@@ -40,7 +40,7 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 			stream.write(name);
 			stream.write("\" rel=\"stylesheet\"");
 
-			if (session.theme().equals(name) || (!hadEnabled && i == names.length - 1)) {
+			if (user.theme().equals(name) || (!hadEnabled && i == names.length - 1)) {
 				hadEnabled = true;
 			} else {
 				stream.write(" disabled");
@@ -50,7 +50,7 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 		}
 	}
 
-	protected void renderHead(HtmlOutputStream stream, Session session) throws IOException {
+	protected void renderHead(HtmlOutputStream stream, User user) throws IOException {
 		stream.write("<head>");
 		if (title != null) {
 			stream.write("<title>");
@@ -58,15 +58,15 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 			stream.write("</title>");
 		}
 		stream.write("<link href=\"themes?name=general\" rel=\"stylesheet\">");
-		renderThemes(stream, session, "dark", "light");
+		renderThemes(stream, user, "dark", "light");
 
 		stream.write("</head>");
 	}
 
-	protected void renderBody(HtmlOutputStream stream, Session session) throws IOException {
+	protected void renderBody(HtmlOutputStream stream, User user) throws IOException {
 		if (!childrenBuilders.isEmpty()) {
 			stream.write("<body>");
-			renderAllChildren(stream, session);
+			renderAllChildren(stream, user);
 			stream.write("</body>");
 		}
 	}
@@ -77,14 +77,14 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 		}
 	}
 
-	public void render(OutputStream stream, Session session) throws IOException {
-		render(new HtmlOutputStream(stream), session);
+	public void render(OutputStream stream, User user) throws IOException {
+		render(new HtmlOutputStream(stream), user);
 	}
 
-	public String render(Session session) {
+	public String render(User user) {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
-			render(stream, session);
+			render(stream, user);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -5,11 +5,11 @@
     The event's date 1 are ordered starting at 2, 3, 1, 4.
     See inserts for event info.
 
-    We also create a user with id 2, so it can create the events
+    We also create a person with id 2, so it can create the events
 */
 
-INSERT INTO {prefix}User (uid, userInfo)
-VALUES (2, 'User2');
+INSERT INTO {prefix}Person (uid, personInfo)
+VALUES (2, 'Person2');
 
 
 INSERT INTO {prefix}Event (eid, name, description, postedUid, postedDate, eventDateType, eventDate1,

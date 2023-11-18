@@ -5,7 +5,7 @@ import ch.vorburger.mariadb4j.DB;
 import com.greenjon902.hisdoc.pages.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
 
@@ -52,12 +52,12 @@ public class UITest {
 		return Map.of("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher),
 				"/" + pageNamePrefix + "tag", new TagPageRenderer(dispatcher),
 				"/" + pageNamePrefix + "tags", new TagsPageRenderer(dispatcher),
-				"/" + pageNamePrefix + "user", new UserPageRenderer(dispatcher),
-				"/" + pageNamePrefix + "users", new UsersPageRenderer(dispatcher),
+				"/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher),
+				"/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher),
 				"/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher),
 				"/" + pageNamePrefix + "themes", new PageRenderer() {
 					@Override
-					public String render(Map<String, String> query, String fragment, Session session) throws SQLException {
+					public String render(Map<String, String> query, String fragment, User user) throws SQLException {
 						try {
 							InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("com/greenjon902/hisdoc/pageBuilder/themes/" + query.get("name") + ".css");
 							return new String(fileInputStream.readAllBytes());

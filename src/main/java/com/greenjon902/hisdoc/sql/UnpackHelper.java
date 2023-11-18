@@ -10,12 +10,12 @@ import java.util.concurrent.Callable;
 
 public class UnpackHelper {
 	/**
-	 * Unpacks a singular {@link UserData} from a {@link ResultSet}, this expects the current result to be the one we are
+	 * Unpacks a singular {@link PersonData} from a {@link ResultSet}, this expects the current result to be the one we are
 	 * getting (meaning we do not use {@link ResultSet#next()}).
-	 * This looks at the columns userType, and userData.
+	 * This looks at the columns personType, and personData.
 	 */
-	public static UserData getUserData(ResultSet result) throws SQLException {
-		return new UserData(result.getString("userType"), result.getString("userData"));
+	public static PersonData getPersonData(ResultSet result) throws SQLException {
+		return new PersonData(result.getString("personType"), result.getString("personData"));
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class UnpackHelper {
 	 */
 	public static ChangeInfo getChangeInfo(ResultSet result) throws SQLException {
 		return new ChangeInfo(result.getTimestamp("date"),
-				new UserLink(result.getInt("authorUid"), getUserData(result)),
+				new PersonLink(result.getInt("authorUid"), getPersonData(result)),
 				result.getString("description"));
 	}
 
@@ -66,12 +66,12 @@ public class UnpackHelper {
 	}
 
 	/**
-	 * Unpacks a singular {@link UserLink} from a {@link ResultSet}, this expects the current result to be the one we are
+	 * Unpacks a singular {@link PersonLink} from a {@link ResultSet}, this expects the current result to be the one we are
 	 * getting (meaning we do not use {@link ResultSet#next()}).
-	 * This looks at the columns uid, userInfo.
+	 * This looks at the columns uid, personInfo.
 	 */
-	public static UserLink getUserLink(ResultSet result) throws SQLException {
-		return new UserLink(result.getInt("uid"), getUserData(result));
+	public static PersonLink getPersonLink(ResultSet result) throws SQLException {
+		return new PersonLink(result.getInt("uid"), getPersonData(result));
 	}
 
 	/**
@@ -94,8 +94,8 @@ public class UnpackHelper {
 	 */
 	public static EventInfo getEventInfo(PreparedStatement ps) throws SQLException {
 		Set<TagLink> tagLinks = getSet(ps.getResultSet(), UnpackHelper::getTagLink);
-		nextResultSet(ps, "userLinks");
-		Set<UserLink> userLinks = getSet(ps.getResultSet(), UnpackHelper::getUserLink);
+		nextResultSet(ps, "personLinks");
+		Set<PersonLink> personLinks = getSet(ps.getResultSet(), UnpackHelper::getPersonLink);
 		nextResultSet(ps, "eventLinks");
 		Set<EventLink> eventLinks = getSet(ps.getResultSet(), UnpackHelper::getEventLink);
 		nextResultSet(ps, "changeInfos");
@@ -109,9 +109,9 @@ public class UnpackHelper {
 		DateInfo eventDateInfo = getDateInfo(result);
 
 		Integer postedUid;
-		UserLink postedUser = null;
+		PersonLink postedPerson = null;
 		if ((postedUid = getInteger(result, "postedUid")) != null) {
-			postedUser = new UserLink(postedUid, getUserData(result));
+			postedPerson = new PersonLink(postedUid, getPersonData(result));
 		}
 
 		return new EventInfo(
@@ -119,10 +119,10 @@ public class UnpackHelper {
 				result.getString("name"),
 				result.getString("description"),
 				result.getTimestamp("postedDate"),
-				postedUser,
+				postedPerson,
 				eventDateInfo,
 				tagLinks,
-				userLinks,
+				personLinks,
 				changeInfos,
 				eventLinks,
 				result.getString("details")
@@ -130,11 +130,11 @@ public class UnpackHelper {
 	}
 
 	/**
-	 * Unpacks a single {@link UserLink} from a {@link PreparedStatement}, this expects the current result set to be the
+	 * Unpacks a single {@link PersonLink} from a {@link PreparedStatement}, this expects the current result set to be the
 	 * first item to be unpacked, this also expects the next result to be the one we are
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 */
-	public static UserInfo getUserInfo(PreparedStatement ps) throws SQLException {
+	public static PersonInfo getPersonInfo(PreparedStatement ps) throws SQLException {
 		Map<TagLink, Integer> countedTagLinks = getCountedTagLinks(ps.getResultSet());
 
 		nextResultSet(ps, "postCount");
@@ -153,15 +153,15 @@ public class UnpackHelper {
 		nextResultSet(ps, "recentPosts");
 		List<EventLink> recentPosts = getList(ps.getResultSet(), UnpackHelper::getEventLink);
 
-		nextResultSet(ps, "user");
+		nextResultSet(ps, "person");
 		result = ps.getResultSet();
 		if (!result.next()) {
 			return null;
 		}
 
-		return new UserInfo(
+		return new PersonInfo(
 				result.getInt("uid"),
-				getUserData(result),
+				getPersonData(result),
 				countedTagLinks,
 				postCount, eventCount, recentEvents, recentPosts);
 	}
@@ -263,15 +263,15 @@ public class UnpackHelper {
 		List<EventLink> eventLinks = getList(ps.getResultSet(), UnpackHelper::getEventLink);
 		nextResultSet(ps, "tagLinks");
 		Set<TagLink> tagLinks = getSet(ps.getResultSet(), UnpackHelper::getTagLink);
-		nextResultSet(ps, "userLinks");
-		Set<UserLink> userLinks = getSet(ps.getResultSet(), UnpackHelper::getUserLink);
+		nextResultSet(ps, "personLinks");
+		Set<PersonLink> personLinks = getSet(ps.getResultSet(), UnpackHelper::getPersonLink);
 		nextResultSet(ps, "eventTagRelations");
 		HashMap<EventLink, ArrayList<TagLink>> eventTagRelations = getRelationsFromRaw(ps.getResultSet(), "eid", "tid", eventLinks, tagLinks);
-		nextResultSet(ps, "eventUserRelations");
-		HashMap<EventLink, ArrayList<UserLink>> eventUserRelations = getRelationsFromRaw(ps.getResultSet(), "eid", "uid", eventLinks, userLinks);
+		nextResultSet(ps, "eventPersonRelations");
+		HashMap<EventLink, ArrayList<PersonLink>> eventPersonRelations = getRelationsFromRaw(ps.getResultSet(), "eid", "uid", eventLinks, personLinks);
 
 
-		return new TimelineInfo(eventLinks, tagLinks, userLinks, eventTagRelations, eventUserRelations);
+		return new TimelineInfo(eventLinks, tagLinks, personLinks, eventTagRelations, eventPersonRelations);
 	}
 
 	/**

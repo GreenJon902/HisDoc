@@ -1,7 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 
 import java.io.IOException;
 
@@ -17,7 +17,7 @@ public class TagBuilder implements WidgetBuilder{
 	}
 
 	@Override
-	public void render(HtmlOutputStream stream, Session session) throws IOException {
+	public void render(HtmlOutputStream stream, User user) throws IOException {
 		int red = (color & 0xFF0000) >> 16;
 		int green = (color & 0x00FF00) >> 8;
 		int blue = (color & 0x0000FF);

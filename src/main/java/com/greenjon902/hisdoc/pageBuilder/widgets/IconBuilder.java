@@ -1,7 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 
 import java.io.IOException;
 
@@ -14,12 +14,12 @@ public class IconBuilder implements WidgetBuilder {
 	}
 
 	@Override
-	public void render(HtmlOutputStream stream, Session session) throws IOException {
+	public void render(HtmlOutputStream stream, User user) throws IOException {
 		stream.write("<i class=\"icon " + iconType.classes + "\"></i>");
 	}
 
 	public enum IconType {
-		TIMELINE("fa-light fa-timeline"), USERS("fa-solid fa-users"), TAGS("fa-solid fa-tags");
+		TIMELINE("fa-light fa-timeline"), PERSONS("fa-solid fa-users"), TAGS("fa-solid fa-tags");
 
 		private final String classes;
 

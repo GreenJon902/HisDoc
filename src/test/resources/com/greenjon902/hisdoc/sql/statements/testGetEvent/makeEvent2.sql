@@ -1,6 +1,6 @@
 /*
     Create an event with id 1 and with the standard test data, using a between date.
-    Requires make users to be ran beforehand.
+    Requires make persons to be ran beforehand.
 */
 
 INSERT INTO {prefix}Event (eid, name, description, postedUid, postedDate, eventDateType, eventDate1,

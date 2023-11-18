@@ -16,63 +16,63 @@ import static com.greenjon902.hisdoc.sql.Utils.makeInMemoryConnection;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.DAY;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.HOUR;
 
-public class TestGetUser {
+public class TestGetPerson {
 	@Test
-	public void should_returnNoUser_when_noUsersExist() throws SQLException {
+	public void should_returnNoPerson_when_noPersonsExist() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
 
-		UserInfo userInfo = dispatcher.getUserInfo(1);
+		PersonInfo personInfo = dispatcher.getPersonInfo(1);
 
-		Assertions.assertNull(userInfo);
+		Assertions.assertNull(personInfo);
 	}
 
 	@Test
-	public void should_returnNoUser_when_thatUserDoesNotExist() throws SQLException {
+	public void should_returnNoPerson_when_thatPersonDoesNotExist() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
 
-		dispatcher.prepare("testGetUser/makeUser1").execute();
+		dispatcher.prepare("testGetPerson/makePerson1").execute();
 
-		UserInfo userInfo = dispatcher.getUserInfo(2);
+		PersonInfo personInfo = dispatcher.getPersonInfo(2);
 
-		Assertions.assertNull(userInfo);
+		Assertions.assertNull(personInfo);
 	}
 
 	@Test
-	public void should_returnTheUser_when_usingUser1() throws SQLException {
+	public void should_returnThePerson_when_usingPerson1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
 
-		dispatcher.prepare("testGetUser/makeUser1").execute();
+		dispatcher.prepare("testGetPerson/makePerson1").execute();
 
 
 		//waitForNewline();
 
-		UserInfo userInfo = dispatcher.getUserInfo(1);
+		PersonInfo personInfo = dispatcher.getPersonInfo(1);
 
 		Assertions.assertEquals(
-				new UserInfo(1, UserData.miscellaneous("User1"), Collections.emptyMap(), 0, 0, Collections.emptyList(), Collections.emptyList()),
-				userInfo);
+				new PersonInfo(1, PersonData.miscellaneous("Person1"), Collections.emptyMap(), 0, 0, Collections.emptyList(), Collections.emptyList()),
+				personInfo);
 	}
 
 	@Test
-	public void should_returnTheUser_when_usingUser2() throws SQLException {
+	public void should_returnThePerson_when_usingPerson2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
 
-		dispatcher.prepare("testGetUser/makeUser2").execute();
+		dispatcher.prepare("testGetPerson/makePerson2").execute();
 
-		UserInfo userInfo = dispatcher.getUserInfo(2);
+		PersonInfo personInfo = dispatcher.getPersonInfo(2);
 
 		//waitForNewline();
 
 		Assertions.assertEquals(
-				new UserInfo(2, UserData.miscellaneous("User2"),
+				new PersonInfo(2, PersonData.miscellaneous("Person2"),
 						Map.of(
 							new TagLink(1, "Tag1", 123), 2,
 							new TagLink(2, "Tag2", 321), 1
@@ -80,26 +80,26 @@ public class TestGetUser {
 						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
 				), Collections.emptyList()),
-				userInfo);
+				personInfo);
 	}
 
 	@Test
-	public void should_returnTheCorrectUser_when_usingUser1AndUser2() throws SQLException {
+	public void should_returnTheCorrectPerson_when_usingPerson1AndPerson2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
 
-		dispatcher.prepare("testGetUser/makeUser1").execute();
-		dispatcher.prepare("testGetUser/makeUser2").execute();
+		dispatcher.prepare("testGetPerson/makePerson1").execute();
+		dispatcher.prepare("testGetPerson/makePerson2").execute();
 
-		UserInfo userInfo = dispatcher.getUserInfo(1);
+		PersonInfo personInfo = dispatcher.getPersonInfo(1);
 		Assertions.assertEquals(
-				new UserInfo(1, UserData.miscellaneous("User1"), Collections.emptyMap(), 0, 0, Collections.emptyList(), Collections.emptyList()),
-				userInfo);
+				new PersonInfo(1, PersonData.miscellaneous("Person1"), Collections.emptyMap(), 0, 0, Collections.emptyList(), Collections.emptyList()),
+				personInfo);
 
-		userInfo = dispatcher.getUserInfo(2);
+		personInfo = dispatcher.getPersonInfo(2);
 		Assertions.assertEquals(
-				new UserInfo(2, UserData.miscellaneous("User2"),
+				new PersonInfo(2, PersonData.miscellaneous("Person2"),
 						Map.of(
 								new TagLink(1, "Tag1", 123), 2,
 								new TagLink(2, "Tag2", 321), 1
@@ -107,6 +107,6 @@ public class TestGetUser {
 						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
 				), Collections.emptyList()),
-				userInfo);
+				personInfo);
 	}
 }

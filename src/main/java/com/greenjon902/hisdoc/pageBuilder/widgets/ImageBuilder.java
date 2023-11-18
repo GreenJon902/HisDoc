@@ -1,7 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 
 import java.io.IOException;
 
@@ -13,7 +13,7 @@ public class ImageBuilder implements WidgetBuilder {
 	}
 
 	@Override
-	public void render(HtmlOutputStream stream, Session session) throws IOException {
+	public void render(HtmlOutputStream stream, User user) throws IOException {
 		stream.write(" <img src=\"");
 		stream.write(src);
 		stream.write("\">");

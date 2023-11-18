@@ -61,11 +61,11 @@ public class Dispatcher {
 
 	public void createTables() throws SQLException {
 		prepare("createTables/tag",
-		"createTables/user",
+		"createTables/person",
 		"createTables/event",
 		"createTables/eventEventRelation",
 		"createTables/eventTagRelation",
-		"createTables/eventUserRelation",
+		"createTables/eventPersonRelation",
 		"createTables/changeLog").execute();
 	}
 
@@ -77,12 +77,12 @@ public class Dispatcher {
 		return UnpackHelper.getEventInfo(ps);
 	}
 
-	public UserInfo getUserInfo(int uid) throws SQLException {
-		System.out.println("Getting user info for user with id " + uid + " -----------------");
-		PreparedStatement ps = prepareWithArgs("queries/getUserInfo", "uid", uid);
+	public PersonInfo getPersonInfo(int uid) throws SQLException {
+		System.out.println("Getting person info for person with id " + uid + " -----------------");
+		PreparedStatement ps = prepareWithArgs("queries/getPersonInfo", "uid", uid);
 		ps.execute();
 
-		return UnpackHelper.getUserInfo(ps);
+		return UnpackHelper.getPersonInfo(ps);
 	}
 
 
@@ -110,11 +110,11 @@ public class Dispatcher {
 		return UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getTagLink);
 	}
 
-	public Set<UserLink> getAllUserLinks() throws SQLException {
-		System.out.println("Getting all user links -----------------");
-		PreparedStatement ps = prepareWithArgs("queries/getAllUserLinks");
+	public Set<PersonLink> getAllPersonLinks() throws SQLException {
+		System.out.println("Getting all person links -----------------");
+		PreparedStatement ps = prepareWithArgs("queries/getAllPersonLinks");
 		ps.execute();
 
-		return UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getUserLink);
+		return UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getPersonLink);
 	}
 }

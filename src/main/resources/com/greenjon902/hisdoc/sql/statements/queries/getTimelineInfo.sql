@@ -5,8 +5,8 @@ SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.eventDateType, {pref
 SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.color
 FROM {prefix}Tag;
 
-SELECT {prefix}User.uid, {prefix}User.userType, {prefix}User.userData
-FROM {prefix}User;
+SELECT {prefix}Person.uid, {prefix}Person.personType, {prefix}Person.personData
+FROM {prefix}Person;
 
 SELECT {prefix}EventTagRelation.eid, {prefix}EventTagRelation.tid FROM {prefix}EventTagRelation;
-SELECT {prefix}EventUserRelation.eid, {prefix}EventUserRelation.uid FROM {prefix}EventUserRelation;
+SELECT {prefix}EventPersonRelation.eid, {prefix}EventPersonRelation.uid FROM {prefix}EventPersonRelation;

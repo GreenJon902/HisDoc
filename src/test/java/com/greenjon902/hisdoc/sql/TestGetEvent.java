@@ -73,7 +73,7 @@ public class TestGetEvent {
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
 
-		dispatcher.prepare("testGetEvent/makeUsers").execute();  // Requires this beforehand
+		dispatcher.prepare("testGetEvent/makePersons").execute();  // Requires this beforehand
 		dispatcher.prepare("testGetEvent/makeEvent2").execute();
 
 
@@ -84,7 +84,7 @@ public class TestGetEvent {
 		Assertions.assertEquals(
 				new EventInfo(2,
 						"testing", "i was testing",
-						new Timestamp(1696767960000L), new UserLink(1, UserData.miscellaneous("User1")),
+						new Timestamp(1696767960000L), new PersonLink(1, PersonData.miscellaneous("Person1")),
 						DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)),
 						Collections.emptySet(),
 						Collections.emptySet(),
@@ -101,7 +101,7 @@ public class TestGetEvent {
 		Dispatcher dispatcher = new Dispatcher(conn);
 		dispatcher.createTables();
 
-		dispatcher.prepare("testGetEvent/makeUsers").execute();  // Requires this beforehand
+		dispatcher.prepare("testGetEvent/makePersons").execute();  // Requires this beforehand
 		dispatcher.prepare("testGetEvent/makeEvent1").execute();
 		dispatcher.prepare("testGetEvent/makeEvent2").execute();
 		dispatcher.prepare("testGetEvent/makeEventRelation").execute();
@@ -131,7 +131,7 @@ public class TestGetEvent {
 		Assertions.assertEquals(
 				new EventInfo(2,
 						"testing", "i was testing",
-						new Timestamp(1696767960000L), new UserLink(1, UserData.miscellaneous("User1")),
+						new Timestamp(1696767960000L), new PersonLink(1, PersonData.miscellaneous("Person1")),
 						DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)),
 						Collections.emptySet(),
 						Collections.emptySet(),
@@ -150,7 +150,7 @@ public class TestGetEvent {
 
 		dispatcher.prepare("testGetEvent/makeEvent1").execute();
 		dispatcher.prepare("testGetEvent/makeTags").execute();
-		dispatcher.prepare("testGetEvent/makeUsers").execute();
+		dispatcher.prepare("testGetEvent/makePersons").execute();
 		dispatcher.prepare("testGetEvent/makeChangeLogsFor5And6").execute();
 
 
@@ -180,8 +180,8 @@ public class TestGetEvent {
 		dispatcher.prepare("testGetEvent/makeEvent1").execute();
 		dispatcher.prepare("testGetEvent/makeTags").execute();
 		dispatcher.prepare("testGetEvent/makeTagRelations").execute();
-		dispatcher.prepare("testGetEvent/makeUsers").execute();
-		dispatcher.prepare("testGetEvent/makeUserRelations").execute();
+		dispatcher.prepare("testGetEvent/makePersons").execute();
+		dispatcher.prepare("testGetEvent/makePersonRelations").execute();
 		dispatcher.prepare("testGetEvent/makeChangeLogsFor1And2").execute();
 
 
@@ -194,8 +194,8 @@ public class TestGetEvent {
 						"testing", "i was testing",
 						DateInfo.centered(new Timestamp(1500811811000L), DAY, 4, HOUR),
 						Set.of(new TagLink(2, "Tag2", 321)),
-						Set.of(new UserLink(2, UserData.miscellaneous("User2"))),
-						List.of(new ChangeInfo(new Timestamp(1500811811000L), new UserLink(2, UserData.miscellaneous("User2")), "I did you")),
+						Set.of(new PersonLink(2, PersonData.miscellaneous("Person2"))),
+						List.of(new ChangeInfo(new Timestamp(1500811811000L), new PersonLink(2, PersonData.miscellaneous("Person2")), "I did you")),
 						Collections.emptySet(),
 						null
 						),

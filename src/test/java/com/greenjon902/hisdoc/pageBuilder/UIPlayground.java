@@ -3,7 +3,7 @@ package com.greenjon902.hisdoc.pageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.LogoBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.SeparatorBuilder;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
 
@@ -17,20 +17,20 @@ public class UIPlayground {
 		WebDriver webDriver = new WebDriver(new WebDriverConfig(
 				Map.of("/", new PageRenderer() {
 					@Override
-					public String render(Map<String, String> query, String fragment, Session session) throws SQLException {
+					public String render(Map<String, String> query, String fragment, User session) throws SQLException {
 						// Put builders here	------------------------------------------------------------------------
 						PageBuilder pageBuilder = new PageBuilder();
 						pageBuilder.add(new LogoBuilder());
 						pageBuilder.add(new SeparatorBuilder(0.3));
 
-						return pageBuilder.render(Session.empty());
+						return pageBuilder.render(User.empty());
 						// ---------------------------------------------------------------------------------------------
 					}
 				},
 						"/themes", new PageRenderer() {
 
 							@Override
-							public String render(Map<String, String> query, String fragment, Session session) throws SQLException {
+							public String render(Map<String, String> query, String fragment, User session) throws SQLException {
 								try {
 									InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("com/greenjon902/hisdoc/pageBuilder/themes/" + query.get("name") + ".css");
 									return new String(fileInputStream.readAllBytes());

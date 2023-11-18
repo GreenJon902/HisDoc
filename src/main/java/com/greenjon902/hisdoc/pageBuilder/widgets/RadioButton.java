@@ -1,7 +1,7 @@
 package com.greenjon902.hisdoc.pageBuilder.widgets;
 
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,7 @@ public class RadioButton extends AbstractContainerWidgetBuilder {
 	}
 
 	@Override
-	public void render(HtmlOutputStream stream, Session session) throws IOException {
+	public void render(HtmlOutputStream stream, User user) throws IOException {
 		stream.write("<div class=\"radio-button-holder\">");
 		for (String value : values) {
 			renderButton(stream, value, defaultValue.equals(value));

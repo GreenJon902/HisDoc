@@ -6,22 +6,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public record UserData(@NotNull Type type, @NotNull String userData) {
-	public UserData(@NotNull Type type, @NotNull String userData) {
+public record PersonData(@NotNull Type type, @NotNull String personData) {
+	public PersonData(@NotNull Type type, @NotNull String personData) {
 		this.type = type;
-		this.userData = userData;
+		this.personData = personData;
 	}
 
-	public UserData(@NotNull String type, @NotNull String userData) {
-		this(Type.decode(type), userData);
+	public PersonData(@NotNull String type, @NotNull String personData) {
+		this(Type.decode(type), personData);
 	}
 
-	public static UserData minecraft(String uuid) {
-		return new UserData(Type.MINECRAFT, uuid);
+	public static PersonData minecraft(String uuid) {
+		return new PersonData(Type.MINECRAFT, uuid);
 	}
 
-	public static UserData miscellaneous(String name) {
-		return new UserData(Type.MISCELLANEOUS, name);
+	public static PersonData miscellaneous(String name) {
+		return new PersonData(Type.MISCELLANEOUS, name);
 	}
 
 	public enum Type {

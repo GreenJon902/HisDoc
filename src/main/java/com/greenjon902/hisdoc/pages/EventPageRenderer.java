@@ -7,7 +7,7 @@ import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.*;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
-import com.greenjon902.hisdoc.webDriver.Session;
+import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -26,7 +26,7 @@ public class EventPageRenderer extends PageRenderer {
 		this.dispatcher = dispatcher;
 	}
 
-	public String render(Map<String, String> query, String fragment, Session session) throws SQLException {
+	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
 		if (!query.containsKey("id")) {
 			return "No id given :(";
 		}
@@ -58,7 +58,7 @@ public class EventPageRenderer extends PageRenderer {
 		columnLayoutBuilder.add(right);
 
 		pageBuilder.add(columnLayoutBuilder);
-		return pageBuilder.render(session);
+		return pageBuilder.render(user);
 	}
 
 	private ContainerWidgetBuilder makeLeft(EventInfo eventInfo, LazyLoadAccountNameScript lazyLoadAccountNameScript, PageBuilder pageBuilder) {
@@ -123,16 +123,16 @@ public class EventPageRenderer extends PageRenderer {
 		right.add(relatedEvents);
 		right.add(new BreakBuilder());
 
-		TextBuilder relatedUserTitles = new TextBuilder(AUX_INFO_TITLE);
-		relatedUserTitles.add("Related Users");
-		right.add(relatedUserTitles);
-		TextBuilder relatedUsers = new TextBuilder(NORMAL, "\n");
-		for (UserLink userLink : eventInfo.relatedPlayerInfos()) {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + userLink.data().userData());
-			lazyLoadAccountNameScript.add(userLink.data(), pageVariable);
-			relatedUsers.add(pageVariable.toString(), "user?id=" + userLink.id());
+		TextBuilder relatedPersonTitles = new TextBuilder(AUX_INFO_TITLE);
+		relatedPersonTitles.add("Related Persons");
+		right.add(relatedPersonTitles);
+		TextBuilder relatedPersons = new TextBuilder(NORMAL, "\n");
+		for (PersonLink personLink : eventInfo.relatedPlayerInfos()) {
+			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
+			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
+			relatedPersons.add(pageVariable.toString(), "person?id=" + personLink.id());
 		}
-		right.add(relatedUsers);
+		right.add(relatedPersons);
 
 		return right;
 	}
@@ -148,7 +148,7 @@ public class EventPageRenderer extends PageRenderer {
 
 		if (eventInfo.postedBy() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown:"); }});
 		else {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + eventInfo.postedBy().data().userData());
+			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + eventInfo.postedBy().data().personData());
 			lazyLoadAccountNameScript.add(eventInfo.postedBy().data(), pageVariable);
 			table.add(new TextBuilder(NORMAL) {{ add(pageVariable + ":"); }});
 		}
@@ -156,7 +156,7 @@ public class EventPageRenderer extends PageRenderer {
 
 		// Then we add any changes
 		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + changeInfo.author().data().userData());
+			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + changeInfo.author().data().personData());
 			lazyLoadAccountNameScript.add(changeInfo.author().data(), pageVariable);
 
 			table.add(new TextBuilder(NORMAL) {{ add(changeInfo.date().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))); }});

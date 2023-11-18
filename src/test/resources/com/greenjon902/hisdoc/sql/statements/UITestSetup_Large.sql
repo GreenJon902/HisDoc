@@ -1,4 +1,4 @@
-INSERT INTO {prefix}User (uid, userType, userData) VALUES
+INSERT INTO {prefix}Person (uid, personType, personData) VALUES
 (1, 'mc', '16ad067c-2be5-44e3-8218-58ba4ffba574'),
 (2, 'mc', 'a7ddc940-7137-46b4-af8d-b30e3b64af03'),
 (3, 'mc', '0acde9a4-cdc4-474b-8612-09c3020597af'),
@@ -8831,7 +8831,7 @@ INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES
 (764, 15),
 (764, 17),
 (764, 25);
-INSERT INTO {prefix}EventUserRelation (eid, uid) VALUES
+INSERT INTO {prefix}EventPersonRelation (eid, uid) VALUES
 (1, 2),
 (1, 12),
 (1, 27),

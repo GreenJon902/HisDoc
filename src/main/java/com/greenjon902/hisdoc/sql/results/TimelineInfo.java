@@ -2,14 +2,14 @@ package com.greenjon902.hisdoc.sql.results;
 
 import java.util.*;
 
-public record TimelineInfo(java.util.List<EventLink> eventLinks, java.util.Set<TagLink> tagLinks, java.util.Set<UserLink> userLinks,
+public record TimelineInfo(java.util.List<EventLink> eventLinks, java.util.Set<TagLink> tagLinks, java.util.Set<PersonLink> personLinks,
 						   Map<EventLink, ArrayList<TagLink>> eventTagRelations,
-						   Map<EventLink, ArrayList<UserLink>> eventUserRelations) {
-	public TimelineInfo(List<EventLink> eventLinks, Set<TagLink> tagLinks, Set<UserLink> userLinks, Map<EventLink, ArrayList<TagLink>> eventTagRelations, Map<EventLink, ArrayList<UserLink>> eventUserRelations) {
+						   Map<EventLink, ArrayList<PersonLink>> eventPersonRelations) {
+	public TimelineInfo(List<EventLink> eventLinks, Set<TagLink> tagLinks, Set<PersonLink> personLinks, Map<EventLink, ArrayList<TagLink>> eventTagRelations, Map<EventLink, ArrayList<PersonLink>> eventPersonRelations) {
 		this.eventLinks = Collections.unmodifiableList(eventLinks);
 		this.tagLinks = Collections.unmodifiableSet(tagLinks);
-		this.userLinks = Collections.unmodifiableSet(userLinks);
+		this.personLinks = Collections.unmodifiableSet(personLinks);
 		this.eventTagRelations = Collections.unmodifiableMap(eventTagRelations);
-		this.eventUserRelations = Collections.unmodifiableMap(eventUserRelations);
+		this.eventPersonRelations = Collections.unmodifiableMap(eventPersonRelations);
 	}
 }
