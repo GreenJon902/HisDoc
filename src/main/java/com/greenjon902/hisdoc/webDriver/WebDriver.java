@@ -129,6 +129,6 @@ class HttpHandlerImpl implements HttpHandler {
 				default -> otherCookies.put(parts[0], parts[1]);
 			}
 		}
-		return new User(theme, otherCookies);
+		return new User(theme, otherCookies, exchange.getRemoteAddress());
 	}
 }
