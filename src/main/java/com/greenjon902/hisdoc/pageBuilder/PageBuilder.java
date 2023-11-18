@@ -7,13 +7,15 @@ import com.greenjon902.hisdoc.webDriver.User;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PageBuilder extends AbstractContainerWidgetBuilder {
 	private String title;
 	private final Set<PageVariable> pageVariables = new HashSet<>();
-	private final Set<Script> scripts = new HashSet<>();
+	private final List<Script> scripts = new ArrayList<>();  // List as some scripts add their dependencies
 
 
 	public void render(HtmlOutputStream stream, User user) throws IOException {

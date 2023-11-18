@@ -90,10 +90,10 @@ public class TimelineSearchFilterScript extends Script {
 				"  }\n" +
 				"  setCookie(\"date1\", document.getElementById(\"date1\").value);\n" +
 				"  setCookie(\"date2\", document.getElementById(\"date2\").value);\n" +
-				"  if (document.getElementById(\"dateSelectionMethod-Exclude\").checked) {\n" +
-				"    setCookie(\"dateSelectionMethod\", \"Exclude\");\n" +
-				"  } else if (document.getElementById(\"dateSelectionMethod-Ignore\").checked) {\n" +
-				"    setCookie(\"dateSelectionMethod\", \"Ignore\");\n" +
+				"  if (document.getElementById(\"dateSelectionMethod-Exclusive\").checked) {\n" +
+				"    setCookie(\"dateSelectionMethod\", \"Exclusive\");\n" +
+				"  } else if (document.getElementById(\"dateSelectionMethod-Inclusive\").checked) {\n" +
+				"    setCookie(\"dateSelectionMethod\", \"Inclusive\");\n" +
 				"  }" +
 				"}\n" +
 				"filterChanged()\n\n" +  // Run func by default

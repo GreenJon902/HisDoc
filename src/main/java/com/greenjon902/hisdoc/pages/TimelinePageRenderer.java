@@ -30,16 +30,11 @@ public class TimelinePageRenderer extends PageRenderer {
 
 	private final Dispatcher dispatcher;
 
-	// We cache this since it takes so long to generate all the information
-	private String cache = null;  // TODO: Make a better cache system that checks for changes
-
 	public TimelinePageRenderer(Dispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 	}
 
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
-		if (cache != null) return cache;
-
 		TimelineInfo timelineInfo = dispatcher.getTimelineInfo();
 
 		if (timelineInfo == null) {
@@ -58,8 +53,7 @@ public class TimelinePageRenderer extends PageRenderer {
 		pageBuilder.add(new TextBuilder(MAJOR_SUBTITLE) {{add("Timeline");}});
 		pageBuilder.add(makeBottom(timelineInfo, searchFilterScript));
 
-		cache = pageBuilder.render(user);
-		return cache;
+		return pageBuilder.render(user);
 	}
 
 	private ContainerWidgetBuilder makeBottom(TimelineInfo timelineInfo, TimelineSearchFilterScript searchFilterScript) {
