@@ -2,7 +2,12 @@ package com.greenjon902.hisdoc;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
+import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
+import com.greenjon902.hisdoc.pageBuilder.widgets.NavBarBuilder;
+import com.greenjon902.hisdoc.pageBuilder.widgets.TextBuilder;
+import com.greenjon902.hisdoc.pageBuilder.widgets.TextType;
 import com.greenjon902.hisdoc.pages.*;
+import com.greenjon902.hisdoc.sessionHandler.impl.testSessionHandlerImpl.TestSessionHandlerImpl;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
@@ -16,6 +21,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.greenjon902.hisdoc.sessionHandler.SessionHandler.VerifyResult.*;
 
 public class UITest {
 	public static void main(String[] args) throws Exception {
@@ -49,15 +56,33 @@ public class UITest {
 		dispatcher.createTables();
 		dispatcher.prepare(sqlScriptName).execute();  // Fill with test data
 		
-		return Map.of("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher),
-				"/" + pageNamePrefix + "tag", new TagPageRenderer(dispatcher),
-				"/" + pageNamePrefix + "tags", new TagsPageRenderer(dispatcher),
-				"/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher),
-				"/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher),
-				"/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher),
-				"/" + pageNamePrefix + "themes", new PageRenderer() {
+		return Map.ofEntries(Map.entry("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher)),
+				Map.entry("/" + pageNamePrefix + "tag", new TagPageRenderer(dispatcher)),
+				Map.entry("/" + pageNamePrefix + "tags", new TagsPageRenderer(dispatcher)),
+				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher)),
+				Map.entry("/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher)),
+				Map.entry("/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher)),
+				Map.entry("/" + pageNamePrefix + "addS", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(NO_SESSION))),
+				Map.entry("/" + pageNamePrefix + "addI", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(INVALID_IP))),
+				Map.entry("/" + pageNamePrefix + "addV", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID))),
+				Map.entry("/" + pageNamePrefix + "add", new PageRenderer() {  // A helper page for choosing what to happen on adding
 					@Override
-					public String render(Map<String, String> query, String fragment, User user) throws SQLException {
+					public String render(Map<String, String> query, String fragment, User user) {
+						PageBuilder pageBuilder = new PageBuilder();
+						pageBuilder.add(new NavBarBuilder(pageBuilder));
+						pageBuilder.add(new TextBuilder(TextType.NORMAL, "\n") {{
+							add("This is a testing page, please contact jon if your seeing this (given your not a developer)!\n");
+							add("NO_SESSION", "addS");
+							add("INVALID_IP", "addI");
+							add("VALID", "addV");
+						}});
+
+						return pageBuilder.render(user);
+					}
+				}),
+				Map.entry("/" + pageNamePrefix + "themes", new PageRenderer() {
+					@Override
+					public String render(Map<String, String> query, String fragment, User user) {
 						try {
 							InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("com/greenjon902/hisdoc/pageBuilder/themes/" + query.get("name") + ".css");
 							return new String(fileInputStream.readAllBytes());
@@ -65,6 +90,6 @@ public class UITest {
 							throw new RuntimeException(e);
 						}
 					}
-				});
+				}));
 	}
 }

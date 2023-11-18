@@ -98,7 +98,7 @@ body {
     margin-right: 0.4em;
 }
 
-.tag-container {
+.tag-container, .add-person-container {
     overflow: auto;
 }
 
@@ -268,4 +268,40 @@ input[type=date] {
 
 .icon {
     font-size: 4em;
+}
+
+.code {
+    border-radius: 1em;
+    padding: 0.5em 1em;
+    padding-left: 1em;
+}
+
+textarea {
+    width: calc(100% - 2em);
+    border-radius: 1em;
+    border: none;
+    padding: 0.5em 1em;
+}
+
+.tag-selector[type="checkbox"] {
+    display: none;
+}
+
+.tag-selector {
+    cursor: pointer;
+}
+
+.tag-selector-circle {
+    color: white;
+    margin-right: 0.2em;
+}
+
+.tag-selector-check {
+    position: absolute;
+    color: black;
+}
+
+.checkbox-container {
+    margin-right: 0.5em;
+    display: inline-flex;
 }

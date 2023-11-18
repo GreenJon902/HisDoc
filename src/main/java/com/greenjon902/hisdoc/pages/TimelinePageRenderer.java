@@ -25,6 +25,7 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
 // TODO: Sorting?
 // TODO: Searching?
+// TODO: Open in new tag?
 
 public class TimelinePageRenderer extends PageRenderer {
 

@@ -57,8 +57,14 @@ public abstract class AbstractTextBuilder extends AbstractContainerWidgetBuilder
 	public void add(String text, String href) {
 		add(new SimpleText(text), href);
 	}
+	public void add(String text, String href, boolean newTab) {
+		add(new SimpleText(text), href, newTab);
+	}
 	public void add(WidgetBuilder widget, String href) {
-		add(new LinkedText(widget, href));
+		add(widget, href, false);
+	}
+	public void add(WidgetBuilder widget, String href, boolean newTab) {
+		add(new LinkedText(widget, href, newTab));
 	}
 }
 
@@ -86,12 +92,14 @@ record Element(int id) implements WidgetBuilder {
 /**
  * A piece of text that acts like a html &lt;a> attribute.
  */
-record LinkedText(WidgetBuilder widgetBuilder, String href) implements WidgetBuilder {
+record LinkedText(WidgetBuilder widgetBuilder, String href, boolean newTab) implements WidgetBuilder {
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
 		stream.write("<a class=\"text-link\" href=\"");
 		stream.writeSafe(href);
-		stream.write("\">");
+		stream.write("\"");
+		if (newTab) stream.write(" target=\"_blank\"");
+		stream.write(">");
 		widgetBuilder.render(stream, user);
 		stream.write("</a>");
 	}

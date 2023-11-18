@@ -19,7 +19,8 @@ public class IconBuilder implements WidgetBuilder {
 	}
 
 	public enum IconType {
-		TIMELINE("fa-light fa-timeline"), PERSONS("fa-solid fa-users"), TAGS("fa-solid fa-tags");
+		TIMELINE("fa-light fa-timeline"), PERSONS("fa-solid fa-users"), TAGS("fa-solid fa-tags"),
+		ADD("fa-solid fa-calendar-plus");
 
 		private final String classes;
 

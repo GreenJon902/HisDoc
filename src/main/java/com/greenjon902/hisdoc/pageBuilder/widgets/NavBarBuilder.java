@@ -19,6 +19,7 @@ public class NavBarBuilder implements WidgetBuilder {
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TIMELINE), "timeline");}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(PERSONS), "persons");}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TAGS), "tags");}});
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(ADD), "add");}});
 
 		columnLayoutBuilder1.add(columnLayoutBuilder2);
 		columnLayoutBuilder1.add(new ThemeSwitcherBuilder(pageBuilder));

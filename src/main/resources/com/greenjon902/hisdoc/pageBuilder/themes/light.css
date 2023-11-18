@@ -66,7 +66,7 @@ body {
 
 }
 
-.tag-container {
+.tag-container, .add-person-container {
 
 }
 
@@ -176,4 +176,34 @@ input[type=date] {
 
 .icon {
     color: #000;
+}
+
+.code {
+    background-color: #eee;
+    color: #000;
+}
+
+textarea {
+    background-color: #eee;
+    color: #000;
+}
+
+.tag-selector[type="checkbox"] {
+
+}
+
+.tag-selector {
+    cursor: pointer;
+}
+
+.tag-selector-circle {
+
+}
+
+.tag-selector-check {
+
+}
+
+.inline {
+    display: inline-flex;
 }

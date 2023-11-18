@@ -14,4 +14,9 @@ public class TestSessionHandlerImpl implements SessionHandler {
 	public VerifyResult verify(User user) {
 		return verifyResult;
 	}
+
+	@Override
+	public String getNameOf(User user) {
+		return "TestUserName";
+	}
 }

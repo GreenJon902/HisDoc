@@ -7,7 +7,8 @@ public enum TextType {
 	AUX_INFO_TITLE("h3", "auxiliary-info-title", false),
 	NORMAL("p", "text", false),
 	WARNING("p", "warning-text fas", false),
-	MISC("p", "misc-text", false);
+	MISC("p", "misc-text", false),
+	CODE("p", "code", false);
 
 	public final String tagType;
 	public final String cssClass;
