@@ -151,7 +151,7 @@ public class TimelinePageRenderer extends PageRenderer {
 					true, "date1", "filterChanged()"));
 		}
 		table.add(new TextBuilder(NORMAL) {{add("End Date:");}});
-		if (user.otherCookies().containsKey("date1")) {
+		if (user.otherCookies().containsKey("date2")) {
 			table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
 					timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(),
 					new Timestamp(Date.valueOf(user.otherCookies().get("date2")).getTime()), "date2", "filterChanged()"));

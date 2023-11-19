@@ -108,6 +108,8 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 	}
 
 	public void addScript(Script script) {
-		this.scripts.add(script);
+		if (!this.scripts.contains(script)) {
+			this.scripts.add(script);
+		}
 	}
 }
