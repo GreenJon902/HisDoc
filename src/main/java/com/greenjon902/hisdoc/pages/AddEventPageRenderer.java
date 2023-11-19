@@ -18,8 +18,6 @@ import java.util.Set;
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
 // TODO: Saving event drafts
-// TODO: Date entering widget builder
-// TODO: Tag/event/user list entering widget builder
 
 public class AddEventPageRenderer extends PageRenderer {
 	private final Dispatcher dispatcher;
@@ -87,13 +85,22 @@ public class AddEventPageRenderer extends PageRenderer {
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Events");}});
 		form.add(new TextBuilder(NORMAL) {{
-			add(" Please add all the other events that are related to this event.\n" +
+			add("Please add all the other events that are related to this event.\n" +
 				"Using the ");
 			add("timeline", "timeline", true);
 			add(", click on an event and copy the eid (text in grey under the title) and paste it in this box, " +
 				"separate values with commas - e.g. 32,12,532,2");
 		}});
 		form.add(new FormBuilder.TextInputBuilder("events", 1, "^([0-9]*?,)*?[0-9]*$"));
+
+		form.add(new TextBuilder(SUBTITLE) {{add("Date");}});
+		form.add(new TextBuilder(NORMAL) {{
+			add("""
+					Please add when this event happened, there are two types of dates - "centered", and "between" - which are used to clarify uncertainty.
+					Centered dates have a center which has a precision, meaning it was somewhere on that date to the precision given. It also has a difference and a difference type, show how far either side the event could occurred.
+					Between dates mean that the event could've happened anywhere between the first and second date.""");
+		}});
+		form.add(new FormBuilder.DateInfoInputBuilder(""));
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
 		String mcName = sessionHandler.getNameOf(user);

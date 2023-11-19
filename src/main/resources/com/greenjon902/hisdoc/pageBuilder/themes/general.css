@@ -305,3 +305,7 @@ input[type=date] {
     margin-right: 0.5em;
     display: inline-flex;
 }
+
+[hidden] {
+  display: none !important;
+}
