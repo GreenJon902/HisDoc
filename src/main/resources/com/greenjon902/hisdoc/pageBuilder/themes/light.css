@@ -183,7 +183,7 @@ input[type=date] {
     color: #000;
 }
 
-textarea {
+.text-input {
     background-color: #eee;
     color: #000;
 }
@@ -204,6 +204,3 @@ textarea {
 
 }
 
-.inline {
-    display: inline-flex;
-}

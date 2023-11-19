@@ -182,7 +182,7 @@ input[type=date] {
     color: #eef;
 }
 
-textarea {
+.text-input {
     background-color: #343941;
     color: #eef;
 }
@@ -201,8 +201,4 @@ textarea {
 
 .tag-selector-check {
 
-}
-
-.inline {
-    display: inline-flex;
 }

@@ -93,7 +93,7 @@ public class AddEventPageRenderer extends PageRenderer {
 			add(", click on an event and copy the eid (text in grey under the title) and paste it in this box, " +
 				"separate values with commas - e.g. 32,12,532,2");
 		}});
-		form.add(new FormBuilder.TextInputBuilder("events", 1));
+		form.add(new FormBuilder.TextInputBuilder("events", 1, "^([0-9]*?,)*?[0-9]*$"));
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
 		String mcName = sessionHandler.getNameOf(user);
