@@ -1,12 +1,11 @@
 package com.greenjon902.hisdoc.sql;
 
+import com.greenjon902.hisdoc.pages.AddEventSubmitPageRenderer;
 import com.greenjon902.hisdoc.sql.results.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +36,9 @@ public class Dispatcher {
 		sql.append(checkStatement("statement/start"));
 		String statement = checkStatement(code);
 		for (int i=0; i < arguments.length / 2; i++) {
+			if (!(arguments[i * 2 + 1] instanceof Integer)) {
+				throw new IllegalArgumentException("Can only pass integer arguments, anything else should use ? args");
+			}
 			statement = statement.replace("{" + (String) arguments[i * 2] + "}", arguments[i * 2 + 1].toString());
 		}
 		sql.append(statement);
@@ -116,5 +118,72 @@ public class Dispatcher {
 		ps.execute();
 
 		return UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getPersonLink);
+	}
+
+	public int addEvent(AddEventSubmitPageRenderer.SubmittedEvent submittedEvent) throws SQLException {
+		// Add the actual event
+		System.out.println("Adding event link -----------------");
+		System.out.println(submittedEvent);
+		PreparedStatement ps = prepareWithArgs("upload/addEvent");
+		ps.setString(1, submittedEvent.name());
+		ps.setString(11, submittedEvent.name());  // For getting the event id
+		ps.setString(2, submittedEvent.description());
+		ps.setString(3, submittedEvent.details());
+		ps.setString(4, submittedEvent.dateInfo().type().sqlId);
+		ps.setTimestamp(5, submittedEvent.dateInfo().date1());
+		if (submittedEvent.dateInfo().precision() == null) {
+			ps.setNull(6, Types.VARCHAR);
+		} else {
+			ps.setString(6, submittedEvent.dateInfo().precision().sqlId);
+		}
+		if (submittedEvent.dateInfo().diff() == null) {
+			ps.setNull(7, Types.INTEGER);
+		} else {
+			ps.setInt(7, submittedEvent.dateInfo().diff());
+		}
+		if (submittedEvent.dateInfo().diffType() == null) {
+			ps.setNull(8, Types.VARCHAR);
+		} else {
+			ps.setString(8, submittedEvent.dateInfo().diffType().sqlId);
+		}
+		ps.setDate(9, submittedEvent.dateInfo().date2());
+		ps.setInt(10, submittedEvent.postedBy());
+		ps.execute();
+
+		// Get eid
+		ps.getMoreResults();
+		ResultSet resultSet =  ps.getResultSet();
+		resultSet.next();
+		int eid = resultSet.getInt("eid");
+		if (ps.getMoreResults()) {
+			throw new RuntimeException("Too many event with the same name, name=\"" + submittedEvent.name() + "\"");
+		}
+
+		// Add relations
+		System.out.println("Adding tag relations --");
+		PreparedStatement tagPs = prepareWithArgs("upload/addTagRelation");
+		for (int tagId : submittedEvent.tagIds()) {
+			tagPs.setInt(1, eid);
+			tagPs.setInt(2, tagId);
+			tagPs.execute();
+		}
+
+		System.out.println("Adding person relations --");
+		PreparedStatement personPs = prepareWithArgs("upload/addPersonRelation");
+		for (int personId : submittedEvent.personIds()) {
+			personPs.setInt(1, eid);
+			personPs.setInt(2, personId);
+			personPs.execute();
+		}
+
+		System.out.println("Adding event relations --");
+		PreparedStatement eventPs = prepareWithArgs("upload/addEventRelation");
+		for (int eventId : submittedEvent.relatedEventIds()) {
+			eventPs.setInt(1, eid);
+			eventPs.setInt(2, eventId);
+			eventPs.execute();
+		}
+
+		return eid;
 	}
 }

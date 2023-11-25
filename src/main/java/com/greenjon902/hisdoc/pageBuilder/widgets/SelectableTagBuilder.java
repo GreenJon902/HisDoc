@@ -12,7 +12,7 @@ public class SelectableTagBuilder extends TagBuilder {
 
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
-		stream.write("<input id=\"tag" + id + "\" " +
+		stream.write("<input name=\"tag" + id + "\" id=\"tag" + id + "\" " +
 				"onchange=\"document.getElementById('check-for-tag" + id + "').style.display = (this.checked) ? '' : 'none'\" " +
 				"type=\"checkbox\" class=\"tag-selector\">");
 		stream.write("<label for=\"tag" + id + "\" class=\"tag-selector\">");

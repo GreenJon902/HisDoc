@@ -4,9 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.stream.Stream;
@@ -72,14 +70,24 @@ class HttpHandlerImpl implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		User user = getUser(exchange);
-
 		String rendered;
 		try {
+			User user = getUser(exchange);
+
 			Map<String, String> query = getQuery(exchange);
 			rendered = pageRenderer.render(query, null, user);
 
 		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			e.printStackTrace(pw);
+			rendered = "Sorry, we experienced an error, please send this page to Jon\n\n" + sw;
+
+			exchange.sendResponseHeaders(200, rendered.length());
+			OutputStream os = exchange.getResponseBody();
+			os.write(rendered.getBytes());
+			os.close();
+
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}

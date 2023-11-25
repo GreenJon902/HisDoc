@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS {prefix}Event (
     eventDate2     DATE,  -- The second date for when type is 'b'
 
     PRIMARY KEY (eid),
+    UNIQUE (name),
     CONSTRAINT CheckDate_c_precision CHECK ((eventDateType = 'c') = (eventDatePrecision IS NOT NULL)),
     CONSTRAINT CheckDate_c_diff      CHECK ((eventDateType = 'c') = (eventDateDiff IS NOT NULL)),
     CONSTRAINT CheckDate_c_diffType  CHECK ((eventDateType = 'c') = (eventDateDiffType IS NOT NULL)),

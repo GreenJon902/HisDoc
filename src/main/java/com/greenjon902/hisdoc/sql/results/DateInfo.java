@@ -85,13 +85,16 @@ public record DateInfo(@NotNull Type type, @NotNull Timestamp date1, @Nullable P
 	}
 
 	public enum Type {
-		CENTERED("c"), BETWEEN("b");
+		CENTERED("c", "centered"), BETWEEN("b", "between");
 
 		private static final Map<String, Type> decodeMap;
 		static {
 			HashMap<String, Type> mutDecodeMap = new HashMap<>();
 			for (Type dateType : values()) {
 				mutDecodeMap.put(dateType.sqlId.toLowerCase(), dateType);
+				for (String otherName : dateType.otherNames) {
+					mutDecodeMap.put(otherName, dateType);
+				}
 			}
 			decodeMap = Collections.unmodifiableMap(mutDecodeMap);
 		}
@@ -101,10 +104,12 @@ public record DateInfo(@NotNull Type type, @NotNull Timestamp date1, @Nullable P
 			return decodeMap.get(string.toLowerCase());
 		}
 
-		private final String sqlId;
+		public final String sqlId;
+		private final String[] otherNames;
 
-		Type(String sqlId) {
+		Type(String sqlId, String... otherNames) {
 			this.sqlId = sqlId;
+			this.otherNames = otherNames;
 		}
 	}
 
@@ -125,7 +130,7 @@ public record DateInfo(@NotNull Type type, @NotNull Timestamp date1, @Nullable P
 			return decodeMap.get(string.toLowerCase());
 		}
 
-		private final String sqlId;
+		public final String sqlId;
 		public final int calenderVersion;
 
 		Precision(String sqlId, int calenderVersion) {

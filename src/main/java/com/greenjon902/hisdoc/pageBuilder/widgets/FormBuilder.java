@@ -6,22 +6,29 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class FormBuilder extends AbstractContainerWidgetBuilder {
 	private final String id;
+	private final Method method;
+	private final String action;
 
-	public FormBuilder(@Nullable String id) {
+	public FormBuilder(@Nullable String id, @NotNull Method method, String action) {
 		this.id = id;
+		this.method = method;
+		this.action = action;
 	}
 
-	public FormBuilder() {
-		this(null);
+	public FormBuilder(@NotNull Method method, String action) {
+		this(null, method, action);
 	}
 
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
-		stream.write("<form onkeydown=\"return event.key != 'Enter';\"");
+		stream.write("<form onkeydown=\"return event.key != 'Enter';\" method=\"" + method.string + "\" action=\"" + action + "\"");
 		if (id != null) stream.write( " id=\"" + id + "\"");
 		stream.write(">");
 		renderAllChildren(stream, user);
@@ -32,6 +39,16 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		@Override
 		public void render(HtmlOutputStream stream, User user) throws IOException {
 			stream.write("<input type=\"submit\" value=\"Submit\">");
+		}
+	}
+
+	public enum Method {
+		POST("POST"), GET("GET");
+
+		public final String string;
+
+		Method(String string) {
+			this.string = string;
 		}
 	}
 
@@ -84,11 +101,9 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 	}
 
 	public static class DateInfoInputBuilder implements WidgetBuilder {
-		private final String name;
 		private final RadioButton dateType;
 
-		public DateInfoInputBuilder(String name) {
-			this.name = name;
+		public DateInfoInputBuilder() {
 
 			this.dateType = new RadioButton("dateType", "Centered", List.of("Centered", "Between"),
 					"""
@@ -118,7 +133,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 
 			stream.write("<div style=\"display: grid;\">");
 			stream.write("<label id=\"datecLabel1\" for=\"datec1\">Center: </label>");
-			stream.write("<input id=\"datec1\" name=\"datec1\" type=\"datetime-local\">");
+			stream.write("<input id=\"datec1\" name=\"datec1\" type=\"datetime-local\" value=\"" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")) + "\">");
 
 			stream.write("""
 						<label id="datecPrecisionLabel" for="datecPrecision">Precision: </label>
@@ -129,7 +144,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 						</select>""");
 
 			stream.write("<label id=\"datecDiffLabel\" for=\"datecDiff\">Diff: </label>");
-			stream.write("<input id=\"datecDiff\" name=\"datecDiff\" type=\"number\">");
+			stream.write("<input id=\"datecDiff\" name=\"datecDiff\" type=\"number\" value=\"0\">");
 			stream.write("""
 						<label id="datecDiffTypeLabel" for="datecDiffType">Diff Type: </label>
 						<select id="datecDiffType" name="datecDiffType">
@@ -141,9 +156,9 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 
 			// Hide by default
 			stream.write("<label id=\"datebLabel1\" for=\"dateb1\" hidden>Start: </label>");
-			stream.write("<input id=\"dateb1\" name=\"dateb1\" type=\"date\" hidden/>");
+			stream.write("<input id=\"dateb1\" name=\"dateb1\" type=\"date\" value=\"" + LocalDate.now() + "\" hidden/>");
 			stream.write("<label id=\"datebLabel2\" for=\"dateb2\" hidden>End: </label>");
-			stream.write("<input id=\"dateb2\" name=\"dateb2\" type=\"date\" hidden/>");
+			stream.write("<input id=\"dateb2\" name=\"dateb2\" type=\"date\" value=\"" + LocalDate.now() + "\" hidden/>");
 			stream.write("</div>");
 		}
 	}

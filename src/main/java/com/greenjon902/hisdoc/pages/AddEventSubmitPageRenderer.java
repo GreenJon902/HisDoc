@@ -1,0 +1,103 @@
+package com.greenjon902.hisdoc.pages;
+
+import com.greenjon902.hisdoc.sessionHandler.SessionHandler;
+import com.greenjon902.hisdoc.sql.Dispatcher;
+import com.greenjon902.hisdoc.sql.results.DateInfo;
+import com.greenjon902.hisdoc.webDriver.PageRenderer;
+import com.greenjon902.hisdoc.webDriver.User;
+import org.jetbrains.annotations.NotNull;
+
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+
+public class AddEventSubmitPageRenderer extends PageRenderer {
+	private final Dispatcher dispatcher;
+	private final SessionHandler sessionHandler;
+
+	public AddEventSubmitPageRenderer(Dispatcher dispatcher, SessionHandler sessionHandler) {
+		this.dispatcher = dispatcher;
+		this.sessionHandler = sessionHandler;
+	}
+
+	@Override
+	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
+		try {
+			if (sessionHandler.verify(user, query) != SessionHandler.VerifyResult.VALID) {
+				throw new IllegalStateException("You are not verified, you should not be on this page!");
+			}
+			int postedBy = sessionHandler.getPersonId(user, query);
+
+			SubmittedEvent submittedEvent = SubmittedEvent.fromQuery(query, postedBy);
+			int eid = dispatcher.addEvent(submittedEvent);
+			return "Your mother, <a href='event=" + eid + "'>" + eid + "</a>";
+
+		} catch (Exception e) {
+			throw new RuntimeException("An error occurred,\nquery=\n" + query + "\n\n", e);
+		}
+	}
+
+	public record SubmittedEvent(String name, String description, String details, ArrayList<Integer> tagIds,
+								 ArrayList<Integer> personIds, int[] relatedEventIds, DateInfo dateInfo, int postedBy) {
+		public static @NotNull SubmittedEvent fromQuery(@NotNull Map<String, String> query, int postedBy) {
+			String name = query.get("name");
+			String description = query.get("description");
+			String details = query.get("details");
+
+			ArrayList<Integer> personIds = new ArrayList<>();
+			ArrayList<Integer> tagIds = new ArrayList<>();
+			for (String key : query.keySet()) {
+				if (key.startsWith("person") && query.get(key).equals("on")) {
+					personIds.add(Integer.valueOf(key.replace("person", "")));
+				} else if (key.startsWith("tag") && query.get(key).equals("on")) {
+					tagIds.add(Integer.valueOf(key.replace("tag", "")));
+				}
+			}
+
+			String sEventIds = query.get("events");
+
+			String dateType = query.get("dateType");
+			String datec1 = query.get("datec1");
+			String datecPrecision = query.get("datecPrecision");
+			String datecDiff = query.get("datecDiff");
+			String datecDiffType = query.get("datecDiffType");
+			String dateb1 = query.get("dateb1");
+			String dateb2 = query.get("dateb2");
+
+			if (name == null || description == null || details == null || sEventIds == null || dateType == null ||
+					datec1 == null || datecPrecision == null || datecDiff == null || datecDiffType == null ||
+					dateb1 == null || dateb2 == null) {
+				throw new RuntimeException("Got a null value");
+			}
+
+			int[] eventIds;
+			if (sEventIds != "") {
+				eventIds = Arrays.stream(sEventIds.split(",")).mapToInt(Integer::parseInt).toArray();
+			} else {
+				eventIds = new int[0];
+			}
+
+			Timestamp center = Timestamp.valueOf(convertTimestampSeparators(datec1));
+			Timestamp start = new Timestamp(Date.valueOf(dateb1).getTime());
+			Date end = Date.valueOf(dateb2);
+
+			DateInfo dateInfo = switch (DateInfo.Type.decode(dateType)) {
+				case CENTERED -> DateInfo.centered(center, DateInfo.Precision.decode(datecPrecision), Integer.parseInt(datecDiff), DateInfo.Precision.decode(datecDiffType));
+				case BETWEEN -> DateInfo.between(start, end);
+			};
+
+
+			return new SubmittedEvent(name, description, details, tagIds, personIds, eventIds, dateInfo, postedBy);
+		}
+		 private static String convertTimestampSeparators(String input) {
+			 char[] chars = input.toCharArray();
+			 chars[10] = ' ';
+			 chars[13] = ':';
+			 chars[16] = ':';
+			 return new String(chars);
+		 }
+	}
+}

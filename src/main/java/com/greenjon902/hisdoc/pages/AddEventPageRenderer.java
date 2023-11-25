@@ -3,6 +3,7 @@ package com.greenjon902.hisdoc.pages;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
+import com.greenjon902.hisdoc.pageBuilder.scripts.UnloadMessageSenderScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sessionHandler.SessionHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
@@ -17,8 +18,12 @@ import java.util.Set;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
-// TODO: Saving event drafts
-
+/**
+ * A page that can be used to add an event. This will check for verification of the user, to ensure they can add an
+ * event, and that it can be registered under their {@link com.greenjon902.hisdoc.sql.results.PersonInfo person}.
+ * Data will be uploaded with cookies using the {@link AddEventSubmitPageRenderer}.
+ * On a successful submit, data will then be cleared from local storage.
+ */
 public class AddEventPageRenderer extends PageRenderer {
 	private final Dispatcher dispatcher;
 	private final SessionHandler sessionHandler;
@@ -33,10 +38,13 @@ public class AddEventPageRenderer extends PageRenderer {
 		PageBuilder pageBuilder = new PageBuilder();
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();
 		pageBuilder.addScript(lazyLoadAccountNameScript);
+		UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
+				"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
+		pageBuilder.addScript(unloadMessageSenderScript);
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
-		switch (sessionHandler.verify(user)) {
+		switch (sessionHandler.verify(user, query)) {
 			case NO_SESSION -> renderNoSession(pageBuilder);
 			case INVALID_IP -> renderInvalidIp(pageBuilder, user);
 			case VALID -> renderValid(pageBuilder, user, lazyLoadAccountNameScript);
@@ -45,8 +53,9 @@ public class AddEventPageRenderer extends PageRenderer {
 		return pageBuilder.render(user);
 	}
 
+
 	private void renderValid(PageBuilder pageBuilder, User user, LazyLoadAccountNameScript lazyLoadAccountNameScript) throws SQLException {
-		FormBuilder form = new FormBuilder();
+		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.GET, "addEventSubmit");
 
 		form.add(new TextBuilder(TITLE) {{add("Add Event");}});
 
@@ -100,7 +109,7 @@ public class AddEventPageRenderer extends PageRenderer {
 					Centered dates have a center which has a precision, meaning it was somewhere on that date to the precision given. It also has a difference and a difference type, show how far either side the event could occurred.
 					Between dates mean that the event could've happened anywhere between the first and second date.""");
 		}});
-		form.add(new FormBuilder.DateInfoInputBuilder(""));
+		form.add(new FormBuilder.DateInfoInputBuilder());
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
 		String mcName = sessionHandler.getNameOf(user);
@@ -135,7 +144,7 @@ public class AddEventPageRenderer extends PageRenderer {
 			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
 			personNameText.add(pageVariable.toString());
 
-			CheckBoxBuilder checkBoxBuilder = new CheckBoxBuilder(personNameText, "user" + personLink.id());
+			CheckBoxBuilder checkBoxBuilder = new CheckBoxBuilder(personNameText, "person" + personLink.id());
 
 			container.add(checkBoxBuilder);
 		}
@@ -166,6 +175,6 @@ public class AddEventPageRenderer extends PageRenderer {
 	private void renderNoSession(PageBuilder pageBuilder) {
 		pageBuilder.add(new TextBuilder(TITLE) {{add("Invalid Session");}});
 		pageBuilder.add(new TextBuilder(NORMAL) {{add("We could not verify you as a player, please run this command in game:");}});
-		pageBuilder.add(new TextBuilder(CODE) {{add("/hs addEvent");}});
+		pageBuilder.add(new TextBuilder(CODE) {{add("/hs addEvent.sql");}});
 	}
 }

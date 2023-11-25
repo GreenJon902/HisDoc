@@ -63,6 +63,7 @@ public class UITest {
 				Map.entry("/" + pageNamePrefix + "addS", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(NO_SESSION))),
 				Map.entry("/" + pageNamePrefix + "addI", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(INVALID_IP))),
 				Map.entry("/" + pageNamePrefix + "addV", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID))),
+				Map.entry("/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID))),
 				Map.entry("/" + pageNamePrefix + "add", new PageRenderer() {  // A helper page for choosing what to happen on adding
 					@Override
 					public String render(Map<String, String> query, String fragment, User user) {
