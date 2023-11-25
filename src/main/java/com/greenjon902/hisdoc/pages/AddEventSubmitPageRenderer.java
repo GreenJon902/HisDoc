@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
+// FIXME: adding events really needs to use POST to fix text and give us a longer length
+
 public class AddEventSubmitPageRenderer extends PageRenderer {
 	private final Dispatcher dispatcher;
 	private final SessionHandler sessionHandler;
