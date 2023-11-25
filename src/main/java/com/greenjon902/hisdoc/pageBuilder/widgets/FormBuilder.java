@@ -60,19 +60,25 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		private final String name;
 		private final int rows;
 		private final String pattern;
+		private final String updateFunc;
 
 		public TextInputBuilder(String name, int rows) {
 			this(name, rows, "");
 		}
 
-		public TextInputBuilder(String name, int rows, @NotNull String pattern) {
+		public TextInputBuilder(String name, int rows, @NotNull String pattern, @Nullable String updateFunc) {
 			this.name = name;
 			this.rows = rows;
 			this.pattern = pattern;
+			this.updateFunc = updateFunc;
 
 			if (!pattern.isEmpty() && rows != 1) {
 				System.out.println("Text builder cannot have a multi row text input when a pattern is set!");
 			}
+		}
+
+		public TextInputBuilder(String name, int rows, @NotNull String pattern) {
+			this(name, rows, "", "");
 		}
 
 		@Override
@@ -84,7 +90,11 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 				stream.write("input type=\"text\"");
 			}
 
-			stream.write(" class=\"text-input\" name=\"" + name + "\" rows=\"" + rows + "\"");
+			if (updateFunc != null) {
+				stream.write(" oninput=\"" + updateFunc + "\"");
+			}
+
+			stream.write(" class=\"text-input\" name=\"" + name + "\" id=\"" + name + "\" rows=\"" + rows + "\"");
 			if (!pattern.isEmpty()) {
 				stream.write(" pattern=\"");
 				stream.write(pattern);

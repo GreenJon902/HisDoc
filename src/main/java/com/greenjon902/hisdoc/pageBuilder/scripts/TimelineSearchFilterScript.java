@@ -52,6 +52,7 @@ public class TimelineSearchFilterScript extends Script {
 				"  var dateInclusive = document.getElementById(\"dateSelectionMethod-Inclusive\").checked;\n" +
 				"  var filterStartDate = Date.parse(document.getElementById(\"date1\").value);\n" +
 				"  var filterEndDate = Date.parse(document.getElementById(\"date2\").value);\n" +
+				"  var filterText = document.getElementById(\"filterText\").value;\n" +
 
 				"  for (var eventId in filterIdsForEvent) {\n" +
 				"    let event = document.getElementById(eventId);\n" +
@@ -79,6 +80,8 @@ public class TimelineSearchFilterScript extends Script {
 				"          included = true;\n" +
 				"        }\n" +
 				"      }\n" +
+				"\n" +
+				"      included = included && event.id.toLowerCase().includes(filterText.toLowerCase());\n" +
 				"    }\n" +
 				"\n" +
 				"    event.hidden = !included;\n" +

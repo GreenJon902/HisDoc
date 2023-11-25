@@ -167,6 +167,13 @@ public class TimelinePageRenderer extends PageRenderer {
 		table.add(new RadioButton("dateSelectionMethod",
 				user.otherCookies().getOrDefault("dateSelectionMethod", "Inclusive"),
 				List.of("Exclusive", "Inclusive"), "filterChanged()"));
+
+		table.add(new BreakBuilder());
+		table.add(new BreakBuilder());
+		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("Search:");}});
+		table.add(new BreakBuilder());
+		table.add(new TextBuilder(NORMAL) {{add("Text: ");}});
+		table.add(new FormBuilder.TextInputBuilder("filterText", 1, "", "filterChanged()"));
 		filterButtons.add(table);
 		top.add(filterButtons);
 
