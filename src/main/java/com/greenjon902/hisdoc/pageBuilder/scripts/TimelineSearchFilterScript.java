@@ -58,9 +58,15 @@ public class TimelineSearchFilterScript extends Script {
 				"    let eventFilterIds = filterIdsForEvent[eventId];\n" +
 				"    let included = false;\n" +
 				"\n" +
-				"    if ((dateInclusive && (filterStartDate <= eventDates[eventId][1] && eventDates[eventId][0] <= filterEndDate)) || " +
-				"        (filterStartDate <= eventDates[eventId][0] && eventDates[eventId][1] <= filterEndDate)) {" +
+				"    let startAllowed = isNaN(filterStartDate);" +
+				"    startAllowed = startAllowed || dateInclusive && (filterStartDate <= eventDates[eventId][1]);" +
+				"    startAllowed = startAllowed || !dateInclusive && (filterStartDate <= eventDates[eventId][0]);" +
 				"\n" +
+				"    let endAllowed = isNaN(filterEndDate);" +
+				"    endAllowed = endAllowed || dateInclusive && (eventDates[eventId][0] <= filterEndDate);" +
+				"    endAllowed = endAllowed || !dateInclusive && (eventDates[eventId][1] <= filterEndDate);" +
+				"\n" +
+				"    if (startAllowed && endAllowed) {" +
 				"      for (let i=0; i<eventFilterIds.length; i++) {\n" +
 				"        let excludeFilter = document.getElementById(eventFilterIds[i] + \"-Exclude\");\n" +
 				"        if (excludeFilter.checked) {\n" +

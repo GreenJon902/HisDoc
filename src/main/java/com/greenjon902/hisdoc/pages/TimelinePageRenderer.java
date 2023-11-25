@@ -49,10 +49,21 @@ public class TimelinePageRenderer extends PageRenderer {
 		pageBuilder.addScript(searchFilterScript);
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
-		pageBuilder.add(new TextBuilder(MAJOR_SUBTITLE) {{add("Filters");}});
-		pageBuilder.add(makeTop(timelineInfo, pageBuilder, lazyLoadAccountNameScript, user, searchFilterScript));
-		pageBuilder.add(new TextBuilder(MAJOR_SUBTITLE) {{add("Timeline");}});
-		pageBuilder.add(makeBottom(timelineInfo, searchFilterScript));
+
+		if (timelineInfo.eventLinks().isEmpty()) {
+			pageBuilder.add(new TextBuilder(NORMAL) {{
+				add("No events exist"); }});
+
+		} else {
+			pageBuilder.add(new TextBuilder(MAJOR_SUBTITLE) {{
+				add("Filters");
+			}});
+			pageBuilder.add(makeTop(timelineInfo, pageBuilder, lazyLoadAccountNameScript, user, searchFilterScript));
+			pageBuilder.add(new TextBuilder(MAJOR_SUBTITLE) {{
+				add("Timeline");
+			}});
+			pageBuilder.add(makeBottom(timelineInfo, searchFilterScript));
+		}
 
 		return pageBuilder.render(user);
 	}
@@ -141,24 +152,16 @@ public class TimelinePageRenderer extends PageRenderer {
 		table.add(new BreakBuilder());
 
 		table.add(new TextBuilder(NORMAL) {{add("Start Date:");}});
-		if (user.otherCookies().containsKey("date1")) {
-			table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-					timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(),
-					new Timestamp(Date.valueOf(user.otherCookies().get("date1")).getTime()), "date1", "filterChanged()"));
+		if (user.otherCookies().containsKey("date1") && !user.otherCookies().get("date1").isEmpty()) {
+			table.add(new DateSelector(new Timestamp(Date.valueOf(user.otherCookies().get("date1")).getTime()), "date1", "filterChanged()"));
 		} else {
-			table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-					timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(),
-					true, "date1", "filterChanged()"));
+			table.add(new DateSelector("date1", "filterChanged()"));
 		}
 		table.add(new TextBuilder(NORMAL) {{add("End Date:");}});
-		if (user.otherCookies().containsKey("date2")) {
-			table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-					timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(),
-					new Timestamp(Date.valueOf(user.otherCookies().get("date2")).getTime()), "date2", "filterChanged()"));
+		if (user.otherCookies().containsKey("date2") && !user.otherCookies().get("date2").isEmpty()) {
+			table.add(new DateSelector(new Timestamp(Date.valueOf(user.otherCookies().get("date2")).getTime()), "date2", "filterChanged()"));
 		} else {
-			table.add(new DateSelector(timelineInfo.eventLinks().get(0).dateInfo().date1(),
-					timelineInfo.eventLinks().get(timelineInfo.eventLinks().size() - 1).dateInfo().date1(),
-					false, "date2", "filterChanged()"));
+			table.add(new DateSelector("date2", "filterChanged()"));
 		}
 		table.add(new TextBuilder(NORMAL) {{add("Selection Method:");}});
 		table.add(new RadioButton("dateSelectionMethod",
