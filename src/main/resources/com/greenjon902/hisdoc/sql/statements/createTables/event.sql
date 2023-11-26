@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS {prefix}Event (
     name          VARCHAR(255) NOT NULL,
     description   LONGTEXT NOT NULL,
     details       LONGTEXT,
-    postedUid     INTEGER              REFERENCES {prefix}Person(uid),
+    postedPid     INTEGER              REFERENCES {prefix}Person(pid),
     postedDate    TIMESTAMP NULL DEFAULT NULL,
 
     eventDateType      ENUM('c', 'b') NOT NULL, -- 'c': centered around date1, with precision and a difference, 'b': between two dates

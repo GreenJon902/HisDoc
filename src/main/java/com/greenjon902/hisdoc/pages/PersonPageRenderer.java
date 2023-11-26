@@ -33,7 +33,7 @@ public class PersonPageRenderer extends PageRenderer {
 		try {
 			personId = Integer.parseInt(query.get("id"));
 		} catch (NumberFormatException e) {
-			return "Malformed person id :(\nUID: " + query.get("id");
+			return "Malformed person id :(\nPID: " + query.get("id");
 		}
 		PersonInfo personInfo = dispatcher.getPersonInfo(personId);
 
@@ -66,7 +66,7 @@ public class PersonPageRenderer extends PageRenderer {
 		left.add(titleBuilder);
 
 		TextBuilder idTextBuilder = new TextBuilder(MISC);
-		idTextBuilder.add("UID: " + personInfo.id());
+		idTextBuilder.add("PID: " + personInfo.id());
 		left.add(idTextBuilder);
 
 		TextBuilder recentEventsTitle = new TextBuilder(SUBTITLE);
@@ -135,7 +135,7 @@ public class PersonPageRenderer extends PageRenderer {
 
 		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
 		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + personInfo.data().personData());
-		miscInfo.add("UUID: " + personInfo.data().personData());
+		miscInfo.add("UPID: " + personInfo.data().personData());
 		miscInfo.add("Post Count: " + personInfo.postCount());
 		miscInfo.add("Event Count: " + personInfo.eventCount());
 		right.add(miscInfo);

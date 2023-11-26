@@ -1,2 +1,2 @@
-SELECT {prefix}Person.uid, {prefix}Person.personType, {prefix}Person.personData
+SELECT {prefix}Person.pid, {prefix}Person.personType, {prefix}Person.personData
 FROM {prefix}Person;

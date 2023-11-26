@@ -135,10 +135,10 @@ tags = list(parse_text_info(tags_text_file))
 
 def make_event_list():
     c_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDatePrecision, eventDateDiff, "
-               "eventDateDiffType, postedDate, description, postedUid)"
+               "eventDateDiffType, postedDate, description, postedPid)"
                "VALUES \n")
     b_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDate2, "
-               "postedDate, description, postedUid)"
+               "postedDate, description, postedPid)"
                "VALUES \n")
 
     eid = 1
@@ -147,18 +147,18 @@ def make_event_list():
         description = event_text[1]
         date1 = (max_date - timedelta(days=randint(0, max_date_days_since_min)))
         postedDate = (max_date - timedelta(days=randint(0, max_date_days_since_min)))
-        postedUid = randint(1, len(persons))
+        postedPid = randint(1, len(persons))
 
         if randint(0, 1) == 0:  # C Date
             date_precision = ["d", "h", "m"][randint(0, 2)]
             date_diff = randint(0, date_c_max_diff)
             date_diff_type = ["d", "h", "m"][randint(0, 2)]
 
-            c_dates += f"({eid}, '{name}', 'c', {format_timestamp(date1)}, '{date_precision}', {date_diff}, '{date_diff_type}', {format_timestamp(postedDate)}, '{description}', {postedUid}), \n"
+            c_dates += f"({eid}, '{name}', 'c', {format_timestamp(date1)}, '{date_precision}', {date_diff}, '{date_diff_type}', {format_timestamp(postedDate)}, '{description}', {postedPid}), \n"
         else:  # B Date
             date2 = (date1 + timedelta(days=randint(0, max_date_days_since_min)))
 
-            b_dates += f"({eid}, '{name}', 'b', {format_timestamp(date1)}, {format_timestamp(date2)}, {format_timestamp(postedDate)}, '{description}', {postedUid}), \n"
+            b_dates += f"({eid}, '{name}', 'b', {format_timestamp(date1)}, {format_timestamp(date2)}, {format_timestamp(postedDate)}, '{description}', {postedPid}), \n"
 
         eid += 1
 
@@ -172,7 +172,7 @@ def make_event_list():
 
 
 def make_person_list():
-    string = "INSERT INTO {prefix}Person (uid, personType, personData) VALUES \n"
+    string = "INSERT INTO {prefix}Person (pid, personType, personData) VALUES \n"
 
     for n, person in enumerate(persons):
         string += f"({n + 1}, '{person[0]}', '{person[1]}'), \n"
@@ -212,7 +212,7 @@ def make_event_event_relation():
 
 
 def make_event_person_relation():
-    string = "INSERT INTO {prefix}EventPersonRelation (eid, uid) VALUES \n"
+    string = "INSERT INTO {prefix}EventPersonRelation (eid, pid) VALUES \n"
 
     done = []  # To stop the same thing but the other way round
 

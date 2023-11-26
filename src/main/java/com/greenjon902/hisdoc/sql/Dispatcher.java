@@ -79,9 +79,9 @@ public class Dispatcher {
 		return UnpackHelper.getEventInfo(ps);
 	}
 
-	public PersonInfo getPersonInfo(int uid) throws SQLException {
-		System.out.println("Getting person info for person with id " + uid + " -----------------");
-		PreparedStatement ps = prepareWithArgs("queries/getPersonInfo", "uid", uid);
+	public PersonInfo getPersonInfo(int pid) throws SQLException {
+		System.out.println("Getting person info for person with id " + pid + " -----------------");
+		PreparedStatement ps = prepareWithArgs("queries/getPersonInfo", "pid", pid);
 		ps.execute();
 
 		return UnpackHelper.getPersonInfo(ps);

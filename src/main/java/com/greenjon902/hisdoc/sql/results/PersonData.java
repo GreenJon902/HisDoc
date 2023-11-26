@@ -16,8 +16,8 @@ public record PersonData(@NotNull Type type, @NotNull String personData) {
 		this(Type.decode(type), personData);
 	}
 
-	public static PersonData minecraft(String uuid) {
-		return new PersonData(Type.MINECRAFT, uuid);
+	public static PersonData minecraft(String upid) {
+		return new PersonData(Type.MINECRAFT, upid);
 	}
 
 	public static PersonData miscellaneous(String name) {

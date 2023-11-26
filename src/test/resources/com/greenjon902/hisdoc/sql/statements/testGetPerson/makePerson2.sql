@@ -8,26 +8,26 @@
     The person has created 2 events.
 */
 
-INSERT INTO {prefix}Person (uid, personType, personData)
+INSERT INTO {prefix}Person (pid, personType, personData)
 VALUES (2, 'misc', 'Person2');
 
 
-INSERT INTO {prefix}Event (eid, name, description, postedUid, postedDate, eventDateType, eventDate1,
+INSERT INTO {prefix}Event (eid, name, description, postedPid, postedDate, eventDateType, eventDate1,
 eventDatePrecision, eventDateDiff, eventDateDiffType)
 VALUES (1, 'testing1', 'i was testing', null, null, 'c',
 TIMESTAMP('2017-07-24',  '13:10:11'), 'd', 4, 'h');
 
-INSERT INTO {prefix}Event (eid, name, description, postedUid, postedDate, eventDateType, eventDate1,
+INSERT INTO {prefix}Event (eid, name, description, postedPid, postedDate, eventDateType, eventDate1,
 eventDate2)
 VALUES (2, 'testing2', 'i was testing again', 2, TIMESTAMP('2023/10/08',  '13:26:00'), 'b',
 TIMESTAMP('2017-07-23',  '13:10:11'), DATE('2017-08-23'));
 
-INSERT INTO {prefix}Event (eid, name, description, postedUid, postedDate, eventDateType, eventDate1,
+INSERT INTO {prefix}Event (eid, name, description, postedPid, postedDate, eventDateType, eventDate1,
 eventDate2)
 VALUES (3, 'testing3', 'more testing', 2, TIMESTAMP('2023/10/08',  '13:26:00'), 'b',
 TIMESTAMP('2017-07-25',  '13:10:11'), DATE('2017-08-23'));
 
-INSERT INTO {prefix}EventPersonRelation (eid, uid)
+INSERT INTO {prefix}EventPersonRelation (eid, pid)
 VALUES (1, 2), (2, 2);
 
 

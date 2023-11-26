@@ -21,11 +21,11 @@ public class UnpackHelper {
 	/**
 	 * Unpacks a singular {@link ChangeInfo} from a {@link ResultSet}, this expects the current result to be the one we are
 	 * getting (meaning we do not use {@link ResultSet#next()}).
-	 * This looks at the columns date, authorUid, authorInfo, and description.
+	 * This looks at the columns date, authorPid, authorInfo, and description.
 	 */
 	public static ChangeInfo getChangeInfo(ResultSet result) throws SQLException {
 		return new ChangeInfo(result.getTimestamp("date"),
-				new PersonLink(result.getInt("authorUid"), getPersonData(result)),
+				new PersonLink(result.getInt("authorPid"), getPersonData(result)),
 				result.getString("description"));
 	}
 
@@ -68,10 +68,10 @@ public class UnpackHelper {
 	/**
 	 * Unpacks a singular {@link PersonLink} from a {@link ResultSet}, this expects the current result to be the one we are
 	 * getting (meaning we do not use {@link ResultSet#next()}).
-	 * This looks at the columns uid, personInfo.
+	 * This looks at the columns pid, personInfo.
 	 */
 	public static PersonLink getPersonLink(ResultSet result) throws SQLException {
-		return new PersonLink(result.getInt("uid"), getPersonData(result));
+		return new PersonLink(result.getInt("pid"), getPersonData(result));
 	}
 
 	/**
@@ -108,10 +108,10 @@ public class UnpackHelper {
 		}
 		DateInfo eventDateInfo = getDateInfo(result);
 
-		Integer postedUid;
+		Integer postedPid;
 		PersonLink postedPerson = null;
-		if ((postedUid = getInteger(result, "postedUid")) != null) {
-			postedPerson = new PersonLink(postedUid, getPersonData(result));
+		if ((postedPid = getInteger(result, "postedPid")) != null) {
+			postedPerson = new PersonLink(postedPid, getPersonData(result));
 		}
 
 		return new EventInfo(
@@ -160,7 +160,7 @@ public class UnpackHelper {
 		}
 
 		return new PersonInfo(
-				result.getInt("uid"),
+				result.getInt("pid"),
 				getPersonData(result),
 				countedTagLinks,
 				postCount, eventCount, recentEvents, recentPosts);
@@ -268,7 +268,7 @@ public class UnpackHelper {
 		nextResultSet(ps, "eventTagRelations");
 		HashMap<EventLink, ArrayList<TagLink>> eventTagRelations = getRelationsFromRaw(ps.getResultSet(), "eid", "tid", eventLinks, tagLinks);
 		nextResultSet(ps, "eventPersonRelations");
-		HashMap<EventLink, ArrayList<PersonLink>> eventPersonRelations = getRelationsFromRaw(ps.getResultSet(), "eid", "uid", eventLinks, personLinks);
+		HashMap<EventLink, ArrayList<PersonLink>> eventPersonRelations = getRelationsFromRaw(ps.getResultSet(), "eid", "pid", eventLinks, personLinks);
 
 
 		return new TimelineInfo(eventLinks, tagLinks, personLinks, eventTagRelations, eventPersonRelations);

@@ -1,2 +1,2 @@
-INSERT INTO {prefix}EventPersonRelation (eid, uid) VALUES
+INSERT INTO {prefix}EventPersonRelation (eid, pid) VALUES
 (?, ?);

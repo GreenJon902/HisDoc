@@ -66,7 +66,7 @@ public class LazyLoadAccountNameScript extends Script {
 						console.log("Response Json: ");
 						console.log(responseJson);
 						
-						name = responseJson.data.player.personname;
+						name = responseJson.data.player.username;
 						console.log("Name: " +  name);
 						
 						localStorage["mcAccountNameCache_" + info] = name;
