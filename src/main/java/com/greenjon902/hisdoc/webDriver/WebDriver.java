@@ -6,6 +6,9 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -118,8 +121,29 @@ class HttpHandlerImpl implements HttpHandler {
 		return query;
 	}
 
-	public User getUser(HttpExchange exchange) {
+	public User getUser(HttpExchange exchange) throws IOException {
+		// Post ---
+		// Expect it to be encoded, so the & signs will only be there to separate key-value pairs
+		String postString = new String(exchange.getRequestBody().readAllBytes());
+		System.out.println(postString);
+		HashMap<String, String> post = new HashMap<>();
+		if (!postString.isEmpty()) {
+			String[] postStrings = postString.split("&");
+			for (String string : postStrings) {
+				String[] split = string.split("=", 2);
+				if (split.length != 2) {
+					throw new RuntimeException("Expected post entry in two parts, got " + split.length + ", " + Arrays.toString(split) + ", \"" + string + "\"");
+				}
+				Charset charset = StandardCharsets.UTF_8;
+				post.put(URLDecoder.decode(split[0], charset), URLDecoder.decode(split[1], charset));
+			}
+		}
+
+
+		// Cookies ---
 		List<String> cookieStrings = exchange.getRequestHeaders().getOrDefault("Cookie", Collections.emptyList());
+		System.out.println(cookieStrings);
+
 		List<String> cookies = new ArrayList<>();
 		for (String cookieString : cookieStrings) {
 			cookies.addAll(Stream.of(cookieString.split(";")).map(String::trim).toList());
@@ -130,13 +154,14 @@ class HttpHandlerImpl implements HttpHandler {
 		for (String cookie : cookies) {
 			String[] parts = cookie.split("=", 2);
 			if (parts.length != 2) {
-				throw new RuntimeException("Expected cookie in two parts, got " + parts.length + ", " + Arrays.toString(parts));
+				throw new RuntimeException("Expected cookie in two parts, got " + parts.length + ", " + Arrays.toString(parts) + ", \"" + cookie + "\"");
 			}
+			// Get cookies that will be used throughout the website into their own fields, page specific ones can be dealt with there
 			switch (parts[0]) {
 				case "theme" -> theme = parts[1];
 				default -> otherCookies.put(parts[0], parts[1]);
 			}
 		}
-		return new User(theme, otherCookies, exchange.getRemoteAddress());
+		return new User(theme, otherCookies, exchange.getRemoteAddress(), post);
 	}
 }

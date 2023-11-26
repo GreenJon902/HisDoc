@@ -55,7 +55,7 @@ public class AddEventPageRenderer extends PageRenderer {
 
 
 	private void renderValid(PageBuilder pageBuilder, User user, LazyLoadAccountNameScript lazyLoadAccountNameScript) throws SQLException {
-		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.GET, "addEventSubmit");
+		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, "addEventSubmit");
 
 		form.add(new TextBuilder(TITLE) {{add("Add Event");}});
 

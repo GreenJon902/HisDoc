@@ -31,7 +31,7 @@ public class AddEventSubmitPageRenderer extends PageRenderer {
 			}
 			int postedBy = sessionHandler.getPersonId(user, query);
 
-			SubmittedEvent submittedEvent = SubmittedEvent.fromQuery(query, postedBy);
+			SubmittedEvent submittedEvent = SubmittedEvent.fromPost(user.post(), postedBy);
 			int eid = dispatcher.addEvent(submittedEvent);
 			return "Your mother, <a href='event=" + eid + "'>" + eid + "</a>";
 
@@ -42,7 +42,7 @@ public class AddEventSubmitPageRenderer extends PageRenderer {
 
 	public record SubmittedEvent(String name, String description, String details, ArrayList<Integer> tagIds,
 								 ArrayList<Integer> personIds, int[] relatedEventIds, DateInfo dateInfo, int postedBy) {
-		public static @NotNull SubmittedEvent fromQuery(@NotNull Map<String, String> query, int postedBy) {
+		public static @NotNull SubmittedEvent fromPost(@NotNull Map<String, String> query, int postedBy) {
 			String name = query.get("name");
 			String description = query.get("description");
 			String details = query.get("details");
@@ -73,8 +73,12 @@ public class AddEventSubmitPageRenderer extends PageRenderer {
 				throw new RuntimeException("Got a null value");
 			}
 
+			if (details.isBlank()) {
+				details = null;
+			}
+
 			int[] eventIds;
-			if (sEventIds != "") {
+			if (!sEventIds.isEmpty()) {
 				eventIds = Arrays.stream(sEventIds.split(",")).mapToInt(Integer::parseInt).toArray();
 			} else {
 				eventIds = new int[0];
