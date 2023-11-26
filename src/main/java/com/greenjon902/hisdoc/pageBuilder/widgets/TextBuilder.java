@@ -24,6 +24,9 @@ public class TextBuilder extends AbstractTextBuilder {
 		stream.write(" class=\"");
 		stream.write(type.cssClass);
 		stream.write("\">");
+		if (type.prefix != null) {
+			stream.write(type.prefix);
+		}
 		renderAllChildren(stream, user);
 		stream.write("</");
 		stream.write(String.valueOf(type.tagType));

@@ -178,10 +178,6 @@ iframe {
     padding: 0.1em;
 }
 
-.warning-text:before {
-    content: "\26A0";
-}
-
 .radio-button[type=radio] {
   position: absolute;
   visibility: hidden;
