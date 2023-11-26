@@ -169,7 +169,7 @@ public class TimelinePageRenderer extends PageRenderer {
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("Search:");}});
 		table.add(new BreakBuilder());
 		table.add(new TextBuilder(NORMAL) {{add("Text: ");}});
-		table.add(new FormBuilder.TextInputBuilder("filterText", 1, "", "filterChanged()"));
+		table.add(new FormBuilder.TextInputBuilder("filterText", 1, "", "filterChanged()", user.otherCookies().getOrDefault("filterText", "")));
 		filterButtons.add(table);
 		top.add(filterButtons);
 

@@ -9,7 +9,8 @@ import java.io.IOException;
  * <br>
  * `setCookie` takes the arguments `cname` - the name of the cookie -
  * and `cvalue` - the value to set for that cookie. Note that these cookies have no expiration date, and have `SameSite`
- * set to `Strict`.<br>
+ * set to `Strict`. They also set path to "/" so I don't have to deal with duplicate cookies issues with testing between
+ * the large and refined datasets.<br>
  * <br>
  * `getCookie` takes the argument `cname` - the name of the cookie.
  */
@@ -18,7 +19,7 @@ public class CookieHelperScript extends Script {
 	protected void writeScriptContents(HtmlOutputStream stream) throws IOException {
 		// Taken from w3 schools
 		stream.write("function setCookie(cname, cvalue) {\n" +
-				"  document.cookie = cname + \"=\" + cvalue + \";SameSite=Strict\";\n" +
+				"  document.cookie = cname + \"=\" + cvalue + \";SameSite=Strict;path=/; \";\n" +
 				"}\n" +
 				"\n" +
 				"function getCookie(cname) {\n" +

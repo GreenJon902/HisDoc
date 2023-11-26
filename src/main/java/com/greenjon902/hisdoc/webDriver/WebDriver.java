@@ -159,7 +159,10 @@ class HttpHandlerImpl implements HttpHandler {
 			// Get cookies that will be used throughout the website into their own fields, page specific ones can be dealt with there
 			switch (parts[0]) {
 				case "theme" -> theme = parts[1];
-				default -> otherCookies.put(parts[0], parts[1]);
+				default -> {
+					if (otherCookies.containsKey(parts[0])) throw new RuntimeException("Duplicate cookie key " + parts[0]);
+					otherCookies.put(parts[0], parts[1]);
+				}
 			}
 		}
 		return new User(theme, otherCookies, exchange.getRemoteAddress(), post);

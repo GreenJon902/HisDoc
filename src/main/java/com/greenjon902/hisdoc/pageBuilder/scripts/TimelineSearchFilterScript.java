@@ -104,6 +104,7 @@ public class TimelineSearchFilterScript extends Script {
 				"  } else if (document.getElementById(\"dateSelectionMethod-Inclusive\").checked) {\n" +
 				"    setCookie(\"dateSelectionMethod\", \"Inclusive\");\n" +
 				"  }" +
+				"  setCookie(\"filterText\", filterText);\n" +
 				"}\n" +
 				"filterChanged()\n\n" +  // Run func by default
 

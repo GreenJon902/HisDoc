@@ -61,16 +61,18 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		private final int rows;
 		private final String pattern;
 		private final String updateFunc;
+		private final String defaultContents;
 
 		public TextInputBuilder(String name, int rows) {
 			this(name, rows, "");
 		}
 
-		public TextInputBuilder(String name, int rows, @NotNull String pattern, @Nullable String updateFunc) {
+		public TextInputBuilder(String name, int rows, @NotNull String pattern, @Nullable String updateFunc, @NotNull String defaultContents) {
 			this.name = name;
 			this.rows = rows;
 			this.pattern = pattern;
 			this.updateFunc = updateFunc;
+			this.defaultContents = defaultContents;
 
 			if (!pattern.isEmpty() && rows != 1) {
 				System.out.println("Text builder cannot have a multi row text input when a pattern is set!");
@@ -78,7 +80,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		}
 
 		public TextInputBuilder(String name, int rows, @NotNull String pattern) {
-			this(name, rows, "", "");
+			this(name, rows, "", "", "");
 		}
 
 		@Override
@@ -101,6 +103,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 				stream.write("\"");
 			}
 			stream.write(">");
+			stream.write(defaultContents);
 			if (pattern.isEmpty()) {
 				stream.write("</textarea>");
 			} else {
