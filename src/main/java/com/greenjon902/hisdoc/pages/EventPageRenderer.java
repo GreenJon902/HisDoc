@@ -148,7 +148,7 @@ public class EventPageRenderer extends PageRenderer {
 		else {
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + eventInfo.postedBy().data().personData());
 			lazyLoadAccountNameScript.add(eventInfo.postedBy().data(), pageVariable);
-			table.add(new TextBuilder(NORMAL) {{ add(pageVariable + ":"); }});
+			table.add(new TextBuilder(NORMAL) {{ add(pageVariable.toString(), "person?id=" + eventInfo.postedBy().id()); add(":"); }});
 		}
 		table.add(new TextBuilder(MISC) {{ add("This event was created!"); }});
 
@@ -157,8 +157,11 @@ public class EventPageRenderer extends PageRenderer {
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + changeInfo.author().data().personData());
 			lazyLoadAccountNameScript.add(changeInfo.author().data(), pageVariable);
 
-			table.add(new TextBuilder(NORMAL) {{ add(changeInfo.date().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))); }});
-			table.add(new TextBuilder(NORMAL) {{ add(pageVariable + ":"); }});
+			if (changeInfo.date() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown"); }});
+			else table.add(new TextBuilder(NORMAL) {{ add(changeInfo.date().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))); }});
+
+
+			table.add(new TextBuilder(NORMAL) {{ add(pageVariable.toString(), "person?id=" + changeInfo.author().id()); add(":"); }});
 			table.add(new TextBuilder(MISC) {{ add(changeInfo.description()); }});
 		}
 
