@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
-from random import randint, random
+from random import randint, random, choice
 
 event_text_file = "./event_text.txt"
 tags_text_file = "./tag_text.txt"
+details_file = "./details.txt"
+changelogs_file = "./changelogs.txt"
 date_c_max_diff = 100
 max_date = datetime.now()
 max_date_days_since_min = 1000
@@ -131,14 +133,16 @@ def format_timestamp(date):
 
 event_texts = list(parse_text_info(event_text_file))
 tags = list(parse_text_info(tags_text_file))
+details = list(open(details_file, "r").read().split("\n"))
+changelogs = list(open(changelogs_file, "r").read().split("\n"))
 
 
 def make_event_list():
     c_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDatePrecision, eventDateDiff, "
-               "eventDateDiffType, postedDate, description, postedPid)"
+               "eventDateDiffType, postedDate, description, postedPid, details)"
                "VALUES \n")
     b_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDate2, "
-               "postedDate, description, postedPid)"
+               "postedDate, description, postedPid, details)"
                "VALUES \n")
 
     eid = 1
@@ -147,18 +151,21 @@ def make_event_list():
         description = event_text[1]
         date1 = (max_date - timedelta(days=randint(0, max_date_days_since_min)))
         postedDate = (max_date - timedelta(days=randint(0, max_date_days_since_min)))
-        postedPid = randint(1, len(persons))
+        postedPid = randint(0, len(persons))
+        if postedPid == 0:
+            postedPid = "NULL"
+        detail = "'" + choice(details) + "'" if randint(0, 1) == 1 else "NULL"
 
         if randint(0, 1) == 0:  # C Date
             date_precision = ["d", "h", "m"][randint(0, 2)]
             date_diff = randint(0, date_c_max_diff)
             date_diff_type = ["d", "h", "m"][randint(0, 2)]
 
-            c_dates += f"({eid}, '{name}', 'c', {format_timestamp(date1)}, '{date_precision}', {date_diff}, '{date_diff_type}', {format_timestamp(postedDate)}, '{description}', {postedPid}), \n"
+            c_dates += f"({eid}, '{name}', 'c', {format_timestamp(date1)}, '{date_precision}', {date_diff}, '{date_diff_type}', {format_timestamp(postedDate)}, '{description}', {postedPid}, {detail}), \n"
         else:  # B Date
             date2 = (date1 + timedelta(days=randint(0, max_date_days_since_min)))
 
-            b_dates += f"({eid}, '{name}', 'b', {format_timestamp(date1)}, {format_timestamp(date2)}, {format_timestamp(postedDate)}, '{description}', {postedPid}), \n"
+            b_dates += f"({eid}, '{name}', 'b', {format_timestamp(date1)}, {format_timestamp(date2)}, {format_timestamp(postedDate)}, '{description}', {postedPid}, {detail}), \n"
 
         eid += 1
 
@@ -245,6 +252,19 @@ def make_event_tag_relation():
     out.write(string)
 
 
+def make_changelogs():
+    string = "INSERT INTO {prefix}ChangeLog (eid, description, authorPid) VALUES \n"
+
+    for i in range(len(event_texts) - 1):
+        count = randint(0, len(changelogs))
+        for _ in range(count - 1):
+            string += f"({i + 1}, '{choice(changelogs)}', '{randint(1, len(persons))}'), \n"
+
+    string = string.rstrip(", \n")
+    string += ";\n"
+    out.write(string)
+
+
 make_person_list()
 print("Made persons")
 make_event_list()
@@ -257,4 +277,6 @@ make_event_tag_relation()
 print("Made event tag")
 make_event_person_relation()
 print("Made event person")
+make_changelogs()
+print("Making changelogs")
 out.close()

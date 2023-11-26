@@ -9,7 +9,12 @@ INSERT INTO {prefix}Tag (tid, name, description, color) VALUES
 (3, 'Mcmmo', 'A plugin i dont like but others do so fair enough ig?', 000000);  -- Mcmmo should not be linked to
 
 INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDatePrecision, eventDateDiff, eventDateDiffType, postedDate, description, postedPid) VALUES
-(1, 'Monkey', 'c', TIMESTAMP('2023-06-28', '18:23:52'), 'h', 20, 'h', TIMESTAMP('2023-10-03', '18:23:52'), 'Jon and aj made monkey ;)', 1);
+(1, 'Monkey', 'c', TIMESTAMP('2023-06-28', '18:23:52'), 'h', 20, 'h', TIMESTAMP('2023-10-03', '18:23:52'), 'Jon and aj made monkey ;)', 1),
+(2, 'Null PostedPid', 'c', TIMESTAMP('2023-06-28', '18:23:52'), 'h', 20, 'h', TIMESTAMP('2023-10-03', '18:23:52'), 'Look at title', NULL),
+(3, 'Null PostedDate', 'c', TIMESTAMP('2023-06-28', '18:23:52'), 'h', 20, 'h', NULL, 'Look at title', 1),
+(4, 'Null PostedPid & PostedDate', 'c', TIMESTAMP('2023-06-28', '18:23:52'), 'h', 20, 'h', NULL, 'Look at title', NULL);
 
 INSERT INTO {prefix}EventPersonRelation (eid, pid) VALUES (1, 1), (1, 2);
-INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (1, 2);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (2, 1);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (3, 1);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (4, 1);
