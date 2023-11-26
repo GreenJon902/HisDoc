@@ -1,5 +1,3 @@
-# TODO: Changlosg
-
 from datetime import datetime, timedelta
 from random import randint, random
 
@@ -114,7 +112,7 @@ out = open("./out.sql", "w")
 
 
 def parse_text_info(path):
-    texts = open(path, "r").read().replace("?", "").replace("'", "").split("\n")  # TODO: Find fix for special characters
+    texts = open(path, "r").read().replace("?", "").replace("'", "").split("\n")  # Fixes characters that would break sql
     i = 0
     usedNames = []
     while i < len(texts):

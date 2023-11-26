@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 
-// TODO: Auto fill last values from post contents
-
 public class DateSelector implements WidgetBuilder {
 	private final Timestamp defaultDate;
 	private final String id;

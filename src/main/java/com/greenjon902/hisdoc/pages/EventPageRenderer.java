@@ -16,8 +16,6 @@ import java.util.Map;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
-// TODO: Format account names from uuids into descriptions and stuffs
-
 public class EventPageRenderer extends PageRenderer {
 
 	private final Dispatcher dispatcher;

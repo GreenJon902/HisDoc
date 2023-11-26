@@ -96,7 +96,7 @@ public class PersonPageRenderer extends PageRenderer {
 		StringBuilder colors = new StringBuilder();
 		for (Map.Entry<TagLink, Integer> entry : personInfo.countedTagLinks().entrySet()) {
 			labels.append("'");
-			labels.append(entry.getKey().name()); // TODO: Find some way to link to tag page
+			labels.append(entry.getKey().name());
 			labels.append("', ");
 			values.append(entry.getValue());
 			values.append(", ");
