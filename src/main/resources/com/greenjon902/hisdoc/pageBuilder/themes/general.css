@@ -21,6 +21,8 @@ body {
 
     position: relative;
     text-decoration: none; /* Remove default text underline */
+
+    cursor: pointer;
 }
 
 .logo:after {
