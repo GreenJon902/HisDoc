@@ -36,6 +36,8 @@ public class AddEventPageRenderer extends PageRenderer {
 	@Override
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
 		PageBuilder pageBuilder = new PageBuilder();
+		pageBuilder.title("Add Event");
+
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();
 		pageBuilder.addScript(lazyLoadAccountNameScript);
 		UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(

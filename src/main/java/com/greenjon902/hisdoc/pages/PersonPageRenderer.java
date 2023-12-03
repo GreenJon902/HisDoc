@@ -43,6 +43,8 @@ public class PersonPageRenderer extends PageRenderer {
 
 		PageBuilder pageBuilder = new PageBuilder();
 		PageVariable accountNameVar = pageBuilder.addVariable("account-name");
+		pageBuilder.title(accountNameVar.toString());
+
 		pageBuilder.addScript(new LazyLoadAccountNameScript(personInfo.data(), accountNameVar));
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));

@@ -78,6 +78,7 @@ public class LazyLoadAccountNameScript extends Script {
 				}
 				
 				document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
+				document.head.innerHTML = document.head.innerHTML.replaceAll(accountNameVarName, name);
 			};
 			""");
 

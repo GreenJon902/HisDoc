@@ -16,7 +16,7 @@ public class HomePageRenderer extends PageRenderer {
 	@Override
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
 		PageBuilder pageBuilder = new PageBuilder();
-		System.out.println(1);
+		pageBuilder.title("HisDoc");
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		pageBuilder.add(new TextBuilder(TITLE) {{add("Welcome");}});
@@ -39,7 +39,7 @@ public class HomePageRenderer extends PageRenderer {
 			add(128521);
 			add(" .");
 		}});
-		System.out.println(2);
+
 		return pageBuilder.render(user);
 	}
 }

@@ -39,6 +39,8 @@ public class TimelinePageRenderer extends PageRenderer {
 		}
 
 		PageBuilder pageBuilder = new PageBuilder();
+		pageBuilder.title("Timeline");
+
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
 		pageBuilder.addScript(lazyLoadAccountNameScript);
 		TimelineSearchFilterScript searchFilterScript = new TimelineSearchFilterScript(pageBuilder);  // Variables added elsewhere

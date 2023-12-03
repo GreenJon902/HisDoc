@@ -26,6 +26,8 @@ public class TagsPageRenderer extends PageRenderer {
 		Set<TagLink> tagLinks = dispatcher.getAllTagLinks();
 
 		PageBuilder pageBuilder = new PageBuilder();
+		pageBuilder.title("Tags");
+
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");

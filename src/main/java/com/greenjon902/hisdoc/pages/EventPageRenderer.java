@@ -42,6 +42,8 @@ public class EventPageRenderer extends PageRenderer {
 		}
 
 		PageBuilder pageBuilder = new PageBuilder();
+		pageBuilder.title(eventInfo.name());
+
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
 		pageBuilder.addScript(lazyLoadAccountNameScript);
 

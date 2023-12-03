@@ -41,6 +41,8 @@ public class TagPageRenderer extends PageRenderer {
 		}
 
 		PageBuilder pageBuilder = new PageBuilder();
+		pageBuilder.title(tagInfo.name());
+
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		ContainerWidgetBuilder titleContainer = new ContainerWidgetBuilder("tag-page-title", "--circle-color: #" + String.format("%06x", tagInfo.color()));

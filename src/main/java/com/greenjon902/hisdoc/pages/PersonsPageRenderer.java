@@ -28,6 +28,8 @@ public class PersonsPageRenderer extends PageRenderer {
 		Set<PersonLink> personLinks = dispatcher.getAllPersonLinks();
 
 		PageBuilder pageBuilder = new PageBuilder();
+		pageBuilder.title("People");
+
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
 		pageBuilder.addScript(lazyLoadAccountNameScript);
 
