@@ -27,7 +27,11 @@ public class UnloadMessageSenderScript extends Script {
 		if (unlessFormId != null) {
 			stream.write("document.getElementById('");
 			stream.write(unlessFormId);
-			stream.write("').addEventListener(\"submit\", function() {\nwindow.onbeforeunload = null;\n});");
+			stream.write("').addEventListener('submit', async function() {\n" +
+						"	window.onbeforeunload = null;\n" +
+					    "   await new Promise(r => setTimeout(r, 100));\n" +
+						"	document.body.innerHTML = '<p>This form has expired, please reload</p>';\n" +
+					"});");
 		}
 	}
 }

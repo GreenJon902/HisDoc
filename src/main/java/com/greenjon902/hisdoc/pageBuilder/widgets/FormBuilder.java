@@ -28,7 +28,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
-		stream.write("<form onkeydown=\"return event.key != 'Enter';\" method=\"" + method.string + "\" action=\"" + action + "\"");
+		stream.write("<form onkeydown=\"return event.key != 'Enter';\" accept-charset=utf-8 method=\"" + method.string + "\" action=\"" + action + "\"");
 		if (id != null) stream.write( " id=\"" + id + "\"");
 		stream.write(">");
 		renderAllChildren(stream, user);

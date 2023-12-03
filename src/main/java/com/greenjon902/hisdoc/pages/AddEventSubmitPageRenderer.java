@@ -10,9 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class AddEventSubmitPageRenderer extends PageRenderer {
 	private final Dispatcher dispatcher;
@@ -40,15 +39,26 @@ public class AddEventSubmitPageRenderer extends PageRenderer {
 		}
 	}
 
-	public record SubmittedEvent(String name, String description, String details, ArrayList<Integer> tagIds,
-								 ArrayList<Integer> personIds, int[] relatedEventIds, DateInfo dateInfo, int postedBy) {
+	public record SubmittedEvent(String name, String description, String details, Set<Integer> tagIds,
+								 Set<Integer> personIds, Set<Integer> relatedEventIds, DateInfo dateInfo, int postedBy) {
+		public SubmittedEvent(String name, String description, String details, Set<Integer> tagIds, Set<Integer> personIds, Set<Integer> relatedEventIds, DateInfo dateInfo, int postedBy) {
+			this.name = name;
+			this.description = description;
+			this.details = details;
+			this.tagIds = Collections.unmodifiableSet(tagIds);
+			this.personIds = Collections.unmodifiableSet(personIds);
+			this.relatedEventIds = Collections.unmodifiableSet(relatedEventIds);
+			this.dateInfo = dateInfo;
+			this.postedBy = postedBy;
+		}
+
 		public static @NotNull SubmittedEvent fromPost(@NotNull Map<String, String> query, int postedBy) {
 			String name = query.get("name");
 			String description = query.get("description");
 			String details = query.get("details");
 
-			ArrayList<Integer> personIds = new ArrayList<>();
-			ArrayList<Integer> tagIds = new ArrayList<>();
+			HashSet<Integer> personIds = new HashSet<>();
+			HashSet<Integer> tagIds = new HashSet<>();
 			for (String key : query.keySet()) {
 				if (key.startsWith("person") && query.get(key).equals("on")) {
 					personIds.add(Integer.valueOf(key.replace("person", "")));
@@ -77,11 +87,11 @@ public class AddEventSubmitPageRenderer extends PageRenderer {
 				details = null;
 			}
 
-			int[] eventIds;
+			Set<Integer> eventIds;
 			if (!sEventIds.isEmpty()) {
-				eventIds = Arrays.stream(sEventIds.split(",")).mapToInt(Integer::parseInt).toArray();
+				eventIds = Arrays.stream(sEventIds.split(",")).mapToInt(Integer::parseInt).boxed().collect(Collectors.toSet());
 			} else {
-				eventIds = new int[0];
+				eventIds = Collections.emptySet();
 			}
 
 			Timestamp center = Timestamp.valueOf(convertTimestampSeparators(datec1));
