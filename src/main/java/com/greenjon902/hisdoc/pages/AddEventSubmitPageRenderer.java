@@ -32,7 +32,7 @@ public class AddEventSubmitPageRenderer extends PageRenderer {
 
 			SubmittedEvent submittedEvent = SubmittedEvent.fromPost(user.post(), postedBy);
 			int eid = dispatcher.addEvent(submittedEvent);
-			return "<html><body>Your mother, <a href='event?id=" + eid + "'>" + eid + "</a><body><html>";
+			return "<html><script>window.location.href = 'event?id=" + eid + "';</script><html>";
 
 		} catch (Exception e) {
 			throw new RuntimeException("An error occurred,\nquery=\n" + query + "\n\n", e);
