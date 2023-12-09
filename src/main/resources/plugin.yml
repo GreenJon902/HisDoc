@@ -1,0 +1,4 @@
+name: PaperMcRunner
+version: '${project.version}'
+main: com.greenjon902.hisdoc.runners.papermc.HisDocRunner
+api-version: '1.20'
