@@ -24,7 +24,7 @@ TIMESTAMP('2017-07-23',  '13:10:11'), DATE('2017-08-23'));
 
 INSERT INTO {prefix}Event (eid, name, description, postedPid, postedDate, eventDateType, eventDate1,
 eventDate2)
-VALUES (3, 'testing3', 'more testing', 2, TIMESTAMP('2023/10/08',  '13:26:00'), 'b',
+VALUES (3, 'testing3', 'more testing', 2, TIMESTAMP('2023/10/08',  '13:27:00'), 'b',
 TIMESTAMP('2017-07-25',  '13:10:11'), DATE('2017-08-23'));
 
 INSERT INTO {prefix}EventPersonRelation (eid, pid)

@@ -8,7 +8,7 @@
     We also create a person with id 2, so it can create the events
 */
 
-INSERT INTO {prefix}Person (pid, personInfo)
+INSERT INTO {prefix}Person (pid, personData)
 VALUES (2, 'Person2');
 
 

@@ -83,7 +83,7 @@ public class TestGetEvent {
 
 		Assertions.assertEquals(
 				new EventInfo(2,
-						"testing", "i was testing",
+						"testing2", "i was testing",
 						new Timestamp(1696767960000L), new PersonLink(1, PersonData.miscellaneous("Person1")),
 						DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)),
 						Collections.emptySet(),
@@ -120,7 +120,7 @@ public class TestGetEvent {
 						Collections.emptySet(),
 						Collections.emptySet(),
 						Collections.emptyList(),
-						Set.of(new EventLink(2, "testing", DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)), "i was testing")),
+						Set.of(new EventLink(2, "testing2", DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)), "i was testing")),
 						null
 				),
 				eventInfo);
@@ -130,7 +130,7 @@ public class TestGetEvent {
 
 		Assertions.assertEquals(
 				new EventInfo(2,
-						"testing", "i was testing",
+						"testing2", "i was testing",
 						new Timestamp(1696767960000L), new PersonLink(1, PersonData.miscellaneous("Person1")),
 						DateInfo.between(new Timestamp(1500811811000L), new Date(1503442800000L)),
 						Collections.emptySet(),

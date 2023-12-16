@@ -79,7 +79,10 @@ public class TestGetPerson {
 						), 2, 2, List.of(
 						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
-				), Collections.emptyList()),
+				), List.of(
+						new EventLink(3, "testing3", DateInfo.between(Timestamp.valueOf("2017-07-25 13:10:11"), Date.valueOf("2017-08-23")), "more testing"),
+						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
+				)),
 				personInfo);
 	}
 
@@ -106,7 +109,10 @@ public class TestGetPerson {
 						), 2, 2, List.of(
 						new EventLink(1, "testing1", DateInfo.centered(Timestamp.valueOf("2017-07-24 13:10:11"), DAY, 4, HOUR), "i was testing"),
 						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
-				), Collections.emptyList()),
+				), List.of(
+						new EventLink(3, "testing3", DateInfo.between(Timestamp.valueOf("2017-07-25 13:10:11"), Date.valueOf("2017-08-23")), "more testing"),
+						new EventLink(2, "testing2", DateInfo.between(Timestamp.valueOf("2017-07-23 13:10:11"), Date.valueOf("2017-08-23")), "i was testing again")
+				)),
 				personInfo);
 	}
 }
