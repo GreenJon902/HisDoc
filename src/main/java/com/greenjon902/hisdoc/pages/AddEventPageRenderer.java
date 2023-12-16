@@ -5,13 +5,15 @@ import com.greenjon902.hisdoc.pageBuilder.PageVariable;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.UnloadMessageSenderScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
-import com.greenjon902.hisdoc.sessionHandler.SessionHandler;
+import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
@@ -27,10 +29,12 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 public class AddEventPageRenderer extends PageRenderer {
 	private final Dispatcher dispatcher;
 	private final SessionHandler sessionHandler;
+	private final boolean feedforwardQuery; // Should the query info be given to the action page of the form too>
 
-	public AddEventPageRenderer(Dispatcher dispatcher, SessionHandler sessionHandler) {
+	public AddEventPageRenderer(Dispatcher dispatcher, SessionHandler sessionHandler, boolean feedforwardQuery) {
 		this.dispatcher = dispatcher;
 		this.sessionHandler = sessionHandler;
+		this.feedforwardQuery = feedforwardQuery;
 	}
 
 	@Override
@@ -49,15 +53,23 @@ public class AddEventPageRenderer extends PageRenderer {
 		switch (sessionHandler.verify(user, query)) {
 			case NO_SESSION -> renderNoSession(pageBuilder);
 			case INVALID_IP -> renderInvalidIp(pageBuilder, user);
-			case VALID -> renderValid(pageBuilder, user, lazyLoadAccountNameScript);
+			case VALID -> renderValid(pageBuilder, user, lazyLoadAccountNameScript, query);
 		};
 
 		return pageBuilder.render(user);
 	}
 
 
-	private void renderValid(PageBuilder pageBuilder, User user, LazyLoadAccountNameScript lazyLoadAccountNameScript) throws SQLException {
-		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, "addEventSubmit");
+	private void renderValid(PageBuilder pageBuilder, User user, LazyLoadAccountNameScript lazyLoadAccountNameScript, Map<String, String> query) throws SQLException {
+		StringBuilder action = new StringBuilder("addEventSubmit");
+		if (feedforwardQuery) {
+			action.append("?");
+			for (Map.Entry<String, String> entry : query.entrySet()) {
+				action.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)).append(";");
+			}
+		}
+
+		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, action.toString());
 
 		form.add(new TextBuilder(TITLE) {{add("Add Event");}});
 
@@ -114,7 +126,7 @@ public class AddEventPageRenderer extends PageRenderer {
 		form.add(new FormBuilder.DateInfoInputBuilder());
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
-		String mcName = sessionHandler.getNameOf(user);
+		String mcName = sessionHandler.getNameOf(user, query);
 		form.add(new TextBuilder(NORMAL, "\n") {{
 			add("This event will be submitted under the user " + mcName + ".");
 			add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");

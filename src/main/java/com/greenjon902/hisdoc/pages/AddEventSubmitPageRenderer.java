@@ -1,6 +1,6 @@
 package com.greenjon902.hisdoc.pages;
 
-import com.greenjon902.hisdoc.sessionHandler.SessionHandler;
+import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.DateInfo;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
@@ -28,6 +28,7 @@ public class AddEventSubmitPageRenderer extends PageRenderer {
 			if (sessionHandler.verify(user, query) != SessionHandler.VerifyResult.VALID) {
 				throw new IllegalStateException("You are not verified, you should not be on this page!");
 			}
+			sessionHandler.suggestConsumeVerification(user, query);
 			int postedBy = sessionHandler.getPersonId(user, query);
 
 			SubmittedEvent submittedEvent = SubmittedEvent.fromPost(user.post(), postedBy);

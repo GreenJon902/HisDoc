@@ -7,7 +7,6 @@ import com.greenjon902.hisdoc.pageBuilder.widgets.NavBarBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.TextBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.TextType;
 import com.greenjon902.hisdoc.pages.*;
-import com.greenjon902.hisdoc.sessionHandler.impl.testSessionHandlerImpl.TestSessionHandlerImpl;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
@@ -20,9 +19,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.greenjon902.hisdoc.sessionHandler.SessionHandler.VerifyResult.*;
+import static com.greenjon902.hisdoc.SessionHandler.VerifyResult.*;
 
 public class UITest {
+
 	public static void main(String[] args) throws Exception {
 		DB database = DB.newEmbeddedDB(3306);
 		database.start();
@@ -61,9 +61,9 @@ public class UITest {
 				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher)),
-				Map.entry("/" + pageNamePrefix + "addS", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(NO_SESSION))),
-				Map.entry("/" + pageNamePrefix + "addI", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(INVALID_IP))),
-				Map.entry("/" + pageNamePrefix + "addV", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID))),
+				Map.entry("/" + pageNamePrefix + "addS", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(NO_SESSION), false)),
+				Map.entry("/" + pageNamePrefix + "addI", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(INVALID_IP), false)),
+				Map.entry("/" + pageNamePrefix + "addV", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID), false)),
 				Map.entry("/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID))),
 				Map.entry("/" + pageNamePrefix + "add", new PageRenderer() {  // A helper page for choosing what to happen on adding
 					@Override
@@ -81,5 +81,39 @@ public class UITest {
 					}
 				}),
 				Map.entry("/" + pageNamePrefix + "themes", new CssPageRenderer()));
+	}
+}
+
+
+class TestSessionHandlerImpl implements SessionHandler {
+	private final VerifyResult verifyResult;
+
+	public TestSessionHandlerImpl(VerifyResult verifyResult) {
+		this.verifyResult = verifyResult;
+	}
+
+	@Override
+	public VerifyResult verify(User user, Map<String, String> query) {
+		return verifyResult;
+	}
+
+	@Override
+	public String getNameOf(User user, Map<String, String> query) {
+		return "TestUserName";
+	}
+
+	@Override
+	public void suggestConsumeVerification(User user, Map<String, String> query) {
+		if (verifyResult != VerifyResult.VALID) {
+			throw new RuntimeException("Cannot unverify user " + user + " as is not verified in the first place");
+		}
+	}
+
+	@Override
+	public int getPersonId(User user, Map<String, String> query) {
+		if (verifyResult != VerifyResult.VALID) {
+			throw new RuntimeException("Cannot get user " + user + " as is not verified");
+		}
+		return 1;
 	}
 }

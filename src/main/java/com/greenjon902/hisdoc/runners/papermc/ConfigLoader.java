@@ -1,6 +1,9 @@
 package com.greenjon902.hisdoc.runners.papermc;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class ConfigLoader {
 	private final File dataFolder;
@@ -9,17 +12,29 @@ public class ConfigLoader {
 		this.dataFolder = dataFolder;
 	}
 
-	public void get(ConfigItem item) {
-
+	public String get(ConfigItem item) throws IOException {
+		File file = ensureExists(item);
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+		char[] contentBytes = new char[(int) file.length()];
+		bufferedReader.read(contentBytes);
+		return new String(contentBytes);
 	}
 
-	private void ensureExists(ConfigItem item) {
-
+	private File ensureExists(ConfigItem item) throws IOException {
+		File file = new File(dataFolder, item.filename);
+		dataFolder.createNewFile();
+		file.createNewFile();
+		return file;
 	}
 
 	enum ConfigItem {
-		MYSQL_HOST("mysql-host.txt");  THEN SET TO TESTING TO USE TEMPOARARY DB. SEND WARNING IN CONSOLE
+		MYSQL_HOST("mysql-host.txt"), MYSQL_PORT("mysql-port.txt"), MYSQL_USER("mysql-user.txt"),
+		MYSQL_PASSWORD("mysql-password.txt"), ADD_EVENT_URL("add-event-url.txt");
 
-				ALSO LINK UITest to use a custom runner too?
+		public final String filename;
+
+		ConfigItem(String filename) {
+			this.filename = filename;
+		}
 	}
 }

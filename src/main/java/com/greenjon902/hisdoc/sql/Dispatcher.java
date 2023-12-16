@@ -9,6 +9,7 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class Dispatcher {
 	Map<String, String> statements = new HashMap<>();
@@ -185,5 +186,24 @@ public class Dispatcher {
 		}
 
 		return eid;
+	}
+
+	/**
+	 * Gets the person id from a minecraft UUID, returns null if none found.
+	 */
+	public Integer getPersonIdFromMcUUID(UUID uniqueId) throws SQLException {
+		System.out.println("Getting player for mcUUID " + uniqueId + " -----------------");
+		PreparedStatement ps = prepareWithArgs("queries/getAllPersonLinks",
+				"personType", "MC");
+		ps.setString(1, uniqueId.toString());
+		ps.execute();
+
+		ResultSet result = ps.getResultSet();
+		UnpackHelper.next(result, "personId", "the");
+		Integer pid = UnpackHelper.getInteger(result, "pid");
+		if (result.next()) {
+			throw new RuntimeException("Got multiple persons with uuid " + uniqueId);
+		}
+		return pid;
 	}
 }

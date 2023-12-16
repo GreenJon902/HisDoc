@@ -16,6 +16,9 @@ A "Person" refers to someone in the timeline
 A "User" refers to someone using the website
 A "Session" refers to someone adding events who is linked to an ingame account
 
+
+Use getString for getting ips from addresses
+
 ### Person info (string version, same as whats stored in sql)
 so like as names and stuffs change we would like to store uuid and get from api.
 So person info can be a prefixed uuid, e.g. `MC|0dbffb6c-6165-40e4-b0f6-0fab4dcd5511` to say 
