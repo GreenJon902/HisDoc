@@ -28,8 +28,8 @@ public class AddEventSubmitPageRenderer extends PageRenderer {
 			if (sessionHandler.verify(user, query) != SessionHandler.VerifyResult.VALID) {
 				throw new IllegalStateException("You are not verified, you should not be on this page!");
 			}
-			sessionHandler.suggestConsumeVerification(user, query);
 			int postedBy = sessionHandler.getPersonId(user, query);
+			sessionHandler.suggestConsumeVerification(user, query);
 
 			SubmittedEvent submittedEvent = SubmittedEvent.fromPost(user.post(), postedBy);
 			int eid = dispatcher.addEvent(submittedEvent);

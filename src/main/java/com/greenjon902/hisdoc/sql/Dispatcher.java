@@ -193,9 +193,9 @@ public class Dispatcher {
 	 */
 	public Integer getPersonIdFromMcUUID(UUID uniqueId) throws SQLException {
 		System.out.println("Getting player for mcUUID " + uniqueId + " -----------------");
-		PreparedStatement ps = prepareWithArgs("queries/getAllPersonLinks",
-				"personType", "MC");
-		ps.setString(1, uniqueId.toString());
+		PreparedStatement ps = prepareWithArgs("queries/getPerson");
+		ps.setString(1, "MC");
+		ps.setString(2, uniqueId.toString());
 		ps.execute();
 
 		ResultSet result = ps.getResultSet();

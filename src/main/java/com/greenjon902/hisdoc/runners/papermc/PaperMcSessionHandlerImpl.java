@@ -18,8 +18,14 @@ public class PaperMcSessionHandlerImpl implements SessionHandler {
 
 	@Override
 	public VerifyResult verify(User user, Map<String, String> query) {
+		System.out.println("\n\nVerifiying user");
 		String code = query.get("code");
+		System.out.println(code);
+		System.out.println(codeToPidMap);
+		System.out.println(codeToExpectedIpMap);
+		System.out.println(codeToNameMap);
 		if (code == null) return NO_SESSION;
+		System.out.println(codeToPidMap.get(code));
 		if (!codeToPidMap.containsKey(code)) return NO_SESSION;  // Can't check using IPs as that may be null;
 
 		String expectedIp = codeToExpectedIpMap.get(code);
@@ -39,12 +45,13 @@ public class PaperMcSessionHandlerImpl implements SessionHandler {
 		if (name == null) {
 			throw new IllegalStateException("I don't know the name of the user " + user + " with query " + query);
 		}
-		return null;
+		return name;
 	}
 
 	@Override
 	public void suggestConsumeVerification(User user, Map<String, String> query) {
 		String code = query.get("code");
+		System.out.println("Removing " + code);
 		if (code == null) {
 			throw new IllegalStateException("Tried to remove verification for user without code - User " + user + " with query " + query);
 		}
@@ -55,11 +62,14 @@ public class PaperMcSessionHandlerImpl implements SessionHandler {
 
 	@Override
 	public int getPersonId(User user, Map<String, String> query) {
+		System.out.println("Getting person id for " + query);
 		String code = query.get("code");
+		System.out.println(code);
 		if (code == null) {
 			throw new IllegalStateException("User " + user + " with query " + query + " has no code given!");
 		}
 		Integer pid = codeToPidMap.get(code);
+		System.out.println(pid);
 		if (pid == null) {
 			throw new IllegalStateException("I don't know the person id of the user " + user + " with query " + query);
 		}

@@ -46,9 +46,9 @@ public class AddEventCommand implements CommandExecutor {
 				if (playerSender.getAddress() != null) ip = playerSender.getAddress().getHostString();
 
 				sessionHandler.addVerification(code, pid, playerSender.getName(), ip);
-				sender.sendMessage(Component.text("Use this link to add your event").append(
-						Component.text(addEventUrl + "?code="+code)
-								.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, addEventUrl + "?code="+code))
+				sender.sendMessage(Component.text("Use this link to add your event ").append(
+						Component.text("http://" + addEventUrl + "?code="+code)
+								.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "http://" + addEventUrl + "?code="+code))
 				));
 			}
 

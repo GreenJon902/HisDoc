@@ -10,3 +10,4 @@ commands:
 
 permissions:
   hisdoc.addevent:
+    default: op

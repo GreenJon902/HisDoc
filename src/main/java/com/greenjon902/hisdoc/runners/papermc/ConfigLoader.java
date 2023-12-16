@@ -22,13 +22,13 @@ public class ConfigLoader {
 
 	private File ensureExists(ConfigItem item) throws IOException {
 		File file = new File(dataFolder, item.filename);
-		dataFolder.createNewFile();
+		dataFolder.mkdir();
 		file.createNewFile();
 		return file;
 	}
 
 	enum ConfigItem {
-		MYSQL_HOST("mysql-host.txt"), MYSQL_PORT("mysql-port.txt"), MYSQL_USER("mysql-user.txt"),
+		MYSQL_HOST("mysql-host.txt"), MYSQL_USER("mysql-user.txt"), WEBDRIVER_PORT("webdriver-port.txt"),
 		MYSQL_PASSWORD("mysql-password.txt"), ADD_EVENT_URL("add-event-url.txt");
 
 		public final String filename;

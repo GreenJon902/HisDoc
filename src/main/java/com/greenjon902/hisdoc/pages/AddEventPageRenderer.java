@@ -65,7 +65,10 @@ public class AddEventPageRenderer extends PageRenderer {
 		if (feedforwardQuery) {
 			action.append("?");
 			for (Map.Entry<String, String> entry : query.entrySet()) {
-				action.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)).append(";");
+				action.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)).append("&");
+			}
+			if (!query.isEmpty()) {  // Ran at least once - need to remove trailing "&"
+				action = new StringBuilder(action.substring(0, action.length() - 1));
 			}
 		}
 
@@ -189,6 +192,6 @@ public class AddEventPageRenderer extends PageRenderer {
 	private void renderNoSession(PageBuilder pageBuilder) {
 		pageBuilder.add(new TextBuilder(TITLE) {{add("Invalid Session");}});
 		pageBuilder.add(new TextBuilder(NORMAL) {{add("We could not verify you as a player, please run this command in game:");}});
-		pageBuilder.add(new TextBuilder(CODE) {{add("/hs addEvent.sql");}});
+		pageBuilder.add(new TextBuilder(CODE) {{add("/addevent");}});
 	}
 }
