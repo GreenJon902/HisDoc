@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class UIPlayground {
 	public static void main(String[] args) throws Exception {
@@ -40,7 +41,7 @@ public class UIPlayground {
 							}
 						}),
 				8080, 0, 0,
-				"com/greenjon902/hisdoc/logo.ico"));
+				"com/greenjon902/hisdoc/logo.ico"), Logger.getLogger("HisDocUIPlayground"));
 		webDriver.start();
 	}
 }

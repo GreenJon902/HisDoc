@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static com.greenjon902.hisdoc.sql.Utils.getTestLogger;
 import static com.greenjon902.hisdoc.sql.Utils.makeInMemoryConnection;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.DAY;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.HOUR;
@@ -20,7 +21,7 @@ public class TestGetPerson {
 	@Test
 	public void should_returnNoPerson_when_noPersonsExist() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		PersonInfo personInfo = dispatcher.getPersonInfo(1);
@@ -31,7 +32,7 @@ public class TestGetPerson {
 	@Test
 	public void should_returnNoPerson_when_thatPersonDoesNotExist() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetPerson/makePerson1").execute();
@@ -44,7 +45,7 @@ public class TestGetPerson {
 	@Test
 	public void should_returnThePerson_when_usingPerson1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetPerson/makePerson1").execute();
@@ -62,7 +63,7 @@ public class TestGetPerson {
 	@Test
 	public void should_returnThePerson_when_usingPerson2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetPerson/makePerson2").execute();
@@ -89,7 +90,7 @@ public class TestGetPerson {
 	@Test
 	public void should_returnTheCorrectPerson_when_usingPerson1AndPerson2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetPerson/makePerson1").execute();

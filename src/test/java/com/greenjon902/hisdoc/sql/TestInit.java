@@ -18,7 +18,7 @@ public class TestInit {
 	@Test
 	public void should_createTables_when_noneExist() throws ClassNotFoundException, SQLException, IOException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		Set<String> names = getColumnValues(easyDispatch(dispatcher, "testInit/getTableNames"), "TABLE_NAME", String::toLowerCase);
@@ -33,7 +33,7 @@ public class TestInit {
 	public void should_createTables_when_someExist() throws ClassNotFoundException, SQLException, IOException {
 		Connection conn = makeInMemoryConnection();
 
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.prepare("createTables/person").execute();
 		dispatcher.prepare("createTables/tag").execute();
 		dispatcher.prepare("testInit/fillTag").execute();

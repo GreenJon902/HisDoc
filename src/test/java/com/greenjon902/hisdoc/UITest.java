@@ -18,23 +18,26 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static com.greenjon902.hisdoc.SessionHandler.VerifyResult.*;
 
 public class UITest {
 
 	public static void main(String[] args) throws Exception {
+		Logger logger = Logger.getLogger("HisDocUITest");
+
 		DB database = DB.newEmbeddedDB(3306);
 		database.start();
 
 		HashMap<String, PageRenderer> map = new HashMap<>();
-		map.putAll(createTheThing(database, "HisDocUITest_Refined", "UITestSetup_Refined", ""));
-		map.putAll(createTheThing(database, "HisDocUITest_Large", "UITestSetup_Large", "l/"));
+		map.putAll(createTheThing(database, "HisDocUITest_Refined", "UITestSetup_Refined", "", logger));
+		map.putAll(createTheThing(database, "HisDocUITest_Large", "UITestSetup_Large", "l/", logger));
 
 		WebDriver webDriver = new WebDriver(new WebDriverConfig(
 				map,
 				8080, 0, 0, "com/greenjon902/hisdoc/logo.ico"
-		));
+		), logger);
 		webDriver.start();
 	}
 
@@ -46,11 +49,11 @@ public class UITest {
 	 * @param sqlScriptName The name of the sql script that fills the database with test data
 	 * @param pageNamePrefix The text to prefix page names with, can be "", or could be "test/"
 	 */
-	private static Map<String, PageRenderer> createTheThing(DB database, String dbName, String sqlScriptName, String pageNamePrefix) throws ManagedProcessException, SQLException {
+	private static Map<String, PageRenderer> createTheThing(DB database, String dbName, String sqlScriptName, String pageNamePrefix, Logger logger) throws ManagedProcessException, SQLException {
 		database.createDB(dbName);
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/" + dbName + "?allowMultiQueries=true");
 
-		Dispatcher dispatcher = new Dispatcher(connection);
+		Dispatcher dispatcher = new Dispatcher(connection, logger);
 		dispatcher.createTables();
 		dispatcher.prepare(sqlScriptName).execute();  // Fill with test data
 		

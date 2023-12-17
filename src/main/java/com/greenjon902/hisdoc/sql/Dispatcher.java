@@ -6,17 +6,17 @@ import com.greenjon902.hisdoc.sql.results.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class Dispatcher {
-	Map<String, String> statements = new HashMap<>();
-	Connection conn;
+	private final Map<String, String> statements = new HashMap<>();
+	private final Connection conn;
+	private final Logger logger;
 
-	public Dispatcher(Connection conn) {
+	public Dispatcher(Connection conn, Logger logger) {
 		this.conn = conn;
+		this.logger = logger;
 	}
 
 	public PreparedStatement prepare(String... codes) throws SQLException {
@@ -45,16 +45,17 @@ public class Dispatcher {
 		sql.append(statement);
 		sql.append(checkStatement("statement/end"));
 
+		logger.finest(() -> "Prepared \"" + code + "\" with arguments " + Arrays.toString(arguments) + ":\n" + sql);
+
 		return conn.prepareStatement(sql.toString());
 	}
 
 	private String checkStatement(String code) {
 		if (!statements.containsKey(code)) {
 			try {
-				System.out.println("Loading \"" + code + "\" ----------------");
+				logger.fine("Loading sql script \"" + code + "\"");
 				InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("com/greenjon902/hisdoc/sql/statements/" + code + ".sql");
 				statements.put(code, new String(fileInputStream.readAllBytes()).replace("{prefix}", "hs_"));
-				System.out.println(statements.get(code));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -63,6 +64,7 @@ public class Dispatcher {
 	}
 
 	public void createTables() throws SQLException {
+		logger.finer("Creating tables");
 		prepare("createTables/tag",
 		"createTables/person",
 		"createTables/event",
@@ -73,58 +75,69 @@ public class Dispatcher {
 	}
 
 	public EventInfo getEventInfo(int eid) throws SQLException {
-		System.out.println("Getting event info for event with id " + eid + " -----------------");
+		logger.finer("Getting event info for event with id " + eid);
 		PreparedStatement ps = prepareWithArgs("queries/getEventInfo", "eid", eid);
 		ps.execute();
 
-		return UnpackHelper.getEventInfo(ps);
+		EventInfo eventInfo = UnpackHelper.getEventInfo(ps);
+		logger.finest(() -> "Got " + eventInfo);
+		return eventInfo;
 	}
 
 	public PersonInfo getPersonInfo(int pid) throws SQLException {
-		System.out.println("Getting person info for person with id " + pid + " -----------------");
+		logger.finer("Getting person info for person with id " + pid);
 		PreparedStatement ps = prepareWithArgs("queries/getPersonInfo", "pid", pid);
 		ps.execute();
 
-		return UnpackHelper.getPersonInfo(ps);
+		PersonInfo personInfo = UnpackHelper.getPersonInfo(ps);
+		logger.finest(() -> "Got " + personInfo);
+		return personInfo;
 	}
 
 
 	public TagInfo getTagInfo(int tid) throws SQLException {
-		System.out.println("Getting tag info for tag with id " + tid + " -----------------");
+		logger.finer("Getting tag info for tag with id " + tid);
 		PreparedStatement ps = prepareWithArgs("queries/getTagInfo", "tid", tid);
 		ps.execute();
 
-		return UnpackHelper.getTagInfo(ps);
+		TagInfo tagInfo = UnpackHelper.getTagInfo(ps);
+		logger.finest(() -> "Got " + tagInfo);
+		return tagInfo;
 	}
 
 	public TimelineInfo getTimelineInfo() throws SQLException {
-		System.out.println("Getting timeline info -----------------");
+		logger.finer("Getting timeline info");
 		PreparedStatement ps = prepareWithArgs("queries/getTimelineInfo");
 		ps.execute();
 
-		return UnpackHelper.getTimelineInfo(ps);
+		TimelineInfo timelineInfo = UnpackHelper.getTimelineInfo(ps);
+		logger.finest(() -> "Got " + timelineInfo);
+		return timelineInfo;
 	}
 
 	public Set<TagLink> getAllTagLinks() throws SQLException {
-		System.out.println("Getting all tag links -----------------");
+		logger.finer("Getting all tag links");
 		PreparedStatement ps = prepareWithArgs("queries/getAllTagLinks");
 		ps.execute();
 
-		return UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getTagLink);
+		Set<TagLink> tagLinks = UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getTagLink);
+		logger.finest(() -> "Got " + tagLinks);
+		return tagLinks;
 	}
 
 	public Set<PersonLink> getAllPersonLinks() throws SQLException {
-		System.out.println("Getting all person links -----------------");
+		logger.finer("Getting all person links");
 		PreparedStatement ps = prepareWithArgs("queries/getAllPersonLinks");
 		ps.execute();
 
-		return UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getPersonLink);
+		Set<PersonLink> personLinks = UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getPersonLink);
+		logger.finest(() -> "Got " + personLinks);
+		return personLinks;
 	}
 
 	public int addEvent(AddEventSubmitPageRenderer.SubmittedEvent submittedEvent) throws SQLException {
 		// Add the actual event
-		System.out.println("Adding event link -----------------");
-		System.out.println(submittedEvent);
+		logger.finer(() -> "Adding event link for " + submittedEvent);
 		PreparedStatement ps = prepareWithArgs("upload/addEvent");
 		ps.setString(1, submittedEvent.name());
 		ps.setString(11, submittedEvent.name());  // For getting the event id
@@ -161,7 +174,7 @@ public class Dispatcher {
 		}
 
 		// Add relations
-		System.out.println("Adding tag relations --");
+		logger.finer("Adding tag relations");
 		PreparedStatement tagPs = prepareWithArgs("upload/addTagRelation");
 		for (int tagId : submittedEvent.tagIds()) {
 			tagPs.setInt(1, eid);
@@ -169,7 +182,7 @@ public class Dispatcher {
 			tagPs.execute();
 		}
 
-		System.out.println("Adding person relations --");
+		logger.finer("Adding person relations");
 		PreparedStatement personPs = prepareWithArgs("upload/addPersonRelation");
 		for (int personId : submittedEvent.personIds()) {
 			personPs.setInt(1, eid);
@@ -177,7 +190,7 @@ public class Dispatcher {
 			personPs.execute();
 		}
 
-		System.out.println("Adding event relations --");
+		logger.finer("Adding event relations");
 		PreparedStatement eventPs = prepareWithArgs("upload/addEventRelation");
 		for (int eventId : submittedEvent.relatedEventIds()) {
 			eventPs.setInt(1, eid);
@@ -192,7 +205,7 @@ public class Dispatcher {
 	 * Gets the person id from a minecraft UUID, returns null if none found.
 	 */
 	public Integer getPersonIdFromMcUUID(UUID uniqueId) throws SQLException {
-		System.out.println("Getting player for mcUUID " + uniqueId + " -----------------");
+		logger.finer("Getting player for mcUUID " + uniqueId);
 		PreparedStatement ps = prepareWithArgs("queries/getPerson");
 		ps.setString(1, "MC");
 		ps.setString(2, uniqueId.toString());
@@ -204,6 +217,7 @@ public class Dispatcher {
 		if (result.next()) {
 			throw new RuntimeException("Got multiple persons with uuid " + uniqueId);
 		}
+		logger.finest("Got " + pid);
 		return pid;
 	}
 }

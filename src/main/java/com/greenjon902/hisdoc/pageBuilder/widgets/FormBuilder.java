@@ -75,7 +75,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 			this.defaultContents = defaultContents;
 
 			if (!pattern.isEmpty() && rows != 1) {
-				System.out.println("Text builder cannot have a multi row text input when a pattern is set!");
+				throw new IllegalArgumentException("Text builder cannot have a multi row text input when a pattern is set!");
 			}
 		}
 

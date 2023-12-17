@@ -7,16 +7,29 @@ import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import static com.greenjon902.hisdoc.runners.papermc.ConfigLoader.ConfigItem.*;
+
+// TODO: Toggle for verbose logging
+// TODO: Toggle for HisDoc only log files
+// TODO: Custom HisDoc log path
 
 public class HisDocRunner extends JavaPlugin {
 	private ConfigLoader configLoader;
@@ -24,46 +37,59 @@ public class HisDocRunner extends JavaPlugin {
 	private Dispatcher dispatcher;
 	private Connection connection;
 	private PaperMcSessionHandlerImpl sessionHandler;
+	private Logger logger;
 
 
 	@Override
 	public void onEnable() {
 		try {
+			// Setup the logger
+			if (logger == null) {  // Let logger persist as it should not have issues like ever. Also, then it might get multiple file handlers!
+				logger = getLogger();
+				logger.setLevel(Level.ALL);
+				logger.addHandler(makeLoggerFileHandler());
+			}
+			logger.info("Starting HisDoc...");
+
 			// Load config -----------------------
-			configLoader = new ConfigLoader(getDataFolder());
-			String mysqlHost = configLoader.get(MYSQL_HOST).strip();
-			String mysqlUser = configLoader.get(MYSQL_USER).strip();
-			String mysqlPassword = configLoader.get(MYSQL_PASSWORD).strip();
-			String addEventUrl = configLoader.get(ADD_EVENT_URL).strip();
-			int webDriverPort = Integer.parseInt(configLoader.get(WEBDRIVER_PORT).strip());
+			logger.fine("Loading config...");
+			configLoader = new ConfigLoader(getDataFolder(), logger);
+			String mysqlHost = configLoader.get(MYSQL_HOST);
+			String mysqlUser = configLoader.get(MYSQL_USER);
+			String mysqlPassword = configLoader.get(MYSQL_PASSWORD);
+			String addEventUrl = configLoader.get(ADD_EVENT_URL);
+			int webDriverPort = Integer.parseInt(configLoader.get(WEBDRIVER_PORT));
 
 			// Create sql connection -----------------------
+			String url = "jdbc:mysql://" + mysqlHost + "?allowMultiQueries=true";
+			logger.fine("Connecting to database - \"" + url + "\"");
+			connection = DriverManager.getConnection(url, mysqlUser, mysqlPassword);
 
-			System.out.println(Class.forName("com.mysql.cj.jdbc.Driver"));
-			connection = DriverManager.getConnection("jdbc:mysql://" + mysqlHost + "?allowMultiQueries=true", mysqlUser, mysqlPassword);
-
-			System.out.println("Connected to " + connection);
-			dispatcher = new Dispatcher(connection);
+			logger.fine("Connected to " + connection);
+			dispatcher = new Dispatcher(connection, logger);
 
 			// Set up commands -----------------------
-			sessionHandler = new PaperMcSessionHandlerImpl();
-			getCommand("addevent").setExecutor(new AddEventCommand(dispatcher, sessionHandler, addEventUrl));
+			logger.fine("Setting up commands...");
+			sessionHandler = new PaperMcSessionHandlerImpl(logger);
+			getCommand("addevent").setExecutor(new AddEventCommand(dispatcher, sessionHandler, addEventUrl, logger));
 
 			// Set up website stuffs -----------------------
+			logger.fine("Starting webdriver...");
 			Map<String, PageRenderer> map = createMap(dispatcher, sessionHandler);
 			webDriver = new WebDriver(new WebDriverConfig(
 					map,
 					webDriverPort, 0, 0, "com/greenjon902/hisdoc/logo.ico"
-			));
+			), logger);
 
 			webDriver.start();
-		} catch (SQLException | IOException | ClassNotFoundException e) {
+		} catch (SQLException | IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
 	public void onDisable() {
+		logger.info("Stopping HisDoc...");
 		Exception exception = null;
 
 		PluginCommand command;
@@ -73,6 +99,7 @@ public class HisDocRunner extends JavaPlugin {
 		webDriver.stop();
 		webDriver = null;
 		dispatcher = null;
+		sessionHandler = null;
 		try {
 			connection.close();
 		} catch (SQLException e) {
@@ -97,6 +124,24 @@ public class HisDocRunner extends JavaPlugin {
 			Map.entry("/add", new AddEventPageRenderer(dispatcher, sessionHandler, true)),
 			Map.entry("/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, sessionHandler)),
 			Map.entry("/themes", new CssPageRenderer()));
+	}
+
+	private FileHandler makeLoggerFileHandler() {
+		try {
+			File logFolder = new File(Bukkit.getPluginsFolder().getParentFile(), "logs");
+			if (!logFolder.exists()) {
+				throw new RuntimeException("HisDoc cannot find log folder! Tried to use " + logFolder);
+			}
+			String date = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+			FileHandler fh = new FileHandler(logFolder.getAbsolutePath() + "/HisDoc-" + date + ".log", true);
+			LogFormatter formatter = new LogFormatter();
+			fh.setFormatter(formatter);
+			fh.setLevel(Level.ALL);
+			return fh;
+		} catch (SecurityException | IOException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 }
 

@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
@@ -71,7 +72,6 @@ public class EventPageRenderer extends PageRenderer {
 		TextBuilder idTextBuilder = new TextBuilder(MISC);
 		idTextBuilder.add("EID: " + eventInfo.id());
 		left.add(idTextBuilder);
-		System.out.println(eventInfo.details());
 		if (eventInfo.details() != null) {
 			TextBuilder detailsBox = new TextBuilder(WARNING);
 			detailsBox.add(eventInfo.details());

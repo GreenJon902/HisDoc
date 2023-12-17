@@ -10,20 +10,26 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class WebDriver {
 	private final HttpServer server;
 	protected final WebDriverConfig webDriverConfig;
+	private final Logger logger;
 
-	public WebDriver(WebDriverConfig webDriverConfig) throws IOException {
+	public WebDriver(WebDriverConfig webDriverConfig, Logger logger) throws IOException {
 		this.webDriverConfig = webDriverConfig;
+		this.logger = logger;
 
+		logger.finer("Binding HttpServer to" + webDriverConfig.port() + "...");
 		server = HttpServer.create();
 		server.bind(new InetSocketAddress(webDriverConfig.port()), webDriverConfig.backlog());
 
+		logger.finer("Creating contexts...");
 		for (String path : webDriverConfig.pageRenderers().keySet()) {
-			server.createContext(path, new HttpHandlerImpl(webDriverConfig.pageRenderers().get(path)));
+			server.createContext(path, new HttpHandlerImpl(webDriverConfig.pageRenderers().get(path), logger));
 		}
 		server.createContext("/favicon.ico", new FaviconHandler(webDriverConfig.favicon()));
 	}
@@ -32,6 +38,7 @@ public class WebDriver {
 	 * Starts the HttpServer.
 	 */
 	public void start() {
+		logger.fine("Starting HttpServer...");
 		server.start();
 	}
 
@@ -39,6 +46,7 @@ public class WebDriver {
 	 * Stops the HttpServer.
 	 */
 	public void stop() {
+		logger.fine("Stopping HttpServer...");
 		server.stop(webDriverConfig.stopDelay());
 	}
 }
@@ -66,18 +74,24 @@ class FaviconHandler implements HttpHandler {
 
 class HttpHandlerImpl implements HttpHandler {
 	private final PageRenderer pageRenderer;
+	private final Logger logger;
 
-	public HttpHandlerImpl(PageRenderer pageRenderer) {
+	public HttpHandlerImpl(PageRenderer pageRenderer, Logger logger) {
 		this.pageRenderer = pageRenderer;
+		this.logger = logger;
 	}
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
+		logger.finer("Got a request from \"" + exchange.getRemoteAddress().getHostString() + "\"");
+
 		String rendered;
 		try {
 			User user = getUser(exchange);
-
+			logger.finer(() -> "Request is from " + user);
 			Map<String, String> query = getQuery(exchange);
+			logger.finer(() -> "\twith the query " + query);
+
 			rendered = pageRenderer.render(query, null, user);
 
 		} catch (Exception e) {
@@ -91,7 +105,7 @@ class HttpHandlerImpl implements HttpHandler {
 			os.write(rendered.getBytes());
 			os.close();
 
-			e.printStackTrace();
+			logger.log(Level.WARNING, "An error occurred while responding to a request", e);
 			throw new RuntimeException(e);
 		}
 
@@ -125,7 +139,7 @@ class HttpHandlerImpl implements HttpHandler {
 		// Post ---
 		// Expect it to be encoded, so the & signs will only be there to separate key-value pairs
 		String postString = new String(exchange.getRequestBody().readAllBytes());
-		System.out.println(postString);
+
 		HashMap<String, String> post = new HashMap<>();
 		if (!postString.isEmpty()) {
 			String[] postStrings = postString.split("&");
@@ -142,7 +156,6 @@ class HttpHandlerImpl implements HttpHandler {
 
 		// Cookies ---
 		List<String> cookieStrings = exchange.getRequestHeaders().getOrDefault("Cookie", Collections.emptyList());
-		System.out.println(cookieStrings);
 
 		List<String> cookies = new ArrayList<>();
 		for (String cookieString : cookieStrings) {

@@ -11,7 +11,9 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
+import static com.greenjon902.hisdoc.sql.Utils.getTestLogger;
 import static com.greenjon902.hisdoc.sql.Utils.makeInMemoryConnection;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.DAY;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.HOUR;
@@ -20,7 +22,7 @@ public class TestGetEvent {
 	@Test
 	public void should_returnNoEvent_when_noEventsExist() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		EventInfo eventInfo = dispatcher.getEventInfo(1);
@@ -31,7 +33,7 @@ public class TestGetEvent {
 	@Test
 	public void should_returnNoEvent_when_thatEventDoesNotExist() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetEvent/makeEvent1").execute();
@@ -44,7 +46,7 @@ public class TestGetEvent {
 	@Test
 	public void should_returnTheEvent_when_onlyThatEventExists_and_usingEvent1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetEvent/makeEvent1").execute();
@@ -70,7 +72,7 @@ public class TestGetEvent {
 	@Test
 	public void should_returnTheEvent_when_onlyThatEventExists_and_usingEvent2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetEvent/makePersons").execute();  // Requires this beforehand
@@ -98,7 +100,7 @@ public class TestGetEvent {
 	@Test
 	public void should_returnTheEventWithARelation_when_bothEventsExist_and_areRelated() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetEvent/makePersons").execute();  // Requires this beforehand
@@ -145,7 +147,7 @@ public class TestGetEvent {
 	@Test
 	public void should_returnTheEvent_when_onlyOneEventExists_andOtherDataPiecesExistButAreNotRelated_and_usingEvent1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetEvent/makeEvent1").execute();
@@ -174,7 +176,7 @@ public class TestGetEvent {
 	@Test
 	public void should_returnTheEvent_when_onlyOneEventExists_andOtherDataPiecesExistAndAreRelated_and_usingEvent1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetEvent/makeEvent1").execute();

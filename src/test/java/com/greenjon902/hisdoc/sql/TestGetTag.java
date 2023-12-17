@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
+import static com.greenjon902.hisdoc.sql.Utils.getTestLogger;
 import static com.greenjon902.hisdoc.sql.Utils.makeInMemoryConnection;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.DAY;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.HOUR;
@@ -21,7 +22,7 @@ public class TestGetTag {
 	@Test
 	public void should_returnNoTag_when_noTagsExist() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		TagInfo tagInfo = dispatcher.getTagInfo(1);
@@ -32,7 +33,7 @@ public class TestGetTag {
 	@Test
 	public void should_returnNoTag_when_thatTagDoesNotExist() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetTag/makeTag1").execute();
@@ -45,7 +46,7 @@ public class TestGetTag {
 	@Test
 	public void should_returnTheTag_when_usingTag1() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetTag/makeTag1").execute();
@@ -63,7 +64,7 @@ public class TestGetTag {
 	@Test
 	public void should_returnTheTag_when_usingTag2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetTag/makeTag2").execute();
@@ -85,7 +86,7 @@ public class TestGetTag {
 	@Test
 	public void should_returnTheCorrectTag_when_usingTag1AndTag2() throws SQLException {
 		Connection conn = makeInMemoryConnection();
-		Dispatcher dispatcher = new Dispatcher(conn);
+		Dispatcher dispatcher = new Dispatcher(conn, getTestLogger());
 		dispatcher.createTables();
 
 		dispatcher.prepare("testGetTag/makeTag1").execute();
