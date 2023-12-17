@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
-public class TagPageRenderer extends PageRenderer {
+public class TagPageRenderer extends HtmlPageRenderer {
 	private final Dispatcher dispatcher;
 
 	public TagPageRenderer(Dispatcher dispatcher) {

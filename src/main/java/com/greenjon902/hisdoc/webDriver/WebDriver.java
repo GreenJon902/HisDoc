@@ -65,6 +65,7 @@ class FaviconHandler implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
+		exchange.getResponseHeaders().set("Content-Type", "image/x-icon");
 		exchange.sendResponseHeaders(200, image.length);
 		OutputStream os = exchange.getResponseBody();
 		os.write(image);
@@ -92,6 +93,7 @@ class HttpHandlerImpl implements HttpHandler {
 			Map<String, String> query = getQuery(exchange);
 			logger.finer(() -> "\twith the query " + query);
 
+			exchange.getResponseHeaders().set("Content-Type", pageRenderer.contentType());
 			rendered = pageRenderer.render(query, null, user);
 
 		} catch (Exception e) {
@@ -100,6 +102,7 @@ class HttpHandlerImpl implements HttpHandler {
 			e.printStackTrace(pw);
 			rendered = "Sorry, we experienced an error, please send this page to Jon\n\n" + sw;
 
+			exchange.getResponseHeaders().set("Content-Type", "text/plain");
 			exchange.sendResponseHeaders(200, rendered.length());
 			OutputStream os = exchange.getResponseBody();
 			os.write(rendered.getBytes());

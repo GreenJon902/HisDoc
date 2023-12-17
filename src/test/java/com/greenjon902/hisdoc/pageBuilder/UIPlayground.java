@@ -2,6 +2,7 @@ package com.greenjon902.hisdoc.pageBuilder;
 
 import com.greenjon902.hisdoc.pageBuilder.widgets.LogoBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.SeparatorBuilder;
+import com.greenjon902.hisdoc.pages.HtmlPageRenderer;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
 public class UIPlayground {
 	public static void main(String[] args) throws Exception {
 		WebDriver webDriver = new WebDriver(new WebDriverConfig(
-				Map.of("/", new PageRenderer() {
+				Map.of("/", new HtmlPageRenderer() {
 					@Override
 					public String render(Map<String, String> query, String fragment, User session) throws SQLException {
 						// Put builders here	------------------------------------------------------------------------
@@ -38,6 +39,11 @@ public class UIPlayground {
 								} catch (IOException e) {
 									throw new RuntimeException(e);
 								}
+							}
+
+							@Override
+							public String contentType() {
+								return "text/css";
 							}
 						}),
 				8080, 0, 0,

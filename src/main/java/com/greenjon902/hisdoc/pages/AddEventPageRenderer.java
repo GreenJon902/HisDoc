@@ -26,7 +26,7 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
  * Data will be uploaded with cookies using the {@link AddEventSubmitPageRenderer}.
  * On a successful submit, data will then be cleared from local storage.
  */
-public class AddEventPageRenderer extends PageRenderer {
+public class AddEventPageRenderer extends HtmlPageRenderer {
 	private final Dispatcher dispatcher;
 	private final SessionHandler sessionHandler;
 	private final boolean feedforwardQuery; // Should the query info be given to the action page of the form too>

@@ -16,7 +16,7 @@ import java.util.Map;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
-public class PersonPageRenderer extends PageRenderer {
+public class PersonPageRenderer extends HtmlPageRenderer {
 	private final Dispatcher dispatcher;
 
 	public PersonPageRenderer(Dispatcher dispatcher) {

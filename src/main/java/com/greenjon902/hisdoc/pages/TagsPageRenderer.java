@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
 
-public class TagsPageRenderer extends PageRenderer {
+public class TagsPageRenderer extends HtmlPageRenderer {
 
 	private final Dispatcher dispatcher;
 

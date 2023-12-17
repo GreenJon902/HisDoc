@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AddEventSubmitPageRenderer extends PageRenderer {
+public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 	private final Dispatcher dispatcher;
 	private final SessionHandler sessionHandler;
 

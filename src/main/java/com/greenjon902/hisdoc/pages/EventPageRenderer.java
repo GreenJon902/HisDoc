@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
-public class EventPageRenderer extends PageRenderer {
+public class EventPageRenderer extends HtmlPageRenderer {
 
 	private final Dispatcher dispatcher;
 

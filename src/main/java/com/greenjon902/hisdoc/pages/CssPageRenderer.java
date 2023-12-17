@@ -17,4 +17,9 @@ public class CssPageRenderer extends PageRenderer {
 			throw new RuntimeException(e);
 		}
 	}
+
+	@Override
+	public String contentType() {
+		return "text/css";
+	}
 }

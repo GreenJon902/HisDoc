@@ -16,7 +16,7 @@ import java.util.Set;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.NORMAL;
 
-public class PersonsPageRenderer extends PageRenderer {
+public class PersonsPageRenderer extends HtmlPageRenderer {
 
 	private final Dispatcher dispatcher;
 

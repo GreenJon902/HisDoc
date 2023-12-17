@@ -12,7 +12,7 @@ import java.util.Map;
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.NORMAL;
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.TITLE;
 
-public class HomePageRenderer extends PageRenderer {
+public class HomePageRenderer extends HtmlPageRenderer {
 	@Override
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
 		PageBuilder pageBuilder = new PageBuilder();

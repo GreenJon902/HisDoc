@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
-public class TimelinePageRenderer extends PageRenderer {
+public class TimelinePageRenderer extends HtmlPageRenderer {
 
 	private final Dispatcher dispatcher;
 
