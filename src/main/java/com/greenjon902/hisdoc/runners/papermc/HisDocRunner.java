@@ -7,6 +7,7 @@ import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
@@ -30,17 +31,16 @@ public class HisDocRunner extends JavaPlugin {
 		try {
 			// Load config -----------------------
 			configLoader = new ConfigLoader(getDataFolder());
-			String mysqlHost = configLoader.get(MYSQL_HOST);
-			String mysqlUser = configLoader.get(MYSQL_USER);
-			String mysqlPassword = configLoader.get(MYSQL_PASSWORD);
-			String addEventUrl = configLoader.get(ADD_EVENT_URL);
+			String mysqlHost = configLoader.get(MYSQL_HOST).strip();
+			String mysqlUser = configLoader.get(MYSQL_USER).strip();
+			String mysqlPassword = configLoader.get(MYSQL_PASSWORD).strip();
+			String addEventUrl = configLoader.get(ADD_EVENT_URL).strip();
 			int webDriverPort = Integer.parseInt(configLoader.get(WEBDRIVER_PORT).strip());
 
 			// Create sql connection -----------------------
 
 			System.out.println(Class.forName("com.mysql.cj.jdbc.Driver"));
-			connection = DriverManager.getConnection("jdbc:mysql://" + mysqlHost.strip() + "?allowMultiQueries=true",
-					mysqlUser.strip(), mysqlPassword.strip());
+			connection = DriverManager.getConnection("jdbc:mysql://" + mysqlHost + "?allowMultiQueries=true", mysqlUser, mysqlPassword);
 
 			System.out.println("Connected to " + connection);
 			dispatcher = new Dispatcher(connection);
@@ -64,16 +64,25 @@ public class HisDocRunner extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		Exception exception = null;
+
+		PluginCommand command;
+		if ((command = getCommand("addevent")) != null) {
+			command.setExecutor(null);
+		}
+		webDriver.stop();
+		webDriver = null;
+		dispatcher = null;
 		try {
-			getCommand("addevent").setExecutor(null);
-			webDriver.stop();
-			webDriver = null;
-			dispatcher = null;
 			connection.close();
-			connection = null;
-			configLoader = null;
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			exception = e;
+		}
+		connection = null;
+		configLoader = null;
+
+		if (exception != null) {
+			throw new RuntimeException(exception);
 		}
 	}
 

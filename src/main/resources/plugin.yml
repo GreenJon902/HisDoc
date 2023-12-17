@@ -3,6 +3,11 @@ version: '${project.version}'
 main: com.greenjon902.hisdoc.runners.papermc.HisDocRunner
 api-version: '1.20'
 
+libraries:
+  - mysql:mysql-connector-java:8.0.33
+  - org.apache.commons:commons-text:1.10.0
+  - io.quickchart:QuickChart:1.2.0
+
 commands:
   addevent:
     usage: /<command> [--ignore-ip]

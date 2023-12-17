@@ -178,15 +178,9 @@ public class AddEventPageRenderer extends PageRenderer {
 				add("If you would like to continue anyway, please run this command:");
 			}});
 			pageBuilder.add(new TextBuilder(CODE) {{
-				add("/hs verify --ip " + user.address().getHostString());
+				add("/addevent --ignore-ip");
 			}});
 		}
-		pageBuilder.add(new TextBuilder(NORMAL) {{
-			add("Or to allow any ip, please run this command:");
-		}});
-		pageBuilder.add(new TextBuilder(CODE) {{
-			add("/hs verify --noip ");
-		}});
 	}
 
 	private void renderNoSession(PageBuilder pageBuilder) {

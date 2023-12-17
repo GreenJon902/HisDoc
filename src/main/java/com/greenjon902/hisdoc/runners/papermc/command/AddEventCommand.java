@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
+import static net.kyori.adventure.text.event.ClickEvent.Action.OPEN_URL;
+
 public class AddEventCommand implements CommandExecutor {
 	private final Dispatcher dispatcher;
 	private final PaperMcSessionHandlerImpl sessionHandler;
@@ -43,10 +45,11 @@ public class AddEventCommand implements CommandExecutor {
 				String code = RandomStringUtils.random(7, true, true);
 
 				String ip = null;
-				if (playerSender.getAddress() != null) ip = playerSender.getAddress().getHostString();
+				if (playerSender.getAddress() != null && (args.length > 0 && !args[0].equals("--ignore-ip")))
+					ip = playerSender.getAddress().getHostString();
 
 				sessionHandler.addVerification(code, pid, playerSender.getName(), ip);
-				sender.sendMessage(Component.text("Use this link to add your event ").append(
+				sender.sendMessage(Component.text("Use this link to add your event:").append(Component.newline()).append(
 						Component.text("http://" + addEventUrl + "?code="+code)
 								.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "http://" + addEventUrl + "?code="+code))
 				));
@@ -55,6 +58,6 @@ public class AddEventCommand implements CommandExecutor {
 		} else {
 			sender.sendMessage("Only players can add events!");
 		}
-		return false;
+		return true;
 	}
 }
