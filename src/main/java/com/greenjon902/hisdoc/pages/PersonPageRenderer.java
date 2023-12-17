@@ -1,5 +1,6 @@
 package com.greenjon902.hisdoc.pages;
 
+import com.greenjon902.hisdoc.McPlaytimeSupplier;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
@@ -10,6 +11,7 @@ import com.greenjon902.hisdoc.sql.results.TagLink;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 import io.quickchart.QuickChart;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -18,9 +20,11 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
 public class PersonPageRenderer extends HtmlPageRenderer {
 	private final Dispatcher dispatcher;
+	private final McPlaytimeSupplier mcPlaytimeSupplier;
 
-	public PersonPageRenderer(Dispatcher dispatcher) {
+	public PersonPageRenderer(Dispatcher dispatcher, McPlaytimeSupplier mcPlaytimeSupplier) {
 		this.dispatcher = dispatcher;
+		this.mcPlaytimeSupplier = mcPlaytimeSupplier;
 	}
 
 	@Override
@@ -140,6 +144,7 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 		miscInfo.add("UPID: " + personInfo.data().personData());
 		miscInfo.add("Post Count: " + personInfo.postCount());
 		miscInfo.add("Event Count: " + personInfo.eventCount());
+		miscInfo.add("Ticks: " + mcPlaytimeSupplier.getTicks(personInfo.data().personData()));
 		right.add(miscInfo);
 
 		return right;

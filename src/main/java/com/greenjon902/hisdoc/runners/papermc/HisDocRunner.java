@@ -118,7 +118,7 @@ public class HisDocRunner extends JavaPlugin {
 			Map.entry("/event", new EventPageRenderer(dispatcher)),
 			Map.entry("/tag", new TagPageRenderer(dispatcher)),
 			Map.entry("/tags", new TagsPageRenderer(dispatcher)),
-			Map.entry("/person", new PersonPageRenderer(dispatcher)),
+			Map.entry("/person", new PersonPageRenderer(dispatcher, new PaperMcPlaytimeSupplierImpl())),
 			Map.entry("/persons", new PersonsPageRenderer(dispatcher)),
 			Map.entry("/timeline", new TimelinePageRenderer(dispatcher)),
 			Map.entry("/add", new AddEventPageRenderer(dispatcher, sessionHandler, true)),

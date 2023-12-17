@@ -61,7 +61,7 @@ public class UITest {
 				Map.entry("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "tag", new TagPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "tags", new TagsPageRenderer(dispatcher)),
-				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher)),
+				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher, new TestMcPlaytimeSupplierImpl())),
 				Map.entry("/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "addS", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(NO_SESSION), false)),
@@ -118,5 +118,12 @@ class TestSessionHandlerImpl implements SessionHandler {
 			throw new RuntimeException("Cannot get user " + user + " as is not verified");
 		}
 		return 1;
+	}
+}
+
+class TestMcPlaytimeSupplierImpl implements McPlaytimeSupplier {
+	@Override
+	public int getTicks(String uuid) {
+		return 0;
 	}
 }
