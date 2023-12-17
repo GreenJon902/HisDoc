@@ -42,18 +42,20 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title("Add Event");
 
-		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();
-		pageBuilder.addScript(lazyLoadAccountNameScript);
-		UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
-				"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
-		pageBuilder.addScript(unloadMessageSenderScript);
-
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		switch (sessionHandler.verify(user, query)) {
 			case NO_SESSION -> renderNoSession(pageBuilder);
 			case INVALID_IP -> renderInvalidIp(pageBuilder, user);
-			case VALID -> renderValid(pageBuilder, user, lazyLoadAccountNameScript, query);
+			case VALID -> {
+				LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();
+				pageBuilder.addScript(lazyLoadAccountNameScript);
+				UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
+						"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
+				pageBuilder.addScript(unloadMessageSenderScript);
+
+				renderValid(pageBuilder, user, lazyLoadAccountNameScript, query);
+			}
 		};
 
 		return pageBuilder.render(user);
