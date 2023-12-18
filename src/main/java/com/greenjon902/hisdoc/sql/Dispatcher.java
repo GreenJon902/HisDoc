@@ -29,6 +29,9 @@ public class Dispatcher {
 			}
 		}
 		sql.append(checkStatement("statement/end"));
+
+		logger.finest(() -> "Prepared \"" + Arrays.toString(codes) + "\":\n" + sql);
+
 		return conn.prepareStatement(sql.toString());
 	}
 
