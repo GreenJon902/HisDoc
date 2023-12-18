@@ -27,6 +27,8 @@
             </plugin>
         </plugins>
         <resources>
+
+            <!-- Only filter plugin.yml -->
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
@@ -34,6 +36,14 @@
                     <include>plugin.yml</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>plugin.yml</exclude>
+                </excludes>
+            </resource>
+
         </resources>
     </build>
 
