@@ -141,7 +141,7 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 
 		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
 		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + personInfo.data().personData());
-		miscInfo.add("UPID: " + personInfo.data().personData());
+		miscInfo.add("UUID: " + personInfo.data().personData());
 		miscInfo.add("Post Count: " + personInfo.postCount());
 		miscInfo.add("Event Count: " + personInfo.eventCount());
 		miscInfo.add("Ticks: " + mcPlaytimeSupplier.getTicks(personInfo.data().personData()));
