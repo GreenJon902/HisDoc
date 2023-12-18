@@ -16,14 +16,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import static com.greenjon902.hisdoc.runners.papermc.ConfigLoader.ConfigItem.*;
 
@@ -75,11 +73,12 @@ public class HisDocRunner extends JavaPlugin {
 
 			// Set up website stuffs -----------------------
 			logger.fine("Starting webdriver...");
-			Map<String, PageRenderer> map = createMap(dispatcher, sessionHandler);
+			Map<String, PageRenderer> map = createMap(dispatcher, sessionHandler, getDataFolder());
 			webDriver = new WebDriver(new WebDriverConfig(
 					map,
 					webDriverPort, 0, 0, "com/greenjon902/hisdoc/logo.ico"
 			), logger);
+			webDriver.addHandler("/", new FolderSenderHttpHandlerImpl(new File(getDataFolder(), "homePages")));
 
 			webDriver.start();
 		} catch (SQLException | IOException e) {
@@ -113,17 +112,17 @@ public class HisDocRunner extends JavaPlugin {
 		}
 	}
 
-	private static Map<String, PageRenderer> createMap(Dispatcher dispatcher, SessionHandler sessionHandler) {
-		return Map.ofEntries(Map.entry("/", new HomePageRenderer()),
-			Map.entry("/event", new EventPageRenderer(dispatcher)),
-			Map.entry("/tag", new TagPageRenderer(dispatcher)),
-			Map.entry("/tags", new TagsPageRenderer(dispatcher)),
-			Map.entry("/person", new PersonPageRenderer(dispatcher, new PaperMcPlaytimeSupplierImpl())),
-			Map.entry("/persons", new PersonsPageRenderer(dispatcher)),
-			Map.entry("/timeline", new TimelinePageRenderer(dispatcher)),
-			Map.entry("/add", new AddEventPageRenderer(dispatcher, sessionHandler, true)),
-			Map.entry("/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, sessionHandler)),
-			Map.entry("/themes", new CssPageRenderer()));
+	private static Map<String, PageRenderer> createMap(Dispatcher dispatcher, SessionHandler sessionHandler, File dataFolder) {
+		return Map.ofEntries(Map.entry("/hs/", new HomePageRenderer()),
+			Map.entry("/hs/event", new EventPageRenderer(dispatcher)),
+			Map.entry("/hs/tag", new TagPageRenderer(dispatcher)),
+			Map.entry("/hs/tags", new TagsPageRenderer(dispatcher)),
+			Map.entry("/hs/person", new PersonPageRenderer(dispatcher, new PaperMcPlaytimeSupplierImpl())),
+			Map.entry("/hs/persons", new PersonsPageRenderer(dispatcher)),
+			Map.entry("/hs/timeline", new TimelinePageRenderer(dispatcher)),
+			Map.entry("/hs/add", new AddEventPageRenderer(dispatcher, sessionHandler, true)),
+			Map.entry("/hs/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, sessionHandler)),
+			Map.entry("/hs/themes", new CssPageRenderer()));
 	}
 
 	private FileHandler makeLoggerFileHandler() {
