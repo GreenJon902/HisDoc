@@ -84,7 +84,7 @@ class HttpHandlerImpl implements HttpHandler {
 
 	@Override
 	public void handle(HttpExchange exchange) throws IOException {
-		logger.finer("Got a request from \"" + exchange.getRemoteAddress().getHostString() + "\"");
+		logger.finer("Got a request from \"" + exchange.getRemoteAddress().getHostString() + "\" for the page \"" + exchange.getRequestURI() + "\"");
 
 		String rendered;
 		try {
