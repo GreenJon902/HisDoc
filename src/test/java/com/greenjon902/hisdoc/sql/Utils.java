@@ -2,14 +2,11 @@ package com.greenjon902.hisdoc.sql;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
-import com.greenjon902.hisdoc.sql.Dispatcher;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.*;
 import java.util.function.Function;
-import java.util.logging.Logger;
 
 public class Utils {
 	private static DB database;  // Store this so we don't make one for every test
@@ -60,7 +57,4 @@ public class Utils {
 		scanner.nextLine();
 	}
 
-	public static Logger getTestLogger() {
-		return Logger.getLogger("TestingLogger");
-	}
 }

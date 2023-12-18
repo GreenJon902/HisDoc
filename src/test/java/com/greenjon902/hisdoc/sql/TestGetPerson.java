@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.greenjon902.hisdoc.sql.Utils.getTestLogger;
+import static com.greenjon902.hisdoc.Utils.getTestLogger;
 import static com.greenjon902.hisdoc.sql.Utils.makeInMemoryConnection;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.DAY;
 import static com.greenjon902.hisdoc.sql.results.DateInfo.Precision.HOUR;

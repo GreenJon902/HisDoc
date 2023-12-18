@@ -18,14 +18,16 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.greenjon902.hisdoc.SessionHandler.VerifyResult.*;
+import static com.greenjon902.hisdoc.Utils.getTestLogger;
 
 public class UITest {
 
 	public static void main(String[] args) throws Exception {
-		Logger logger = Logger.getLogger("HisDocUITest");
+		Logger logger = getTestLogger();
 
 		DB database = DB.newEmbeddedDB(3306);
 		database.start();

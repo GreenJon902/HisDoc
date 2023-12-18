@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import static com.greenjon902.hisdoc.Utils.getTestLogger;
+
 public class UIPlayground {
 	public static void main(String[] args) throws Exception {
 		WebDriver webDriver = new WebDriver(new WebDriverConfig(
@@ -47,7 +49,7 @@ public class UIPlayground {
 							}
 						}),
 				8080, 0, 0,
-				"com/greenjon902/hisdoc/logo.ico"), Logger.getLogger("HisDocUIPlayground"));
+				"com/greenjon902/hisdoc/logo.ico"), getTestLogger());
 		webDriver.start();
 	}
 }

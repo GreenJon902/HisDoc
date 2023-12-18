@@ -54,7 +54,9 @@ public class Dispatcher {
 		if (!statements.containsKey(code)) {
 			try {
 				logger.fine("Loading sql script \"" + code + "\"");
-				InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream("com/greenjon902/hisdoc/sql/statements/" + code + ".sql");
+				String path = "com/greenjon902/hisdoc/sql/statements/" + code + ".sql";
+				InputStream fileInputStream = this.getClass().getClassLoader().getResourceAsStream(path);
+				if (fileInputStream == null) throw new IOException("Could not load a stream for statement at \"" + path + "\"");
 				statements.put(code, new String(fileInputStream.readAllBytes()).replace("{prefix}", "hs_"));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
