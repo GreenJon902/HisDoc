@@ -96,8 +96,14 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 			}
 
 			Timestamp center = Timestamp.valueOf(convertTimestampSeparators(datec1));
-			Timestamp start = new Timestamp(Date.valueOf(dateb1).getTime());
+			Date startD = Date.valueOf(dateb1);
 			Date end = Date.valueOf(dateb2);
+			if (startD.after(end)) {  // Ensure in the correct order
+				Date temp = startD;
+				startD = end;
+				end = temp;
+			}
+			Timestamp start = new Timestamp(startD.getTime());
 
 			DateInfo dateInfo = switch (DateInfo.Type.decode(dateType)) {
 				case CENTERED -> DateInfo.centered(center, DateInfo.Precision.decode(datecPrecision), Integer.parseInt(datecDiff), DateInfo.Precision.decode(datecDiffType));

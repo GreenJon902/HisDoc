@@ -24,5 +24,7 @@ CREATE TABLE IF NOT EXISTS {prefix}Event (
     CONSTRAINT CheckDate_b_precision CHECK ((eventDateType = 'b') = (eventDatePrecision IS NULL)),
     CONSTRAINT CheckDate_b_diff      CHECK ((eventDateType = 'b') = (eventDateDiff IS NULL)),
     CONSTRAINT CheckDate_b_diffType  CHECK ((eventDateType = 'b') = (eventDateDiffType IS NULL)),
-    CONSTRAINT CheckDate_b_date2     CHECK ((eventDateType = 'b') = (eventDate2 IS NOT NULL))
+    CONSTRAINT CheckDate_b_date2     CHECK ((eventDateType = 'b') = (eventDate2 IS NOT NULL)),
+
+    CONSTRAINT CheckDate_b_date2_after     CHECK (eventDate1 <= eventDate2)
 );
