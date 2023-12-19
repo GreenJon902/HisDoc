@@ -93,6 +93,11 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 		WidgetBuilder tag = makeTagStatsContents(personInfo);
 		left.add(tag);
 
+		TextBuilder attributionText = new TextBuilder(MISC);
+		attributionText.add("Render from ", 0b010);
+		attributionText.add("QuickChart", "https://quickchart.io");
+		left.add(attributionText);
+
 		return left;
 	}
 
@@ -139,6 +144,13 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 		// Encoded is https://crafatar.com/renders/body/
 		IframeBuilder iframeBuilder = new IframeBuilder("https://corsproxy.io/?https%3A%2F%2Fcrafatar.com%2Frenders%2Fbody%2F" + personInfo.data().personData() + "?overlay");
 		right.add(iframeBuilder);
+
+		TextBuilder attributionText = new TextBuilder(MISC);
+		attributionText.add("Render from ", 0b010);
+		attributionText.add("Crafatar", "https://crafatar.com");
+		right.add(attributionText);
+
+		right.add(new BreakBuilder());
 
 		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
 		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + personInfo.data().personData());
