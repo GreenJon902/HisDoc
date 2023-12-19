@@ -95,7 +95,7 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 				eventIds = Collections.emptySet();
 			}
 
-			Timestamp center = Timestamp.valueOf(convertTimestampSeparators(datec1));
+			Timestamp center = Timestamp.valueOf(convertTimestamp(datec1));
 			Date startD = Date.valueOf(dateb1);
 			Date end = Date.valueOf(dateb2);
 			if (startD.after(end)) {  // Ensure in the correct order
@@ -113,12 +113,17 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 
 			return new SubmittedEvent(name, description, details, tagIds, personIds, eventIds, dateInfo, postedBy);
 		}
-		 private static String convertTimestampSeparators(String input) {
+
+		/**
+		 * Converts a html timestamp to a java timestamp (for use in {@link Timestamp#valueOf(String)}).
+		 * This is done by replacing the 'T' with a ' '.
+		 * @param input The html formatted timestamp
+		 * @return The correct format for a java timestamp
+		 */
+		 private static String convertTimestamp(String input) {
 			 char[] chars = input.toCharArray();
 			 chars[10] = ' ';
-			 chars[13] = ':';
-			 chars[16] = ':';
-			 return new String(chars);
+			 return new String(chars) + ":00";
 		 }
 	}
 }

@@ -146,7 +146,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 
 			stream.write("<div style=\"display: grid;\">");
 			stream.write("<label id=\"datecLabel1\" for=\"datec1\">Center: </label>");
-			stream.write("<input id=\"datec1\" name=\"datec1\" type=\"datetime-local\" step=\"1\" value=\"" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")) + "\">");
+			stream.write("<input id=\"datec1\" name=\"datec1\" type=\"datetime-local\" step=\"60\" value=\"" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm")) + "\">");
 
 			stream.write("""
 						<label id="datecPrecisionLabel" for="datecPrecision">Precision: </label>
