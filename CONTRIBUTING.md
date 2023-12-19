@@ -30,3 +30,6 @@ Or just put any random text in there (obvi excluding prefix) to say its not link
 for integers, we can just replace which also helps incase info has to be repeated.
 However for anything else, we theoretically only actually want to have it once anyway (especisally inserts),
 so use ? instead
+
+# versioning
+The version in pom.xml is the version of the last release. E.g. after v1.0.1, the version will say that until v1.0.2 releases.
