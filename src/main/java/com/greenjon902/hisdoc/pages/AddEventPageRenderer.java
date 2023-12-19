@@ -56,7 +56,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 
 				renderValid(pageBuilder, user, lazyLoadAccountNameScript, query);
 			}
-		};
+		}
 
 		return pageBuilder.render(user);
 	}

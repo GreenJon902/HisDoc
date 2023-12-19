@@ -1,5 +1,6 @@
 package com.greenjon902.hisdoc.pages;
 
+import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
@@ -98,7 +99,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
 
 		TextBuilder date = new TextBuilder(MISC);
-		date.add(formatDateString(eventInfo.eventDateInfo()));
+		date.add(eventInfo.eventDateInfo().formatString());
 		right.add(date);
 
 		right.add(new BreakBuilder());
@@ -144,7 +145,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 
 		// First we add the event author
 		if (eventInfo.postedDate() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown"); }});
-		else table.add(new TextBuilder(NORMAL) {{ add(eventInfo.postedDate().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))); }});
+		else table.add(new TextBuilder(NORMAL) {{ add(eventInfo.postedDate().formatString()); }});
 
 		if (eventInfo.postedBy() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown:"); }});
 		else {
@@ -160,7 +161,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 			lazyLoadAccountNameScript.add(changeInfo.author().data(), pageVariable);
 
 			if (changeInfo.date() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown"); }});
-			else table.add(new TextBuilder(NORMAL) {{ add(changeInfo.date().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"))); }});
+			else table.add(new TextBuilder(NORMAL) {{ add(changeInfo.date().formatString()); }});
 
 
 			table.add(new TextBuilder(NORMAL) {{ add(pageVariable.toString(), "person?id=" + changeInfo.author().id()); add(":"); }});
@@ -170,34 +171,13 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		return table;
 	}
 
-
-	public static String formatDateString(DateInfo dateInfo) {
-		if (dateInfo.type() == DateInfo.Type.CENTERED) {
-			String pattern =
-			switch (dateInfo.precision()) {
-				case MINUTE -> "yyyy-MM-dd hh:mm";
-				case HOUR -> "yyyy-MM-dd hh:??";
-				case DAY -> "yyyy-MM-dd";
-			};
-			String center = dateInfo.date1().toLocalDateTime().format(DateTimeFormatter.ofPattern(pattern));
-			String diff = "";
-			if (dateInfo.diff() != 0) {
-				diff = " ±" + dateInfo.diff() + dateInfo.diffType().toString().charAt(0);
-			}
-			return center + diff;
-		} else {
-			return "Somewhere between " + dateInfo.date1().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) +
-					" and " + dateInfo.date2().toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-		}
-	}
-
 	public static WidgetBuilder makeRecentEventContents(List<EventLink> recentEvents) {
 		// Contents means not title, it does not mean only create table contents. (so we will use the <table> tag)
 
 		TableBuilder table = new TableBuilder(2, false);  // Date, Event
 
 		for (EventLink eventLink : recentEvents) {
-			table.add(new TextBuilder(NORMAL) {{ add(EventPageRenderer.formatDateString(eventLink.dateInfo()) + " -"); }});
+			table.add(new TextBuilder(NORMAL) {{ add(eventLink.dateInfo().formatString() + " -"); }});
 			table.add(new TextBuilder(NORMAL) {{ add(eventLink.name(), "event?id=" + eventLink.id()); }});
 		}
 

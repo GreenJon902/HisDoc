@@ -6,8 +6,8 @@ tags_text_file = "./tag_text.txt"
 details_file = "./details.txt"
 changelogs_file = "./changelogs.txt"
 date_c_max_diff = 100
-max_date = datetime.now()
-max_date_days_since_min = 1000
+min_date = 100
+max_date = 10000
 eventeventrelation_val = 0.05
 eventeventrelation_step_val = (1, 50)
 eventtagrelation_val = 0.25
@@ -127,10 +127,6 @@ def parse_text_info(path):
         i += 3
 
 
-def format_timestamp(date):
-    return f"TIMESTAMP('{date.strftime('%Y-%m-%d')}', '{date.strftime('%H:%M:%S')}')"
-
-
 event_texts = list(parse_text_info(event_text_file))
 tags = list(parse_text_info(tags_text_file))
 details = list(open(details_file, "r").read().split("\n"))
@@ -138,10 +134,10 @@ changelogs = list(open(changelogs_file, "r").read().split("\n"))
 
 
 def make_event_list():
-    c_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDatePrecision, eventDateDiff, "
-               "eventDateDiffType, postedDate, description, postedPid, details)"
+    c_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDateUnits, eventDateDiff, "
+               "postedDate, description, postedPid, details)"
                "VALUES \n")
-    b_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDate2, "
+    r_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDate2, "
                "postedDate, description, postedPid, details)"
                "VALUES \n")
 
@@ -149,23 +145,22 @@ def make_event_list():
     for event_text in event_texts:
         name = event_text[0]
         description = event_text[1]
-        date1 = (max_date - timedelta(days=randint(0, max_date_days_since_min)))
-        postedDate = (max_date - timedelta(days=randint(0, max_date_days_since_min)))
+        date1 = randint(min_date, max_date)
+        postedDate = randint(min_date, max_date)
         postedPid = randint(0, len(persons))
         if postedPid == 0:
             postedPid = "NULL"
         detail = "'" + choice(details) + "'" if randint(0, 1) == 1 else "NULL"
 
         if randint(0, 1) == 0:  # C Date
-            date_precision = ["d", "h", "m"][randint(0, 2)]
+            date_units = ["d", "h", "m"][randint(0, 2)]
             date_diff = randint(0, date_c_max_diff)
-            date_diff_type = ["d", "h", "m"][randint(0, 2)]
 
-            c_dates += f"({eid}, '{name}', 'c', {format_timestamp(date1)}, '{date_precision}', {date_diff}, '{date_diff_type}', {format_timestamp(postedDate)}, '{description}', {postedPid}, {detail}), \n"
-        else:  # B Date
-            date2 = (date1 + timedelta(days=randint(0, max_date_days_since_min)))
+            c_dates += f"({eid}, '{name}', 'c', {date1}, '{date_units}', {date_diff}, {postedDate}, '{description}', {postedPid}, {detail}), \n"
+        else:  # R Date
+            date2 = (date1 + randint(min_date, max_date))
 
-            b_dates += f"({eid}, '{name}', 'b', {format_timestamp(date1)}, {format_timestamp(date2)}, {format_timestamp(postedDate)}, '{description}', {postedPid}, {detail}), \n"
+            r_dates += f"({eid}, '{name}', 'r', {date1}, {date2}, {postedDate}, '{description}', {postedPid}, {detail}), \n"
 
         eid += 1
 
@@ -173,9 +168,9 @@ def make_event_list():
     c_dates += ";\n"
     out.write(c_dates)
 
-    b_dates = b_dates.rstrip(", \n")
-    b_dates += ";\n"
-    out.write(b_dates)
+    r_dates = r_dates.rstrip(", \n")
+    r_dates += ";\n"
+    out.write(r_dates)
 
 
 def make_person_list():
@@ -253,12 +248,12 @@ def make_event_tag_relation():
 
 
 def make_changelogs():
-    string = "INSERT INTO {prefix}ChangeLog (eid, description, authorPid) VALUES \n"
+    string = "INSERT INTO {prefix}ChangeLog (eid, description, authorPid, date) VALUES \n"
 
     for i in range(len(event_texts) - 1):
         count = randint(0, len(changelogs))
         for _ in range(count - 1):
-            string += f"({i + 1}, '{choice(changelogs)}', '{randint(1, len(persons))}'), \n"
+            string += f"({i + 1}, '{choice(changelogs)}', '{randint(1, len(persons))}', {randint(min_date, max_date)}), \n"
 
     string = string.rstrip(", \n")
     string += ";\n"

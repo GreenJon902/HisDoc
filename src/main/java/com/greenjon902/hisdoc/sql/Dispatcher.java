@@ -1,5 +1,7 @@
 package com.greenjon902.hisdoc.sql;
 
+import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
+import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
 import com.greenjon902.hisdoc.pages.AddEventSubmitPageRenderer;
 import com.greenjon902.hisdoc.sql.results.*;
 
@@ -43,7 +45,7 @@ public class Dispatcher {
 			if (!(arguments[i * 2 + 1] instanceof Integer)) {
 				throw new IllegalArgumentException("Can only pass integer arguments, anything else should use ? args");
 			}
-			statement = statement.replace("{" + (String) arguments[i * 2] + "}", arguments[i * 2 + 1].toString());
+			statement = statement.replace("{" + arguments[i * 2] + "}", arguments[i * 2 + 1].toString());
 		}
 		sql.append(statement);
 		sql.append(checkStatement("statement/end"));
@@ -145,28 +147,29 @@ public class Dispatcher {
 		logger.finer(() -> "Adding event link for " + submittedEvent);
 		PreparedStatement ps = prepareWithArgs("upload/addEvent");
 		ps.setString(1, submittedEvent.name());
-		ps.setString(11, submittedEvent.name());  // For getting the event id
+		ps.setString(10, submittedEvent.name());  // For getting the event id
 		ps.setString(2, submittedEvent.description());
 		ps.setString(3, submittedEvent.details());
-		ps.setString(4, submittedEvent.dateInfo().type().sqlId);
-		ps.setTimestamp(5, submittedEvent.dateInfo().date1());
-		if (submittedEvent.dateInfo().precision() == null) {
+
+		if (submittedEvent.dateInfo() instanceof CenteredFlexiDateTime centeredFlexiDateTime) {
+			ps.setString(4, "c");
+			ps.setLong(5, centeredFlexiDateTime.center);
+			ps.setString(6, centeredFlexiDateTime.units.sqlId);
+			ps.setLong(7, centeredFlexiDateTime.diff);
+			ps.setNull(8, Types.BIGINT);
+
+		} else if (submittedEvent.dateInfo() instanceof RangedFlexiDate rangedFlexiDate) {
+			ps.setString(4, "r");
+			ps.setLong(5, rangedFlexiDate.start);
 			ps.setNull(6, Types.VARCHAR);
+			ps.setNull(7, Types.BIGINT);
+			ps.setLong(8, rangedFlexiDate.end);
+
 		} else {
-			ps.setString(6, submittedEvent.dateInfo().precision().sqlId);
+			throw new RuntimeException("Unknown date type " + submittedEvent.dateInfo().getClass());
 		}
-		if (submittedEvent.dateInfo().diff() == null) {
-			ps.setNull(7, Types.INTEGER);
-		} else {
-			ps.setInt(7, submittedEvent.dateInfo().diff());
-		}
-		if (submittedEvent.dateInfo().diffType() == null) {
-			ps.setNull(8, Types.VARCHAR);
-		} else {
-			ps.setString(8, submittedEvent.dateInfo().diffType().sqlId);
-		}
-		ps.setDate(9, submittedEvent.dateInfo().date2());
-		ps.setInt(10, submittedEvent.postedBy());
+
+		ps.setInt(9, submittedEvent.postedBy());
 		ps.execute();
 
 		// Get eid

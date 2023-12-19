@@ -1,10 +1,10 @@
 package com.greenjon902.hisdoc.pageBuilder.scripts;
 
+import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
 import com.greenjon902.hisdoc.pageBuilder.HtmlOutputStream;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.FilterableEvent;
 import com.greenjon902.hisdoc.pageBuilder.widgets.TimelineFilter;
-import com.greenjon902.hisdoc.sql.results.DateInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,13 +25,13 @@ public class TimelineSearchFilterScript extends Script {
 	ArrayList<TimelineFilter> timelineFilters = new ArrayList<>();
 	ArrayList<FilterableEvent> events = new ArrayList<>();
 	ArrayList<Stream<String>> eventsFilterNames = new ArrayList<>();  // Index corresponds to event index
-	ArrayList<DateInfo> eventsDates = new ArrayList<>();  // Index corresponds to event index
+	ArrayList<FlexiDateTime> eventsDates = new ArrayList<>();  // Index corresponds to event index
 
 	public TimelineSearchFilterScript(PageBuilder pageBuilder) {
 		pageBuilder.addScript(new CookieHelperScript());
 	}
 
-	public void add(FilterableEvent event, Stream<String> filterNames, DateInfo dateInfo) {
+	public void add(FilterableEvent event, Stream<String> filterNames, FlexiDateTime dateInfo) {
 		events.add(event);
 		eventsFilterNames.add(filterNames);
 		eventsDates.add(dateInfo);
@@ -145,15 +145,15 @@ public class TimelineSearchFilterScript extends Script {
 		stream.write("const eventDates = {");
 		for (int i=0; i<events.size(); i++) {
 			FilterableEvent event  = events.get(i);
-			DateInfo dateInfo  = eventsDates.get(i);
+			FlexiDateTime dateInfo  = eventsDates.get(i);
 
 			stream.write("\"");
 			stream.write(event.eventName);
-			stream.write("\": [Date.parse(\"");
-			stream.write(dateInfo.earliestDate());
-			stream.write("\"), Date.parse(\"");
-			stream.write(dateInfo.latestDate());
-			stream.write("\")], ");
+			stream.write("\": [new Date(");
+			stream.write(String.valueOf(dateInfo.earliestUnix()));
+			stream.write(" * 1000), new Date(");
+			stream.write(String.valueOf(dateInfo.latestUnix()));
+			stream.write(" * 1000)], ");
 		}
 		stream.write("};\n\n");
 	}

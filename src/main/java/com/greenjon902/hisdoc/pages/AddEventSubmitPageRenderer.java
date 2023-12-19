@@ -1,19 +1,25 @@
 package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.SessionHandler;
+import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
+import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
+import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
 import com.greenjon902.hisdoc.sql.Dispatcher;
-import com.greenjon902.hisdoc.sql.results.DateInfo;
-import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
+	private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd z");
+
 	private final Dispatcher dispatcher;
 	private final SessionHandler sessionHandler;
 
@@ -41,8 +47,8 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 	}
 
 	public record SubmittedEvent(String name, String description, String details, Set<Integer> tagIds,
-								 Set<Integer> personIds, Set<Integer> relatedEventIds, DateInfo dateInfo, int postedBy) {
-		public SubmittedEvent(String name, String description, String details, Set<Integer> tagIds, Set<Integer> personIds, Set<Integer> relatedEventIds, DateInfo dateInfo, int postedBy) {
+								 Set<Integer> personIds, Set<Integer> relatedEventIds, FlexiDateTime dateInfo, int postedBy) {
+		public SubmittedEvent(String name, String description, String details, Set<Integer> tagIds, Set<Integer> personIds, Set<Integer> relatedEventIds, FlexiDateTime dateInfo, int postedBy) {
 			this.name = name;
 			this.description = description;
 			this.details = details;
@@ -71,16 +77,16 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 			String sEventIds = query.get("events");
 
 			String dateType = query.get("dateType");
-			String datec1 = query.get("datec1");
-			String datecPrecision = query.get("datecPrecision");
+			String timezone = query.get("timezone");
+			String datec = query.get("datec");
+			String datecUnits = query.get("datecUnits");
 			String datecDiff = query.get("datecDiff");
-			String datecDiffType = query.get("datecDiffType");
-			String dateb1 = query.get("dateb1");
-			String dateb2 = query.get("dateb2");
+			String dater1 = query.get("dater1");
+			String dater2 = query.get("dater2");
 
 			if (name == null || description == null || details == null || sEventIds == null || dateType == null ||
-					datec1 == null || datecPrecision == null || datecDiff == null || datecDiffType == null ||
-					dateb1 == null || dateb2 == null) {
+					datecUnits == null || dater1 == null || datecDiff == null || dater2 == null ||
+					timezone == null) {
 				throw new RuntimeException("Got a null value");
 			}
 
@@ -95,35 +101,45 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 				eventIds = Collections.emptySet();
 			}
 
-			Timestamp center = Timestamp.valueOf(convertTimestamp(datec1));
-			Date startD = Date.valueOf(dateb1);
-			Date end = Date.valueOf(dateb2);
-			if (startD.after(end)) {  // Ensure in the correct order
-				Date temp = startD;
-				startD = end;
-				end = temp;
+			FlexiDateTime flexiDateTime;
+
+			if (dateType.equals("Centered")) {
+				ZonedDateTime zonedDateTime = getZDT(datec, timezone);
+				CenteredFlexiDateTime.Units units = CenteredFlexiDateTime.Units.decode(datecUnits);
+				long diff = Long.parseLong(datecDiff);
+
+				zonedDateTime = zonedDateTime.truncatedTo(units.temporalUnit); // Hours + Minutes only exist as the html form has to have them, so remove them here if need be
+				long center = zonedDateTime.toEpochSecond() / units.value;
+
+				flexiDateTime = new CenteredFlexiDateTime(center, units, diff);
+
+			} else if (dateType.equals("Ranged")) {
+				ZonedDateTime date1zdt = getZDT(dater1 + "T00:00", timezone);  // Add T00:00 to disguise it as a datetime
+				ZonedDateTime date2zdt = getZDT(dater2 + "T00:00", timezone);
+
+				// No need for truncation as is already in days
+
+				long date1 = date1zdt.toEpochSecond() / (24 * 60 * 60);  // Convert to days since epoch
+				long date2 = date2zdt.toEpochSecond() / (24 * 60 * 60);
+
+				flexiDateTime = new RangedFlexiDate(date1, date2);
+
+			} else {
+				throw new RuntimeException("Unknown date type \""  + dateType + "\"");
 			}
-			Timestamp start = new Timestamp(startD.getTime());
 
-			DateInfo dateInfo = switch (DateInfo.Type.decode(dateType)) {
-				case CENTERED -> DateInfo.centered(center, DateInfo.Precision.decode(datecPrecision), Integer.parseInt(datecDiff), DateInfo.Precision.decode(datecDiffType));
-				case BETWEEN -> DateInfo.between(start, end);
-			};
-
-
-			return new SubmittedEvent(name, description, details, tagIds, personIds, eventIds, dateInfo, postedBy);
+			return new SubmittedEvent(name, description, details, tagIds, personIds, eventIds, flexiDateTime, postedBy);
 		}
 
 		/**
-		 * Converts a html timestamp to a java timestamp (for use in {@link Timestamp#valueOf(String)}).
-		 * This is done by replacing the 'T' with a ' '.
-		 * @param input The html formatted timestamp
-		 * @return The correct format for a java timestamp
+		 * Gets the {@link ZonedDateTime} from a html dateTime (with
+		 * minute precision) and a timezone.
 		 */
-		 private static String convertTimestamp(String input) {
+		 private static ZonedDateTime getZDT(String input, String timezone) {
 			 char[] chars = input.toCharArray();
 			 chars[10] = ' ';
-			 return new String(chars) + ":00";
+			 String fullDateTimeString = new String(chars) + " " + timezone;
+			 return ZonedDateTime.parse(fullDateTimeString, dateTimeFormat);
 		 }
 	}
 }

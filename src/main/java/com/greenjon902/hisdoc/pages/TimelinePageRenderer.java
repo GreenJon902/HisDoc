@@ -77,7 +77,7 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 			event.add(eventName);
 
 			TextBuilder date = new TextBuilder(MISC);
-			date.add(EventPageRenderer.formatDateString(eventLink.dateInfo()));
+			date.add(eventLink.dateInfo().formatString());
 			event.add(date);
 
 			TextBuilder eventDescription = new TextBuilder(NORMAL);

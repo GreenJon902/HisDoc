@@ -9,7 +9,7 @@ import java.io.IOException;
 import static com.greenjon902.hisdoc.pageBuilder.widgets.IconBuilder.IconType.*;
 
 public class NavBarBuilder implements WidgetBuilder {
-	private ContainerWidgetBuilder navBar = new ContainerWidgetBuilder();
+	private final ContainerWidgetBuilder navBar = new ContainerWidgetBuilder();
 
 	public NavBarBuilder(PageBuilder pageBuilder) {
 		ColumnLayoutBuilder columnLayoutBuilder1 = new ColumnLayoutBuilder();

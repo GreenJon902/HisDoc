@@ -3,6 +3,6 @@ CREATE TABLE IF NOT EXISTS {prefix}ChangeLog (
   eid       INTEGER      NOT NULL  REFERENCES {prefix}Event(eid),
   description       LONGTEXT NOT NULL,
   authorPid INTEGER      NOT NULL  REFERENCES {prefix}Person(pid),
-  date      TIMESTAMP    NOT NULL,
+  date      BIGINT UNSIGNED    NOT NULL,
   PRIMARY KEY(cid)
 );
