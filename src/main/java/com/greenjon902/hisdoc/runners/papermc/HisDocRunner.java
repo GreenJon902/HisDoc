@@ -65,6 +65,7 @@ public class HisDocRunner extends JavaPlugin {
 
 			logger.fine("Connected to " + connection);
 			dispatcher = new Dispatcher(connection, logger);
+			dispatcher.createTables();
 
 			// Set up commands -----------------------
 			logger.fine("Setting up commands...");
