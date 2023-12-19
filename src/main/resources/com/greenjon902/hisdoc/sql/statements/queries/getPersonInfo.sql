@@ -30,7 +30,7 @@ SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.eventDateType, {pref
                                             {prefix}Event.eventDatePrecision, {prefix}Event.eventDateDiff, {prefix}Event.eventDateDiffType,
                                             {prefix}Event.eventDate2, {prefix}Event.description FROM {prefix}Event
 WHERE {prefix}Event.postedPid = {pid}
-ORDER BY eventDate1 DESC
+ORDER BY {prefix}Event.postedDate DESC
 LIMIT 10;
 
 
