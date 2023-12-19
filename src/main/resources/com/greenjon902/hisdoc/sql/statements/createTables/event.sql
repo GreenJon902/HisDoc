@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS {prefix}Event (
     description   LONGTEXT NOT NULL,
     details       LONGTEXT,
     postedPid     INTEGER              REFERENCES {prefix}Person(pid),
-    postedDate    TIMESTAMP NULL DEFAULT NULL,
+    postedDate    TIMESTAMP NULL DEFAULT NULL,  -- A value is automatically set in the insert statement in upload/addEvent.sql
 
     eventDateType      ENUM('c', 'b') NOT NULL, -- 'c': centered around date1, with precision and a difference, 'b': between two dates
     eventDate1     TIMESTAMP NOT NULL,  -- If type is 'c' then it is centered around this date as a timestamp with precision, if type is 'b' then this is rounded to a date
