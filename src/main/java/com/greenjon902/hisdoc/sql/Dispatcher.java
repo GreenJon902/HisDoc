@@ -217,10 +217,14 @@ public class Dispatcher {
 		ps.execute();
 
 		ResultSet result = ps.getResultSet();
-		UnpackHelper.next(result, "personId", "the");
-		Integer pid = UnpackHelper.getInteger(result, "pid");
-		if (result.next()) {
-			throw new RuntimeException("Got multiple persons with uuid " + uniqueId);
+		Integer pid;
+		if (!result.next()) {
+			pid = null;
+		} else {
+			pid = UnpackHelper.getInteger(result, "pid");
+			if (result.next()) {
+				throw new RuntimeException("Got multiple persons with uuid " + uniqueId);
+			}
 		}
 		logger.finest("Got " + pid);
 		return pid;
