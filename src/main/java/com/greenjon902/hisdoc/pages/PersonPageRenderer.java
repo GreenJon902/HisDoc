@@ -136,7 +136,8 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 	private ContainerWidgetBuilder makeMcRight(PersonInfo personInfo, PageVariable accountNameVar) {
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
 
-		IframeBuilder iframeBuilder = new IframeBuilder("https://minerender.org/embed/skin/?skin=" + accountNameVar);
+		// Encoded is https://crafatar.com/renders/body/
+		IframeBuilder iframeBuilder = new IframeBuilder("https://corsproxy.io/?https%3A%2F%2Fcrafatar.com%2Frenders%2Fbody%2F" + personInfo.data().personData() + "?overlay");
 		right.add(iframeBuilder);
 
 		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
