@@ -134,7 +134,8 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		String mcName = sessionHandler.getNameOf(user, query);
 		form.add(new TextBuilder(NORMAL, "\n") {{
 			add("This event will be submitted under the user " + mcName + ".");
-			add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");
+			//add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");
+			// That message is planned to be added with event screening in v2
 		}});
 		form.add(new FormBuilder.SubmitButtonBuilder());
 
