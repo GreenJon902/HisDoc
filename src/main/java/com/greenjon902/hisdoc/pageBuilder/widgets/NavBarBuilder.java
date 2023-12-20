@@ -9,14 +9,13 @@ import java.io.IOException;
 import static com.greenjon902.hisdoc.pageBuilder.widgets.IconBuilder.IconType.*;
 
 public class NavBarBuilder implements WidgetBuilder {
-	private ContainerWidgetBuilder navBar = new ContainerWidgetBuilder();
+	private final ContainerWidgetBuilder navBar = new ContainerWidgetBuilder();
 
 	public NavBarBuilder(PageBuilder pageBuilder) {
 		ColumnLayoutBuilder columnLayoutBuilder1 = new ColumnLayoutBuilder();
 		ColumnLayoutBuilder columnLayoutBuilder2 = new ColumnLayoutBuilder();
 
 		columnLayoutBuilder2.add(new LogoBuilder());
-		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(G_DEM), "..");}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TIMELINE), "timeline");}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(PERSONS), "persons");}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TAGS), "tags");}});

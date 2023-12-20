@@ -3,6 +3,7 @@ package com.greenjon902.hisdoc.runners.papermc;
 import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pages.*;
 import com.greenjon902.hisdoc.runners.papermc.command.AddEventCommand;
+import com.greenjon902.hisdoc.runners.papermc.command.RestartHisDocCommand;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
@@ -59,7 +60,7 @@ public class HisDocRunner extends JavaPlugin {
 			int webDriverPort = Integer.parseInt(configLoader.get(WEBDRIVER_PORT));
 
 			// Create sql connection -----------------------
-			String url = "jdbc:mysql://" + mysqlHost + "?allowMultiQueries=true";
+			String url = "jdbc:mysql://" + mysqlHost + "?allowMultiQueries=true&autoReconnect=true";
 			logger.fine("Connecting to database - \"" + url + "\"");
 			connection = DriverManager.getConnection(url, mysqlUser, mysqlPassword);
 
@@ -71,6 +72,7 @@ public class HisDocRunner extends JavaPlugin {
 			logger.fine("Setting up commands...");
 			sessionHandler = new PaperMcSessionHandlerImpl(logger);
 			getCommand("addevent").setExecutor(new AddEventCommand(dispatcher, sessionHandler, addEventUrl, logger));
+			getCommand("restarthisdoc").setExecutor(new RestartHisDocCommand(this, logger));
 
 			// Set up website stuffs -----------------------
 			logger.fine("Starting webdriver...");
@@ -79,7 +81,6 @@ public class HisDocRunner extends JavaPlugin {
 					map,
 					webDriverPort, 0, 0, "com/greenjon902/hisdoc/logo.ico"
 			), logger);
-			webDriver.addHandler("/", new FolderSenderHttpHandlerImpl(new File(getDataFolder(), "homePages")));
 
 			webDriver.start();
 		} catch (SQLException | IOException e) {
@@ -94,6 +95,9 @@ public class HisDocRunner extends JavaPlugin {
 
 		PluginCommand command;
 		if ((command = getCommand("addevent")) != null) {
+			command.setExecutor(null);
+		}
+		if ((command = getCommand("restarthisdoc")) != null) {
 			command.setExecutor(null);
 		}
 		webDriver.stop();

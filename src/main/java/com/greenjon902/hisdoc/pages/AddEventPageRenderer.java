@@ -9,7 +9,6 @@ import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
-import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.net.URLEncoder;
@@ -56,7 +55,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 
 				renderValid(pageBuilder, user, lazyLoadAccountNameScript, query);
 			}
-		};
+		}
 
 		return pageBuilder.render(user);
 	}
@@ -81,7 +80,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		form.add(new TextBuilder(SUBTITLE) {{add("Name");}});
 		form.add(new TextBuilder(NORMAL) {{add("Please enter the event name, which should be short and concise. \n" +
 				"It is shown in bold at the top of the event page and will be used when other pages are linking to this event.");}});
-		form.add(new FormBuilder.TextInputBuilder("name", 1));
+		form.add(new FormBuilder.TextInputBuilder("name", 1, ".*"));  // Pattern allows anything but newlines, it also locks it to one line anyway due to html stuffs
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Description");}});
 		form.add(new TextBuilder(NORMAL) {{add("Please enter the event description, " +
@@ -128,13 +127,14 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 					Centered dates have a center which has a precision, meaning it was somewhere on that date to the precision given. It also has a difference and a difference type, show how far either side the event could occurred.
 					Between dates mean that the event could've happened anywhere between the first and second date.""");
 		}});
-		form.add(new FormBuilder.DateInfoInputBuilder());
+		form.add(new FormBuilder.FlexiDateTimeInputBuilder());
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
 		String mcName = sessionHandler.getNameOf(user, query);
 		form.add(new TextBuilder(NORMAL, "\n") {{
 			add("This event will be submitted under the user " + mcName + ".");
-			add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");
+			//add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");
+			// That message is planned to be added with event screening in v2
 		}});
 		form.add(new FormBuilder.SubmitButtonBuilder());
 

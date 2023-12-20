@@ -25,8 +25,13 @@ So person info can be a prefixed uuid, e.g. `MC|0dbffb6c-6165-40e4-b0f6-0fab4dcd
 that this is a minecraft account with that uuid, so the program can then load the name afterwards.
 Or just put any random text in there (obvi excluding prefix) to say its not linked to anything, e.g. `Dave123`
 
+# Dates
+Store all dates as longs.
 
 # Prepared statements and sql safety
 for integers, we can just replace which also helps incase info has to be repeated.
 However for anything else, we theoretically only actually want to have it once anyway (especisally inserts),
 so use ? instead
+
+# versioning
+The version in pom.xml is the version of the last release. E.g. after v1.0.1, the version will say that until v1.0.2 releases.

@@ -13,6 +13,13 @@ commands:
     usage: /<command> [--ignore-ip]
     permission: hisdoc.addevent
 
+  restarthisdoc:
+    usage: /<command> [confirm]
+    permission: hisdoc.restart
+
 permissions:
   hisdoc.addevent:
+    default: op
+
+  hisdoc.restart:
     default: op

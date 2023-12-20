@@ -28,7 +28,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
-		stream.write("<form onkeydown=\"return event.key != 'Enter';\" accept-charset=utf-8 method=\"" + method.string + "\" action=\"" + action + "\"");
+		stream.write("<form accept-charset=utf-8 method=\"" + method.string + "\" action=\"" + action + "\"");
 		if (id != null) stream.write( " id=\"" + id + "\"");
 		stream.write(">");
 		renderAllChildren(stream, user);
@@ -80,7 +80,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		}
 
 		public TextInputBuilder(String name, int rows, @NotNull String pattern) {
-			this(name, rows, "", "", "");
+			this(name, rows, pattern, "", "");
 		}
 
 		@Override
@@ -100,7 +100,8 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 			if (!pattern.isEmpty()) {
 				stream.write(" pattern=\"");
 				stream.write(pattern);
-				stream.write("\"");
+				stream.write("\" ");
+				stream.write("onkeydown=\"return event.key != 'Enter';\"");  // As pattern means one line, but don't want to accidentally submit
 			}
 			stream.write(">");
 			stream.write(defaultContents);
@@ -113,30 +114,24 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		}
 	}
 
-	public static class DateInfoInputBuilder implements WidgetBuilder {
+	public static class FlexiDateTimeInputBuilder implements WidgetBuilder {
 		private final RadioButton dateType;
 
-		public DateInfoInputBuilder() {
+		public FlexiDateTimeInputBuilder() {
 
-			this.dateType = new RadioButton("dateType", "Centered", List.of("Centered", "Between"),
+			this.dateType = new RadioButton("dateType", "Centered", List.of("Centered", "Ranged"),
 					"""
-       						console.log(this.value);
-       						console.log(this.checked);
-							
-								console.log('yay');
-								document.getElementById('datecLabel1').hidden = this.value != 'Centered';
-								document.getElementById('datec1').hidden = this.value != 'Centered';
-								document.getElementById('datecPrecisionLabel').hidden = this.value != 'Centered';
-								document.getElementById('datecPrecision').hidden = this.value != 'Centered';
+								document.getElementById('datecLabel').hidden = this.value != 'Centered';
+								document.getElementById('datec').hidden = this.value != 'Centered';
+								document.getElementById('datecUnitsLabel').hidden = this.value != 'Centered';
+								document.getElementById('datecUnits').hidden = this.value != 'Centered';
 								document.getElementById('datecDiffLabel').hidden = this.value != 'Centered';
 								document.getElementById('datecDiff').hidden = this.value != 'Centered';
-								document.getElementById('datecDiffTypeLabel').hidden = this.value != 'Centered';
-								document.getElementById('datecDiffType').hidden = this.value != 'Centered';
 								
-								document.getElementById('datebLabel1').hidden = this.value != 'Between';
-								document.getElementById('dateb1').hidden = this.value != 'Between';
-								document.getElementById('datebLabel2').hidden = this.value != 'Between';
-								document.getElementById('dateb2').hidden = this.value != 'Between';
+								document.getElementById('daterLabel1').hidden = this.value != 'Ranged';
+								document.getElementById('dater1').hidden = this.value != 'Ranged';
+								document.getElementById('daterLabel2').hidden = this.value != 'Ranged';
+								document.getElementById('dater2').hidden = this.value != 'Ranged';
 							""");
 		}
 
@@ -144,13 +139,17 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		public void render(HtmlOutputStream stream, User user) throws IOException {
 			dateType.render(stream, user);
 
-			stream.write("<div style=\"display: grid;\">");
-			stream.write("<label id=\"datecLabel1\" for=\"datec1\">Center: </label>");
-			stream.write("<input id=\"datec1\" name=\"datec1\" type=\"datetime-local\" step=\"1\" value=\"" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss")) + "\">");
+			stream.write("<div style=\"display: grid;\" onkeydown=\"return event.key != 'Enter';\">");
+
+			stream.write("<input id=\"timezone\" name=\"timezone\" type=\"hidden\">");
+			stream.write("<script>document.getElementById(\"timezone\").value = Intl.DateTimeFormat().resolvedOptions().timeZone;</script>");
+
+			stream.write("<label id=\"datecLabel\" for=\"datec\">Center: </label>");
+			stream.write("<input id=\"datec\" name=\"datec\" type=\"datetime-local\" step=\"60\" value=\"" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm")) + "\">");
 
 			stream.write("""
-						<label id="datecPrecisionLabel" for="datecPrecision">Precision: </label>
-						<select id="datecPrecision" name="datecPrecision">
+						<label id="datecUnitsLabel" for="datecUnits">Units: </label>
+						<select id="datecUnits" name="datecUnits">
 						  <option value="m">Minutes</option>
 						  <option value="h">Hours</option>
 						  <option value="d">Days</option>
@@ -158,20 +157,18 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 
 			stream.write("<label id=\"datecDiffLabel\" for=\"datecDiff\">Diff: </label>");
 			stream.write("<input id=\"datecDiff\" name=\"datecDiff\" type=\"number\" value=\"0\">");
-			stream.write("""
-						<label id="datecDiffTypeLabel" for="datecDiffType">Diff Type: </label>
-						<select id="datecDiffType" name="datecDiffType">
-						  <option value="m">Minutes</option>
-						  <option value="h">Hours</option>
-						  <option value="d">Days</option>
-						</select>""");
 
 
 			// Hide by default
-			stream.write("<label id=\"datebLabel1\" for=\"dateb1\" hidden>Start: </label>");
-			stream.write("<input id=\"dateb1\" name=\"dateb1\" type=\"date\" value=\"" + LocalDate.now() + "\" hidden/>");
-			stream.write("<label id=\"datebLabel2\" for=\"dateb2\" hidden>End: </label>");
-			stream.write("<input id=\"dateb2\" name=\"dateb2\" type=\"date\" value=\"" + LocalDate.now() + "\" hidden/>");
+			stream.write("<label id=\"daterLabel1\" for=\"dater1\" hidden>Start: </label>");
+			stream.write("<input id=\"dater1\" name=\"dater1\" type=\"date\" value=\"" + LocalDate.now() + "\" hidden/>");
+			stream.write("<label id=\"daterLabel2\" for=\"dater2\" hidden>End: </label>");
+			stream.write("<input id=\"dater2\" name=\"dater2\" type=\"date\" value=\"" + LocalDate.now() + "\" hidden/>");
+
+
+
+			stream.write("<span>Your timezone was detected as <span id=\"timezoneLabel\"></span></span>");
+			stream.write("<script>document.getElementById(\"timezoneLabel\").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;</script>");
 			stream.write("</div>");
 		}
 	}

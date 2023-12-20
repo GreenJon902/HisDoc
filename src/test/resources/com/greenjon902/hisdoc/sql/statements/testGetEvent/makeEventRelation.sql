@@ -1,6 +1,0 @@
-SET FOREIGN_KEY_CHECKS=0;
-
-INSERT INTO {prefix}EventEventRelation (eid1, eid2)
-VALUES (1, 2);
-
-SET FOREIGN_KEY_CHECKS=1;

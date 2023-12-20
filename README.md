@@ -14,6 +14,6 @@ This system was built by me (GreenJon902). If you need any help or find a bug or
 
 
 # Other stuffs
-This is still atm an early beta/alpha, what's the difference, does anyone quite know? It is missing some essential features for anyone wanting to use it for larger communities where you don't have direct contact with everyone, as well as setting it up probably requires an understanding in what a mysql is.  
+This is still atm an early beta/alpha, what's the difference, does anyone quite know? It is missing some essential features for anyone wanting to use it for larger communities where you don't have direct contact with everyone, as well as setting it up probably requires an understanding in what a mysql is.  It also is likely not to work from version to version without some manual changes of sql tables.
 I also don't really do error handling like, sometimes it just complains and the messages cant decide whether to contact me, or the person who set that instance up.   
 Apart from that it works great!

@@ -1,12 +1,18 @@
 package com.greenjon902.hisdoc.sql;
 
+import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
+import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
+import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
 import com.greenjon902.hisdoc.sql.results.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.Callable;
+
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class UnpackHelper {
 	/**
@@ -24,26 +30,36 @@ public class UnpackHelper {
 	 * This looks at the columns date, authorPid, authorInfo, and description.
 	 */
 	public static ChangeInfo getChangeInfo(ResultSet result) throws SQLException {
-		return new ChangeInfo(result.getTimestamp("date"),
+		return new ChangeInfo(new CenteredFlexiDateTime(result.getLong("date"), CenteredFlexiDateTime.Units.SECOND, 0),
 				new PersonLink(result.getInt("authorPid"), getPersonData(result)),
 				result.getString("description"));
 	}
 
 	/**
-	 * Unpacks a singular {@link DateInfo} from a {@link ResultSet}, this expects the current result to be the one we are
+	 * Unpacks a singular {@link FlexiDateTime} from a {@link ResultSet}, this expects the current result to be the one we are
 	 * getting (meaning we do not use {@link ResultSet#next()}).
-	 * This looks at the columns eventDateType, eventDate1, eventDatePrecision, eventDateDiff, eventDateDiffType and
+	 * This looks at the columns eventDateType, eventDate1, eventDateUnits, eventDateDiff and
 	 * eventDate2.
 	 */
-	public static DateInfo getDateInfo(ResultSet result) throws SQLException {
-		return new DateInfo(
-				result.getString("eventDateType"),
-				result.getTimestamp("eventDate1"),
-				result.getString("eventDatePrecision"),
-				getInteger(result, "eventDateDiff"),
-				result.getString("eventDateDiffType"),
-				result.getDate("eventDate2")
-		);
+	public static FlexiDateTime getFlexiDateTime(ResultSet result) throws SQLException {
+		String type = result.getString("eventDateType");
+
+		if (type.equals("c")) {
+			long center = result.getLong("eventDate1");
+			long diff = result.getLong("eventDateDiff");
+			CenteredFlexiDateTime.Units units = CenteredFlexiDateTime.Units.decode(result.getString("eventDateUnits"));
+
+			return new CenteredFlexiDateTime(center, units, diff);
+
+		} else if (type.equals("r")) {
+			long date1 = result.getLong("eventDate1");
+			long date2 = result.getLong("eventDate2");
+
+			return new RangedFlexiDate(date1, date2);
+
+		} else {
+			throw new RuntimeException("Unknown date type \""  + type + "\"");
+		}
 	}
 
 	/**
@@ -52,7 +68,7 @@ public class UnpackHelper {
 	 * This looks at the columns eid, name.
 	 */
 	public static EventLink getEventLink(ResultSet result) throws SQLException {
-		return new EventLink(result.getInt("eid"), result.getString("name"), getDateInfo(result),
+		return new EventLink(result.getInt("eid"), result.getString("name"), getFlexiDateTime(result),
 				result.getString("description"));
 	}
 
@@ -106,7 +122,7 @@ public class UnpackHelper {
 		if (!result.next()) {
 			return null;
 		}
-		DateInfo eventDateInfo = getDateInfo(result);
+		FlexiDateTime eventDateInfo = getFlexiDateTime(result);
 
 		Integer postedPid;
 		PersonLink postedPerson = null;
@@ -114,11 +130,19 @@ public class UnpackHelper {
 			postedPerson = new PersonLink(postedPid, getPersonData(result));
 		}
 
+		Long postedDateLong = getLong(result, "postedDate");
+		FlexiDateTime postedDate;
+		if (postedDateLong == null) {
+			postedDate = null;
+		} else {
+			postedDate = new CenteredFlexiDateTime(postedDateLong, CenteredFlexiDateTime.Units.SECOND, 0);
+		}
+
 		return new EventInfo(
 				result.getInt("eid"),
 				result.getString("name"),
 				result.getString("description"),
-				result.getTimestamp("postedDate"),
+				postedDate,
 				postedPerson,
 				eventDateInfo,
 				tagLinks,
@@ -252,6 +276,17 @@ public class UnpackHelper {
 			integer = null;
 		}
 		return integer;
+	}
+
+	/**
+	 * A helper function to get a nullable long from sql.
+	 */
+	public static Long getLong(ResultSet result, String name) throws SQLException {
+		Long loong = result.getLong(name);
+		if (result.wasNull()) {
+			loong = null;
+		}
+		return loong;
 	}
 
 	/**
