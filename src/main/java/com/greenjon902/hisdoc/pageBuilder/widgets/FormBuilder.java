@@ -113,10 +113,10 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		}
 	}
 
-	public static class DateInfoInputBuilder implements WidgetBuilder {
+	public static class FlexiDateTimeInputBuilder implements WidgetBuilder {
 		private final RadioButton dateType;
 
-		public DateInfoInputBuilder() {
+		public FlexiDateTimeInputBuilder() {
 
 			this.dateType = new RadioButton("dateType", "Centered", List.of("Centered", "Ranged"),
 					"""
@@ -163,6 +163,11 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 			stream.write("<input id=\"dater1\" name=\"dater1\" type=\"date\" value=\"" + LocalDate.now() + "\" hidden/>");
 			stream.write("<label id=\"daterLabel2\" for=\"dater2\" hidden>End: </label>");
 			stream.write("<input id=\"dater2\" name=\"dater2\" type=\"date\" value=\"" + LocalDate.now() + "\" hidden/>");
+
+
+
+			stream.write("<span>Your timezone was detected as <span id=\"timezoneLabel\"></span></span>");
+			stream.write("<script>document.getElementById(\"timezoneLabel\").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;</script>");
 			stream.write("</div>");
 		}
 	}

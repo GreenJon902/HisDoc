@@ -9,7 +9,6 @@ import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
-import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.net.URLEncoder;
@@ -128,7 +127,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 					Centered dates have a center which has a precision, meaning it was somewhere on that date to the precision given. It also has a difference and a difference type, show how far either side the event could occurred.
 					Between dates mean that the event could've happened anywhere between the first and second date.""");
 		}});
-		form.add(new FormBuilder.DateInfoInputBuilder());
+		form.add(new FormBuilder.FlexiDateTimeInputBuilder());
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
 		String mcName = sessionHandler.getNameOf(user, query);
