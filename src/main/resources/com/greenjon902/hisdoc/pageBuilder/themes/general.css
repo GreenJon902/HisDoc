@@ -178,6 +178,7 @@ iframe {
 .warning-text {
     border: 1px solid;
     padding: 0.1em;
+    white-space: pre-wrap;
 }
 
 .radio-button[type=radio] {
