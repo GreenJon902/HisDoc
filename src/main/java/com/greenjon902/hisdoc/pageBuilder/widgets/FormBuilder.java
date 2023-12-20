@@ -28,7 +28,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
-		stream.write("<form onkeydown=\"return event.key != 'Enter';\" accept-charset=utf-8 method=\"" + method.string + "\" action=\"" + action + "\"");
+		stream.write("<form accept-charset=utf-8 method=\"" + method.string + "\" action=\"" + action + "\"");
 		if (id != null) stream.write( " id=\"" + id + "\"");
 		stream.write(">");
 		renderAllChildren(stream, user);
@@ -80,7 +80,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		}
 
 		public TextInputBuilder(String name, int rows, @NotNull String pattern) {
-			this(name, rows, "", "", "");
+			this(name, rows, pattern, "", "");
 		}
 
 		@Override
@@ -100,7 +100,8 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 			if (!pattern.isEmpty()) {
 				stream.write(" pattern=\"");
 				stream.write(pattern);
-				stream.write("\"");
+				stream.write("\" ");
+				stream.write("onkeydown=\"return event.key != 'Enter';\"");  // As pattern means one line, but don't want to accidentally submit
 			}
 			stream.write(">");
 			stream.write(defaultContents);
@@ -138,7 +139,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		public void render(HtmlOutputStream stream, User user) throws IOException {
 			dateType.render(stream, user);
 
-			stream.write("<div style=\"display: grid;\">");
+			stream.write("<div style=\"display: grid;\" onkeydown=\"return event.key != 'Enter';\">");
 
 			stream.write("<input id=\"timezone\" name=\"timezone\" type=\"hidden\">");
 			stream.write("<script>document.getElementById(\"timezone\").value = Intl.DateTimeFormat().resolvedOptions().timeZone;</script>");
