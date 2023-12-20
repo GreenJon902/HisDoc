@@ -53,12 +53,16 @@ public class CenteredFlexiDateTime extends FlexiDateTime {
 	public String formatString() {
 		String pattern =
 				switch (units) {
-					case SECOND -> "yyyy-MM-dd hh:mm:ss";
-					case MINUTE -> "yyyy-MM-dd hh:mm";
-					case HOUR -> "yyyy-MM-dd hh:??";
+					case SECOND -> "yyyy-MM-dd HH:mm:ss";
+					case MINUTE -> "yyyy-MM-dd HH:mm";
+					case HOUR -> "yyyy-MM-dd HH:??";
 					case DAY -> "yyyy-MM-dd";
 				};
-		String centerString = new SimpleDateFormat(pattern).format(new Date(center * units.value * 1000));  // Takes in ms
+
+		SimpleDateFormat format = new SimpleDateFormat(pattern);
+		format.setTimeZone(TimeZone.getTimeZone("Europe/London"));
+
+		String centerString = format.format(new Date(center * units.value * 1000));  // Takes in ms
 		String diffString = "";
 		if (diff != 0) {
 			diffString = " ±" + diff + units.sqlId.toUpperCase(Locale.ROOT);

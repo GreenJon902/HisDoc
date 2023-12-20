@@ -17,7 +17,9 @@ import java.util.TimeZone;
  */
 public class RangedFlexiDate extends FlexiDateTime {
 	private static final long value = 24 * 60 * 60; // The value of one day in seconds
-	private static final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  // TODO: Timezone this?
+	private static final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd") {{
+		formatter.setTimeZone(TimeZone.getTimeZone("Europe/London"));
+	}};
 
 	public final long start;
 	public final long end;
