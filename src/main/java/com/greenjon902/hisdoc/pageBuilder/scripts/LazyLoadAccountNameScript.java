@@ -77,8 +77,8 @@ public class LazyLoadAccountNameScript extends Script {
 					}
 				}
 				
+				// We dont replace head as it seems to break the addEvent page?
 				document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
-				document.head.innerHTML = document.head.innerHTML.replaceAll(accountNameVarName, name);
 			};
 			""");
 
