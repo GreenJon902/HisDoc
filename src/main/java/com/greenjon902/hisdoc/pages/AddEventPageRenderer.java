@@ -80,7 +80,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		form.add(new TextBuilder(SUBTITLE) {{add("Name");}});
 		form.add(new TextBuilder(NORMAL) {{add("Please enter the event name, which should be short and concise. \n" +
 				"It is shown in bold at the top of the event page and will be used when other pages are linking to this event.");}});
-		form.add(new FormBuilder.TextInputBuilder("name", 1));
+		form.add(new FormBuilder.TextInputBuilder("name", 1, ".*"));  // Pattern allows anything but newlines, it also locks it to one line anyway due to html stuffs
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Description");}});
 		form.add(new TextBuilder(NORMAL) {{add("Please enter the event description, " +
