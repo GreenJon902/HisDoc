@@ -59,7 +59,7 @@ public class HisDocRunner extends JavaPlugin {
 			int webDriverPort = Integer.parseInt(configLoader.get(WEBDRIVER_PORT));
 
 			// Create sql connection -----------------------
-			String url = "jdbc:mysql://" + mysqlHost + "?allowMultiQueries=true";
+			String url = "jdbc:mysql://" + mysqlHost + "?allowMultiQueries=true&autoReconnect=true";
 			logger.fine("Connecting to database - \"" + url + "\"");
 			connection = DriverManager.getConnection(url, mysqlUser, mysqlPassword);
 
