@@ -53,6 +53,7 @@ public class CenteredFlexiDateTime extends FlexiDateTime {
 	public String formatString() {
 		String pattern =
 				switch (units) {
+					case SECOND -> "yyyy-MM-dd hh:mm:ss";
 					case MINUTE -> "yyyy-MM-dd hh:mm";
 					case HOUR -> "yyyy-MM-dd hh:??";
 					case DAY -> "yyyy-MM-dd";
@@ -72,7 +73,8 @@ public class CenteredFlexiDateTime extends FlexiDateTime {
 	public enum Units {
 		DAY("d", 24 * 60 * 60, ChronoUnit.DAYS),
 		HOUR("h", 60 * 60, ChronoUnit.HOURS),
-		MINUTE("m", 60, ChronoUnit.MINUTES);
+		MINUTE("m", 60, ChronoUnit.MINUTES),
+		SECOND("s", 1, ChronoUnit.SECONDS);
 
 		private static final Map<String, Units> decodeMap;
 		static {

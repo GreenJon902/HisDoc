@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS {prefix}Event (
     description   LONGTEXT NOT NULL,
     details       LONGTEXT,
     postedPid     INTEGER              REFERENCES {prefix}Person(pid),
-    postedDate    BIGINT UNSIGNED NULL,  -- A value is automatically set in the insert statement in upload/addEvent.sql
+    postedDate    BIGINT UNSIGNED NULL,  -- In seconds. A value is automatically set in the insert statement in upload/addEvent.sql
 
     eventDateType      ENUM('c', 'r') NOT NULL, -- 'c': centered around date1, with units and a difference, 'r': between eventDate1 and eventDate2 in days
     eventDate1     BIGINT NOT NULL,  -- If type is 'c' then this has the units of eventDateUnits

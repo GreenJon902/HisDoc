@@ -30,7 +30,7 @@ public class UnpackHelper {
 	 * This looks at the columns date, authorPid, authorInfo, and description.
 	 */
 	public static ChangeInfo getChangeInfo(ResultSet result) throws SQLException {
-		return new ChangeInfo(new CenteredFlexiDateTime(result.getLong("date"), CenteredFlexiDateTime.Units.MINUTE, 0),
+		return new ChangeInfo(new CenteredFlexiDateTime(result.getLong("date"), CenteredFlexiDateTime.Units.SECOND, 0),
 				new PersonLink(result.getInt("authorPid"), getPersonData(result)),
 				result.getString("description"));
 	}
@@ -135,7 +135,7 @@ public class UnpackHelper {
 		if (postedDateLong == null) {
 			postedDate = null;
 		} else {
-			postedDate = new CenteredFlexiDateTime(postedDateLong, CenteredFlexiDateTime.Units.MINUTE, 0);
+			postedDate = new CenteredFlexiDateTime(postedDateLong, CenteredFlexiDateTime.Units.SECOND, 0);
 		}
 
 		return new EventInfo(
