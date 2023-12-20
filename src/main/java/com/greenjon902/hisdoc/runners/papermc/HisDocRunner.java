@@ -81,7 +81,6 @@ public class HisDocRunner extends JavaPlugin {
 					map,
 					webDriverPort, 0, 0, "com/greenjon902/hisdoc/logo.ico"
 			), logger);
-			webDriver.addHandler("/", new FolderSenderHttpHandlerImpl(new File(getDataFolder(), "homePages")));
 
 			webDriver.start();
 		} catch (SQLException | IOException e) {

@@ -1,6 +1,5 @@
 package com.greenjon902.hisdoc.webDriver;
 
-import com.greenjon902.hisdoc.runners.papermc.FolderSenderHttpHandlerImpl;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -49,10 +48,6 @@ public class WebDriver {
 	public void stop() {
 		logger.fine("Stopping HttpServer...");
 		server.stop(webDriverConfig.stopDelay());
-	}
-
-	public void addHandler(String s, HttpHandler handler) {
-		server.createContext(s, handler);
 	}
 }
 

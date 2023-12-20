@@ -16,7 +16,6 @@ public class NavBarBuilder implements WidgetBuilder {
 		ColumnLayoutBuilder columnLayoutBuilder2 = new ColumnLayoutBuilder();
 
 		columnLayoutBuilder2.add(new LogoBuilder());
-		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(G_DEM), "..");}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TIMELINE), "timeline");}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(PERSONS), "persons");}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TAGS), "tags");}});
