@@ -14,7 +14,8 @@ import java.util.stream.Stream;
 /**
  * A script that gives functionality to {@link TimelineFilter} buttons, to filter {@link FilterableEvent}.
  * This creates the function `filterChanged()` which updates all the events based on the current filter selection,
- * and saves them to cookies for the server in the format "{groupName}={Exclude|Ignore|Include}".
+ * and saves them to cookies for the server in the format "{groupName}={Exclude|Ignore}", The "Include" option is
+ * signified by no cookie existing with that name.
  * <br>
  * This expects the IDs "dateSelectionMethod-Inclusive", "date1", and "date2" to exist.
  * <br>
@@ -94,7 +95,7 @@ public class TimelineSearchFilterScript extends Script {
 				"    } else if (document.getElementById(filterIds[i] + \"-Ignore\").checked) {\n" +
 				"      setCookie(filterIds[i], \"Ignore\");\n" +
 				"    } else if (document.getElementById(filterIds[i] + \"-Include\").checked) {\n" +
-				"      setCookie(filterIds[i], \"Include\");\n" +
+				"      eraseCookie(filterIds[i]);\n" +  // No cookie means include
 				"    }\n" +
 				"  }\n" +
 				"  setCookie(\"date1\", document.getElementById(\"date1\").value);\n" +

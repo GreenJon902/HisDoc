@@ -20,6 +20,15 @@ commands:
 permissions:
   hisdoc.addevent:
     default: op
+    description: Should this person be able to add events
+
+  hisdoc.addevent.ingoreip:
+    default: op
+    description: Should this person be able to add events while using a different IP to that which minecraft is on
+
+  hisdoc.addevent.persist:
+    default: op
+    description: Should this person be able to add events with the same code multiple times
 
   hisdoc.restart:
     default: op

@@ -4,6 +4,7 @@ import com.greenjon902.hisdoc.runners.papermc.PaperMcSessionHandlerImpl;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.TextColor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.logging.Logger;
-
-import static net.kyori.adventure.text.event.ClickEvent.Action.OPEN_URL;
 
 public class AddEventCommand implements CommandExecutor {
 	private final Dispatcher dispatcher;
@@ -48,16 +47,39 @@ public class AddEventCommand implements CommandExecutor {
 				// So everything is good, we now need to add a verification
 				String code = RandomStringUtils.random(7, true, true);
 
+				boolean ignoreIp = false;
+				boolean persist = false;
+				for (String arg : args) {
+					switch (arg) {
+						case "--ignore-ip" -> {
+							if (sender.hasPermission("hisdoc.addevent.ingoreip")) ignoreIp = true;
+							else sender.sendMessage(Component.text("You do not have permission to use \"--ignore-ip\", ignoring!")
+									.color(TextColor.color(0xFF0000)));
+						}
+						case "--persist" -> {
+							if (sender.hasPermission("hisdoc.addevent.persist")) persist = true;
+							else sender.sendMessage(Component.text("You do not have permission to use \"--persist\", ignoring!")
+									.color(TextColor.color(0xFF0000)));
+						}
+						default -> sender.sendMessage(Component.text("Unknown argument \"" + arg + "\", ignoring!")
+								.color(TextColor.color(0xFF0000)));
+					}
+				}
+
 				String ip = null;
-				if (playerSender.getAddress() != null && !(args.length > 0 && args[0].equals("--ignore-ip")))
-					ip = playerSender.getAddress().getHostString();
+				if (playerSender.getAddress() != null && !ignoreIp) ip = playerSender.getAddress().getHostString();
 
-				logger.fine(sender.getName() + " was allocated the code \"" + code + "\", they are limited to the ip \"" + ip + "\"");
+				logger.fine(sender.getName() + " was allocated the code \"" + code + "\", " +
+						"they are limited to the ip \"" + ip + "\", " +
+						"persist is set to " + persist);
 
-				sessionHandler.addVerification(code, pid, playerSender.getName(), ip);
+				boolean replaced = sessionHandler.addVerification(code, pid, playerSender.getName(), ip, persist);
+				if (replaced) sender.sendMessage(Component.text("Previous verifications for you were removed").color(TextColor.color(0xA32E00)));
+
+				String url = sessionHandler.getPostUrl(pid);
 				sender.sendMessage(Component.text("Use this link to add your event:").append(Component.newline()).append(
-						Component.text("http://" + addEventUrl + "?code="+code)
-								.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, "http://" + addEventUrl + "?code="+code))
+						Component.text(url)
+								.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, url))
 				));
 			}
 
