@@ -65,10 +65,12 @@ public class UITest {
 				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher, new TestMcPlaytimeSupplierImpl())),
 				Map.entry("/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher)),
-				Map.entry("/" + pageNamePrefix + "addS", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(NO_SESSION), false)),
-				Map.entry("/" + pageNamePrefix + "addI", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(INVALID_IP), false)),
-				Map.entry("/" + pageNamePrefix + "addV", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID), false)),
-				Map.entry("/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID))),
+				Map.entry("/" + pageNamePrefix + "addS", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(NO_SESSION, false), false)),
+				Map.entry("/" + pageNamePrefix + "addI", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(INVALID_IP, false), false)),
+				Map.entry("/" + pageNamePrefix + "addV", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID, false), false)),
+				Map.entry("/c/" + pageNamePrefix + "addV", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID, true), false)),
+				Map.entry("/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID, false))),
+				Map.entry("/c/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID, true))),
 				Map.entry("/" + pageNamePrefix + "add", new HtmlPageRenderer() {  // A helper page for choosing what to happen on adding
 					@Override
 					public String render(Map<String, String> query, String fragment, User user) {
@@ -79,6 +81,7 @@ public class UITest {
 							add("NO_SESSION", "addS", false);
 							add("INVALID_IP", "addI", false);
 							add("VALID", "addV", false);
+							add("VALID & CONSUME", "c/addV", false);
 						}});
 
 						return pageBuilder.render(user);
@@ -91,9 +94,11 @@ public class UITest {
 
 class TestSessionHandlerImpl implements SessionHandler {
 	private final VerifyResult verifyResult;
+	private final boolean consumeVerifications;  // It won't actually consume them, but it will say whether it did or not
 
-	public TestSessionHandlerImpl(VerifyResult verifyResult) {
+	public TestSessionHandlerImpl(VerifyResult verifyResult, boolean consumeVerifications) {
 		this.verifyResult = verifyResult;
+		this.consumeVerifications = consumeVerifications;
 	}
 
 	@Override
@@ -107,10 +112,11 @@ class TestSessionHandlerImpl implements SessionHandler {
 	}
 
 	@Override
-	public void suggestConsumeVerification(User user, Map<String, String> query) {
+	public boolean suggestConsumeVerification(User user, Map<String, String> query) {
 		if (verifyResult != VerifyResult.VALID) {
 			throw new RuntimeException("Cannot unverify user " + user + " as is not verified in the first place");
 		}
+		return consumeVerifications;
 	}
 
 	@Override
@@ -119,6 +125,14 @@ class TestSessionHandlerImpl implements SessionHandler {
 			throw new RuntimeException("Cannot get user " + user + " as is not verified");
 		}
 		return 1;
+	}
+
+	@Override
+	public String getPostUrl(int personId) {
+		if (verifyResult != VerifyResult.VALID) {
+			throw new IllegalStateException("Person with " + personId + " cannot add another event");
+		}
+		return "http://127.0.0.1:8080/addv";
 	}
 }
 

@@ -8,9 +8,7 @@ import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.User;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -35,11 +33,23 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 				throw new IllegalStateException("You are not verified, you should not be on this page!");
 			}
 			int postedBy = sessionHandler.getPersonId(user, query);
-			sessionHandler.suggestConsumeVerification(user, query);
+			boolean consumed = sessionHandler.suggestConsumeVerification(user, query);
 
 			SubmittedEvent submittedEvent = SubmittedEvent.fromPost(user.post(), postedBy);
 			int eid = dispatcher.addEvent(submittedEvent);
-			return "<html><script>window.location.href = 'event?id=" + eid + "';</script><html>";
+
+			if (consumed) {  // If it has been consumed, there is nothing to do but redirect them to the added event
+				return "<html><body><p>You are being redirected, please wait...</p></body>" +
+						"<script>window.location.href = 'event?id=" + eid + "';</script></html>";
+
+			} else {  // If it has not been consumed, they might want to add an event again, so give them the option
+				String getPostAgainHref = sessionHandler.getPostUrl(postedBy);  // Gets the href for posting again
+				return "<html><body><p>" +
+						"The event has been added, would you like to " +
+						"<a href=\"event?id=" + eid + "\" target=\"_blank\">see it</a> or " +  // target="_blank" means open new tab
+						"<a href=\"" + getPostAgainHref + "\" target=\"_blank\">add a new event</a>" +
+						"</p></body></html>";
+			}
 
 		} catch (Exception e) {
 			throw new RuntimeException("An error occurred,\nquery=\n" + query + "\n\n", e);

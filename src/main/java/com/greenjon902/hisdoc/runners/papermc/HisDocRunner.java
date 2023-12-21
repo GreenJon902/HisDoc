@@ -70,7 +70,7 @@ public class HisDocRunner extends JavaPlugin {
 
 			// Set up commands -----------------------
 			logger.fine("Setting up commands...");
-			sessionHandler = new PaperMcSessionHandlerImpl(logger);
+			sessionHandler = new PaperMcSessionHandlerImpl(logger, addEventUrl);
 			getCommand("addevent").setExecutor(new AddEventCommand(dispatcher, sessionHandler, addEventUrl, logger));
 			getCommand("restarthisdoc").setExecutor(new RestartHisDocCommand(this, logger));
 
