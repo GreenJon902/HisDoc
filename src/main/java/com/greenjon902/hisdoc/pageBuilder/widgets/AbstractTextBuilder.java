@@ -54,15 +54,17 @@ public abstract class AbstractTextBuilder extends AbstractContainerWidgetBuilder
 		add(text, -1, stylingFlags);
 	}
 
-	public void add(String text, String href) {
-		add(new SimpleText(text), href);
+	public void add(String text, String tooltip) {
+		add(new TooltipText(new SimpleText(text), tooltip));
 	}
 	public void add(String text, String href, boolean newTab) {
 		add(new SimpleText(text), href, newTab);
 	}
-	public void add(WidgetBuilder widget, String href) {
-		add(widget, href, false);
+
+	public void add(WidgetBuilder widget, String href, boolean newTab, String tooltip) {
+		add(new TooltipText(new LinkedText(widget, href, newTab), tooltip));
 	}
+
 	public void add(WidgetBuilder widget, String href, boolean newTab) {
 		add(new LinkedText(widget, href, newTab));
 	}
@@ -102,6 +104,20 @@ record LinkedText(WidgetBuilder widgetBuilder, String href, boolean newTab) impl
 		stream.write(">");
 		widgetBuilder.render(stream, user);
 		stream.write("</a>");
+	}
+}
+
+/**
+ * A piece of text that has a title attribute, this means it can display a tooltip.
+ */
+record TooltipText(WidgetBuilder widgetBuilder, String tooltip) implements WidgetBuilder {
+	@Override
+	public void render(HtmlOutputStream stream, User user) throws IOException {
+		stream.write("<span title=\"");
+		stream.writeSafe(tooltip);
+		stream.write("\">");
+		widgetBuilder.render(stream, user);
+		stream.write("</span>");
 	}
 }
 

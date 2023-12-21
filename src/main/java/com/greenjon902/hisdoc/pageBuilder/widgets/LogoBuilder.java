@@ -8,6 +8,6 @@ import java.io.IOException;
 public class LogoBuilder implements WidgetBuilder {
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
-		stream.write("<a class=\"logo\" href=\".\">HisDoc</a>");
+		stream.write("<a title=\"Home Page\" class=\"logo\" href=\".\">HisDoc</a>");
 	}
 }

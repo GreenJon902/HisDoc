@@ -17,7 +17,7 @@ public class ThemeSwitcherBuilder implements WidgetBuilder {
 
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
-		stream.write("<div id=\"theme-switcher-button\" class=\"theme-switcher-button\" onclick=\"cycleThemes()\">" +
+		stream.write("<div title=\"Switch Theme\" id=\"theme-switcher-button\" class=\"theme-switcher-button\" onclick=\"cycleThemes()\">" +
 							"<div id=\"theme-switcher-icon\"></div>" +
 						"</div>");
 	}

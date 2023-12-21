@@ -10,7 +10,6 @@ import com.greenjon902.hisdoc.sql.results.EventLink;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
 import com.greenjon902.hisdoc.sql.results.TimelineInfo;
-import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.Date;
@@ -73,7 +72,7 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 			FilterableEvent event = new FilterableEvent(eventLink.name(), false);
 
 			TextBuilder eventName = new TextBuilder(SUBTITLE);
-			eventName.add(eventLink.name(), "event?id=" + eventLink.id());
+			eventName.add(eventLink.name(), "event?id=" + eventLink.id(), false);
 			event.add(eventName);
 
 			TextBuilder date = new TextBuilder(MISC);
@@ -102,9 +101,13 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("Set All To");}});
 		ContainerWidgetBuilder setAllContainer = new ContainerWidgetBuilder("timeline-filters-setall-holder");
-		setAllContainer.add(new Button("Exclude", "setAllFilters('Exclude');filterChanged()"));
-		setAllContainer.add(new Button("Ignore", "setAllFilters('Ignore');filterChanged()"));
-		setAllContainer.add(new Button("Include", "setAllFilters('Include');filterChanged()"));
+
+		setAllContainer.add(new Button("Exclude", "setAllFilters('Exclude');filterChanged()",
+				"Events with this will not been shown"));
+		setAllContainer.add(new Button("Ignore", "setAllFilters('Ignore');filterChanged()",
+				"This has no effect on whether events will be shown"));
+		setAllContainer.add(new Button("Include", "setAllFilters('Include');filterChanged()",
+				"Events with this will be shown, given they are not excluded elsewhere"));
 		table.add(setAllContainer);
 
 		top.add(table);
@@ -115,7 +118,7 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 		table.add(new BreakBuilder());
 
 		for (TagLink tagLink : timelineInfo.tagLinks()) {
-			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
+			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
 			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(),
 					user.otherCookies().getOrDefault(tagLink.name(), "Include"), "filterChanged()");
 			table.add(timelineFilter);
@@ -133,7 +136,7 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 			TextBuilder personNameText = new TextBuilder(NORMAL, "\n");
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
 			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
-			personNameText.add(pageVariable.toString(), "person?id=" + personLink.id());
+			personNameText.add(pageVariable.toString(), "person?id=" + personLink.id(), false);
 
 			table.add(personNameText);
 			TimelineFilter timelineFilter = new TimelineFilter(personLink.data().personData(),
@@ -164,7 +167,9 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 		table.add(new TextBuilder(NORMAL) {{add("Selection Method:");}});
 		table.add(new RadioButton("dateSelectionMethod",
 				user.otherCookies().getOrDefault("dateSelectionMethod", "Inclusive"),
-				List.of("Exclusive", "Inclusive"), "filterChanged()"));
+				List.of("Exclusive", "Inclusive"),
+				List.of("The entire date of the event has to be within the boundaries", "Events just need to overlap with the boundaries"),
+				"filterChanged()"));
 
 		table.add(new BreakBuilder());
 		table.add(new BreakBuilder());

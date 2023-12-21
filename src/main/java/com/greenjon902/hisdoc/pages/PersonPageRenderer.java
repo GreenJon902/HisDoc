@@ -8,10 +8,8 @@ import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonInfo;
 import com.greenjon902.hisdoc.sql.results.TagLink;
-import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 import io.quickchart.QuickChart;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.Map;
@@ -95,7 +93,7 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 
 		TextBuilder attributionText = new TextBuilder(MISC);
 		attributionText.add("Render from ", 0b010);
-		attributionText.add("QuickChart", "https://quickchart.io");
+		attributionText.add("QuickChart", "https://quickchart.io", false);
 		left.add(attributionText);
 
 		return left;
@@ -147,13 +145,13 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 
 		TextBuilder attributionText = new TextBuilder(MISC);
 		attributionText.add("Render from ", 0b010);
-		attributionText.add("Crafatar", "https://crafatar.com");
+		attributionText.add("Crafatar", "https://crafatar.com", false);
 		right.add(attributionText);
 
 		right.add(new BreakBuilder());
 
 		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
-		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + personInfo.data().personData());
+		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + personInfo.data().personData(), false);
 		miscInfo.add("UUID: " + personInfo.data().personData());
 		miscInfo.add("Post Count: " + personInfo.postCount());
 		miscInfo.add("Event Count: " + personInfo.eventCount());

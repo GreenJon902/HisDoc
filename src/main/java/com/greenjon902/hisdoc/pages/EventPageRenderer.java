@@ -1,20 +1,16 @@
 package com.greenjon902.hisdoc.pages;
 
-import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.*;
-import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
@@ -109,7 +105,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		right.add(tagTitles);
 		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
 		for (TagLink tagLink : eventInfo.tagLinks()) {
-			tagContainer.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
+			tagContainer.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
 		}
 		right.add(tagContainer);
 		right.add(new BreakBuilder());
@@ -119,7 +115,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		right.add(relatedEventTitles);
 		TextBuilder relatedEvents = new TextBuilder(NORMAL, "\n");
 		for (EventLink eventLink : eventInfo.relatedEventLinks()) {
-			relatedEvents.add(eventLink.name(), "event?id=" + eventLink.id());
+			relatedEvents.add(eventLink.name(), "event?id=" + eventLink.id(), false);
 		}
 		right.add(relatedEvents);
 		right.add(new BreakBuilder());
@@ -131,7 +127,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		for (PersonLink personLink : eventInfo.relatedPlayerInfos()) {
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
 			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
-			relatedPersons.add(pageVariable.toString(), "person?id=" + personLink.id());
+			relatedPersons.add(pageVariable.toString(), "person?id=" + personLink.id(), false);
 		}
 		right.add(relatedPersons);
 
@@ -151,7 +147,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		else {
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + eventInfo.postedBy().data().personData());
 			lazyLoadAccountNameScript.add(eventInfo.postedBy().data(), pageVariable);
-			table.add(new TextBuilder(NORMAL) {{ add(pageVariable.toString(), "person?id=" + eventInfo.postedBy().id()); add(":"); }});
+			table.add(new TextBuilder(NORMAL) {{ add(pageVariable.toString(), "person?id=" + eventInfo.postedBy().id(), false); add(":"); }});
 		}
 		table.add(new TextBuilder(MISC) {{ add("This event was created!"); }});
 
@@ -164,7 +160,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 			else table.add(new TextBuilder(NORMAL) {{ add(changeInfo.date().formatString()); }});
 
 
-			table.add(new TextBuilder(NORMAL) {{ add(pageVariable.toString(), "person?id=" + changeInfo.author().id()); add(":"); }});
+			table.add(new TextBuilder(NORMAL) {{ add(pageVariable.toString(), "person?id=" + changeInfo.author().id(), false); add(":"); }});
 			table.add(new TextBuilder(MISC) {{ add(changeInfo.description()); }});
 		}
 
@@ -178,7 +174,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 
 		for (EventLink eventLink : recentEvents) {
 			table.add(new TextBuilder(NORMAL) {{ add(eventLink.dateInfo().formatString() + " -"); }});
-			table.add(new TextBuilder(NORMAL) {{ add(eventLink.name(), "event?id=" + eventLink.id()); }});
+			table.add(new TextBuilder(NORMAL) {{ add(eventLink.name(), "event?id=" + eventLink.id(), false); }});
 		}
 
 		return table;
