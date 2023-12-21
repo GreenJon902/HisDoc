@@ -1,4 +1,4 @@
-SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.color
+SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.color, {prefix}Tag.description
 FROM {prefix}EventTagRelation
 LEFT JOIN {prefix}Tag ON {prefix}Tag.tid={prefix}EventTagRelation.tid
 WHERE {prefix}EventTagRelation.eid = {eid};
