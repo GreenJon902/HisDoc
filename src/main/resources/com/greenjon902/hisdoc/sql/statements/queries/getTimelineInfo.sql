@@ -14,7 +14,7 @@ ORDER BY
     END))
 DESC;
 
-SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.color
+SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.color, {prefix}Tag.description
 FROM {prefix}Tag;
 
 SELECT {prefix}Person.pid, {prefix}Person.personType, {prefix}Person.personData

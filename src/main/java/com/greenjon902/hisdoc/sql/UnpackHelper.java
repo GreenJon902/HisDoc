@@ -78,7 +78,11 @@ public class UnpackHelper {
 	 * This looks at the columns eid, name.
 	 */
 	public static TagLink getTagLink(ResultSet result) throws SQLException {
-		return new TagLink(result.getInt("tid"), result.getString("name"), result.getInt("color"));
+		return new TagLink(
+				result.getInt("tid"),
+				result.getString("name"),
+				result.getInt("color"),
+				result.getString("description"));
 	}
 
 	/**
