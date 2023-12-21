@@ -146,7 +146,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 
 		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
 		for (TagLink tagLink : tagLinks) {
-			tagContainer.add(new SelectableTagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
+			tagContainer.add(new SelectableTagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
 		}
 		form.add(tagContainer);
 		form.add(new BreakBuilder());

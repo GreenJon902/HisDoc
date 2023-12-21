@@ -7,7 +7,6 @@ import com.greenjon902.hisdoc.pageBuilder.widgets.NavBarBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.TextBuilder;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
-import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
@@ -39,7 +38,7 @@ public class PersonsPageRenderer extends HtmlPageRenderer {
 		for (PersonLink personLink : personLinks) {
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
 			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
-			persons.add(pageVariable.toString(), "person?id=" + personLink.id());
+			persons.add(pageVariable.toString(), "person?id=" + personLink.id(), false);
 		}
 		pageBuilder.add(persons);
 

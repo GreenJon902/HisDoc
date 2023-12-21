@@ -10,16 +10,26 @@ public class TagBuilder implements WidgetBuilder{
 	protected final int id;
 	private final String name;
 	private final boolean link;
+	private final String description;
 
-	public TagBuilder(String name, int id, int color) {
-		this(name, id, color, true);
+	public TagBuilder(String name, int id, int color, String description) {
+		this(name, id, color, true, description);
 	}
 
-	public TagBuilder(String name, int id, int color, boolean link) {
+	/**
+	 * Creates a new tag builder.
+	 * @param name The name of the tag
+	 * @param id The id of the tag, used for linking
+	 * @param color The color of the tag
+	 * @param link Should it direct you to the tag page when it is pressed
+	 * @param description The description of the tag, used as a tooltip
+	 */
+	public TagBuilder(String name, int id, int color, boolean link, String description) {
 		this.name = name;
 		this.id = id;
 		this.color = color;
 		this.link = link;
+		this.description = description;
 	}
 
 	@Override
@@ -28,7 +38,9 @@ public class TagBuilder implements WidgetBuilder{
 		int green = (color & 0x00FF00) >> 8;
 		int blue = (color & 0x0000FF);
 
-		stream.write("<div class=\"tag\" style=\"--tag-color-red: ");
+		stream.write("<div title=\"");
+		stream.write(description);
+		stream.write("\"class=\"tag\" style=\"--tag-color-red: ");
 		stream.write(String.valueOf(red));
 		stream.write("; --tag-color-green: ");
 		stream.write(String.valueOf(green));

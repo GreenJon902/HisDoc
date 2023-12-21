@@ -32,7 +32,7 @@ public class TagsPageRenderer extends HtmlPageRenderer {
 
 		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
 		for (TagLink tagLink : tagLinks) {
-			tagContainer.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color()));
+			tagContainer.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
 		}
 		pageBuilder.add(tagContainer);
 		pageBuilder.add(new BreakBuilder());

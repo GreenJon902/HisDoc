@@ -120,6 +120,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		public FlexiDateTimeInputBuilder() {
 
 			this.dateType = new RadioButton("dateType", "Centered", List.of("Centered", "Ranged"),
+					List.of("", ""),  // TODO: Get actual descriptions?
 					"""
 								document.getElementById('datecLabel').hidden = this.value != 'Centered';
 								document.getElementById('datec').hidden = this.value != 'Centered';

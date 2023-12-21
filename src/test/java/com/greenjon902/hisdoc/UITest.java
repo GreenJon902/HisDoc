@@ -18,7 +18,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static com.greenjon902.hisdoc.SessionHandler.VerifyResult.*;
@@ -77,9 +76,9 @@ public class UITest {
 						pageBuilder.add(new NavBarBuilder(pageBuilder));
 						pageBuilder.add(new TextBuilder(TextType.NORMAL, "\n") {{
 							add("This is a testing page, please contact jon if your seeing this (given your not a developer)!\n");
-							add("NO_SESSION", "addS");
-							add("INVALID_IP", "addI");
-							add("VALID", "addV");
+							add("NO_SESSION", "addS", false);
+							add("INVALID_IP", "addI", false);
+							add("VALID", "addV", false);
 						}});
 
 						return pageBuilder.render(user);

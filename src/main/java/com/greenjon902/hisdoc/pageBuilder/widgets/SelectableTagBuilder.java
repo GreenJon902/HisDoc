@@ -6,8 +6,8 @@ import com.greenjon902.hisdoc.webDriver.User;
 import java.io.IOException;
 
 public class SelectableTagBuilder extends TagBuilder {
-	public SelectableTagBuilder(String name, int id, int color) {
-		super(name, id, color, false);
+	public SelectableTagBuilder(String name, int id, int color, String description) {
+		super(name, id, color, false, description);
 	}
 
 	@Override

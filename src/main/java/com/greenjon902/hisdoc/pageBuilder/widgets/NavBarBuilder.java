@@ -16,11 +16,19 @@ public class NavBarBuilder implements WidgetBuilder {
 		ColumnLayoutBuilder columnLayoutBuilder2 = new ColumnLayoutBuilder();
 
 		columnLayoutBuilder2.add(new LogoBuilder());
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{
+			add(new IconBuilder(TIMELINE), "timeline", false, "Timeline");
+		}});
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{
+			add(new IconBuilder(PERSONS), "persons", false, "People");
+		}});
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{
+			add(new IconBuilder(TAGS), "tags", false, "Tags");
+		}});
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{
+			add(new IconBuilder(ADD), "add", false, "Add Event");
+		}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(G_DEM), "..");}});
-		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TIMELINE), "timeline");}});
-		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(PERSONS), "persons");}});
-		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(TAGS), "tags");}});
-		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{add(new IconBuilder(ADD), "add");}});
 
 		columnLayoutBuilder1.add(columnLayoutBuilder2);
 		columnLayoutBuilder1.add(new ThemeSwitcherBuilder(pageBuilder));

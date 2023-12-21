@@ -2,6 +2,6 @@ package com.greenjon902.hisdoc.sql.results;
 
 import org.jetbrains.annotations.NotNull;
 
-public record TagLink(int id, @NotNull String name, int color) implements Idable {
+public record TagLink(int id, @NotNull String name, int color, @NotNull String description) implements Idable {
 
 }

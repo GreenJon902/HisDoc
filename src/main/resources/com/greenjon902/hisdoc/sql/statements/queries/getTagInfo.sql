@@ -19,6 +19,6 @@ ORDER BY
 DESC
 LIMIT 10;
 
-SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.description, {prefix}Tag.color
+SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.description, {prefix}Tag.color, {prefix}Tag.description
 FROM {prefix}Tag
 WHERE {prefix}Tag.tid = {tid};
