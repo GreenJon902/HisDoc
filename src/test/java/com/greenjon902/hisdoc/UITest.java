@@ -74,7 +74,7 @@ public class UITest {
 					public String render(Map<String, String> query, String fragment, User user) {
 						PageBuilder pageBuilder = new PageBuilder();
 						pageBuilder.add(new NavBarBuilder(pageBuilder));
-						pageBuilder.add(new TextBuilder(TextType.NORMAL, "\n") {{
+						pageBuilder.add(new TextBuilder(TextType.NORMAL, "\n", null) {{
 							add("This is a testing page, please contact jon if your seeing this (given your not a developer)!\n");
 							add("NO_SESSION", "addS", false);
 							add("INVALID_IP", "addI", false);

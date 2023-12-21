@@ -11,8 +11,7 @@ import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class TagsPageRenderer extends HtmlPageRenderer {
 
@@ -23,7 +22,8 @@ public class TagsPageRenderer extends HtmlPageRenderer {
 	}
 
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
-		Set<TagLink> tagLinks = dispatcher.getAllTagLinks();
+		ArrayList<TagLink> tagLinks = new ArrayList<>(dispatcher.getAllTagLinks());  // List so we can sort them
+		tagLinks.sort(Comparator.comparing(TagLink::name));
 
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title("Tags");

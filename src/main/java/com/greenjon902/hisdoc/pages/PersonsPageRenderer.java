@@ -2,6 +2,7 @@ package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
+import com.greenjon902.hisdoc.pageBuilder.scripts.ContentSortingScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.NavBarBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.TextBuilder;
@@ -29,16 +30,21 @@ public class PersonsPageRenderer extends HtmlPageRenderer {
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title("People");
 
+		ContentSortingScript contentSortingScript = new ContentSortingScript("personContainer",
+				"a.textContent.localeCompare(b.textContent)", false);
+		pageBuilder.addScript(contentSortingScript);
+
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
+		lazyLoadAccountNameScript.addCallback("sortElements()");  // TODO: Should we only run after all have loaded?
 		pageBuilder.addScript(lazyLoadAccountNameScript);
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
-		TextBuilder persons = new TextBuilder(NORMAL, "\n");
+		TextBuilder persons = new TextBuilder(NORMAL, "", "personContainer");
 		for (PersonLink personLink : personLinks) {
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
 			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
-			persons.add(pageVariable.toString(), "person?id=" + personLink.id(), false);
+			persons.add(pageVariable.toString() + "\n", "person?id=" + personLink.id(), false);
 		}
 		pageBuilder.add(persons);
 

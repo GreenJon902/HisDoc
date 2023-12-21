@@ -2,6 +2,7 @@ package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
+import com.greenjon902.hisdoc.pageBuilder.scripts.ContentSortingScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.TimelineSearchFilterScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
@@ -16,6 +17,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -40,7 +42,11 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title("Timeline");
 
+		ContentSortingScript contentSortingScript = new ContentSortingScript("personFilters",
+				"a.children[0].children[0].textContent.localeCompare(b.children[0].children[0].textContent)", false);
+		pageBuilder.addScript(contentSortingScript);
 		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
+		lazyLoadAccountNameScript.addCallback("sortElements()");
 		pageBuilder.addScript(lazyLoadAccountNameScript);
 		TimelineSearchFilterScript searchFilterScript = new TimelineSearchFilterScript(pageBuilder);  // Variables added elsewhere
 		pageBuilder.addScript(searchFilterScript);
@@ -117,7 +123,10 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Tags");}});
 		table.add(new BreakBuilder());
 
-		for (TagLink tagLink : timelineInfo.tagLinks()) {
+		ArrayList<TagLink> tagLinks = new ArrayList<>(timelineInfo.tagLinks());  // List so we can sort them
+		tagLinks.sort(Comparator.comparing(TagLink::name));
+
+		for (TagLink tagLink : tagLinks) {
 			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
 			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(),
 					user.otherCookies().getOrDefault(tagLink.name(), "Include"), "filterChanged()");
@@ -127,13 +136,20 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 
 		filterButtons.add(table);
 
+		ContainerWidgetBuilder containerWidgetBuilder = new ContainerWidgetBuilder();
 		table = new TableBuilder(2, false);
 
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("All Persons");}});
 		table.add(new BreakBuilder());
 
+		containerWidgetBuilder.add(table);
+
+		//I MADE A NEW TABLE THAT CAN BE SORTED BUT IT HAS BROKEN
+
+		table = new TableBuilder(2, false, "personFilters");
+
 		for (PersonLink personLink : timelineInfo.personLinks()) {
-			TextBuilder personNameText = new TextBuilder(NORMAL, "\n");
+			TextBuilder personNameText = new TextBuilder(NORMAL, "\n", null);
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
 			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
 			personNameText.add(pageVariable.toString(), "person?id=" + personLink.id(), false);
@@ -145,7 +161,8 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 			searchFilterScript.add(timelineFilter);
 		}
 
-		filterButtons.add(table);
+		containerWidgetBuilder.add(table);
+		filterButtons.add(containerWidgetBuilder);
 
 		table = new TableBuilder(2, false);
 

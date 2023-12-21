@@ -113,7 +113,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		TextBuilder relatedEventTitles = new TextBuilder(AUX_INFO_TITLE);
 		relatedEventTitles.add("Related Events");
 		right.add(relatedEventTitles);
-		TextBuilder relatedEvents = new TextBuilder(NORMAL, "\n");
+		TextBuilder relatedEvents = new TextBuilder(NORMAL, "\n", null);
 		for (EventLink eventLink : eventInfo.relatedEventLinks()) {
 			relatedEvents.add(eventLink.name(), "event?id=" + eventLink.id(), false);
 		}
@@ -123,7 +123,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		TextBuilder relatedPersonTitles = new TextBuilder(AUX_INFO_TITLE);
 		relatedPersonTitles.add("Related Persons");
 		right.add(relatedPersonTitles);
-		TextBuilder relatedPersons = new TextBuilder(NORMAL, "\n");
+		TextBuilder relatedPersons = new TextBuilder(NORMAL, "\n", null);
 		for (PersonLink personLink : eventInfo.relatedPlayerInfos()) {
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
 			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
