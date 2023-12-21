@@ -8,12 +8,18 @@ import java.io.IOException;
 public class ContainerWidgetBuilder extends AbstractContainerWidgetBuilder {
 	private final String classes;
 	private final String style;
+	private final String id;
 
 	public ContainerWidgetBuilder(String classes) {
 		this(classes, "");
 	}
 
 	public ContainerWidgetBuilder(String classes, String style) {
+		this("", classes, style);
+	}
+
+	public ContainerWidgetBuilder(String id, String classes, String style) {
+		this.id = id;
 		this.classes = classes;
 		this.style = style;
 	}
@@ -25,6 +31,11 @@ public class ContainerWidgetBuilder extends AbstractContainerWidgetBuilder {
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
 		stream.write("<div");
+		if (!id.isEmpty()) {
+			stream.write(" id=\"");
+			stream.writeSafe(id);
+			stream.write("\"");
+		}
 		if (!classes.isEmpty()) {
 			stream.write(" class=\"");
 			stream.write(classes);

@@ -150,7 +150,7 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 
 		right.add(new BreakBuilder());
 
-		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
+		TextBuilder miscInfo = new TextBuilder(MISC, "\n", null);
 		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + personInfo.data().personData(), false);
 		miscInfo.add("UUID: " + personInfo.data().personData());
 		miscInfo.add("Post Count: " + personInfo.postCount());
@@ -164,7 +164,7 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 	private ContainerWidgetBuilder makeMiscRight(PersonInfo personInfo) {
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
 
-		TextBuilder miscInfo = new TextBuilder(MISC, "\n");
+		TextBuilder miscInfo = new TextBuilder(MISC, "\n", null);
 		miscInfo.add("Post Count: " + personInfo.postCount());
 		miscInfo.add("Event Count: " + personInfo.eventCount());
 		right.add(miscInfo);

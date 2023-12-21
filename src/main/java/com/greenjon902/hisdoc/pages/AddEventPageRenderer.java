@@ -2,6 +2,7 @@ package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
+import com.greenjon902.hisdoc.pageBuilder.scripts.ContentSortingScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.UnloadMessageSenderScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
@@ -14,6 +15,8 @@ import com.greenjon902.hisdoc.webDriver.User;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,7 +50,11 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 			case NO_SESSION -> renderNoSession(pageBuilder);
 			case INVALID_IP -> renderInvalidIp(pageBuilder, user);
 			case VALID -> {
+				ContentSortingScript contentSortingScript = new ContentSortingScript("add-person-container",
+						"a.children[1].textContent.localeCompare(b.children[1].textContent)", false);
+				pageBuilder.addScript(contentSortingScript);
 				LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();
+				lazyLoadAccountNameScript.addCallback("sortElements()");
 				pageBuilder.addScript(lazyLoadAccountNameScript);
 				UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
 						"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
@@ -131,7 +138,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
 		String mcName = sessionHandler.getNameOf(user, query);
-		form.add(new TextBuilder(NORMAL, "\n") {{
+		form.add(new TextBuilder(NORMAL, "\n", null) {{
 			add("This event will be submitted under the user " + mcName + ".");
 			//add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");
 			// That message is planned to be added with event screening in v2
@@ -142,7 +149,8 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 	}
 
 	private void makeTagSelector(FormBuilder form) throws SQLException {
-		Set<TagLink> tagLinks = dispatcher.getAllTagLinks();
+		ArrayList<TagLink> tagLinks = new ArrayList<>(dispatcher.getAllTagLinks());  // List so we can sort them
+		tagLinks.sort(Comparator.comparing(TagLink::name));
 
 		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
 		for (TagLink tagLink : tagLinks) {
@@ -155,10 +163,10 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 	private void makePersonSelector(FormBuilder form, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript) throws SQLException {
 		Set<PersonLink> personLinks = dispatcher.getAllPersonLinks();
 
-		ContainerWidgetBuilder container = new ContainerWidgetBuilder("add-person-container");
+		ContainerWidgetBuilder container = new ContainerWidgetBuilder("add-person-container", "add-person-container", "");
 		for (PersonLink personLink : personLinks) {
 
-			TextBuilder personNameText = new TextBuilder(NORMAL, "\n");
+			TextBuilder personNameText = new TextBuilder(NORMAL, "\n", null);
 			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
 			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
 			personNameText.add(pageVariable.toString());

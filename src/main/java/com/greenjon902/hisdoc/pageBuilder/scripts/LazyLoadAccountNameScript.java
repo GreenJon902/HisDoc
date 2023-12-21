@@ -18,6 +18,7 @@ import java.util.Objects;
 public class LazyLoadAccountNameScript extends Script {
 	private final List<PageVariable> accountNameVars = new ArrayList<>();  // Index of accountNameVars corresponds to index of personDatas
 	private final List<PersonData> personDatas = new ArrayList<>();
+	private final List<String> callbacks = new ArrayList<>();
 
 	public LazyLoadAccountNameScript(PersonData personData, PageVariable accountNameVar) {  // Quick method for when only one
 		add(personData, accountNameVar);
@@ -45,7 +46,11 @@ public class LazyLoadAccountNameScript extends Script {
 			async function loadMISCELLANEOUSAccountName(info, accountNameVarName) {
 				const name = info;
 				console.log("Name: " +  name);
+				if (document.head.innerHTML.includes(accountNameVarName)) { 
+					document.head.innerHTML = document.head.innerHTML.replaceAll(accountNameVarName, name);
+				}
 				document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
+				lazyLoadCallbacks();
 			};
 			
 			async function loadMINECRAFTAccountName(info, accountNameVarName) {
@@ -78,12 +83,20 @@ public class LazyLoadAccountNameScript extends Script {
 				}
 				
 				// FIXME: Find a better solution for https://github.com/GreenJon902/HisDoc/issues/11
+				// We also replace head in the other lazyLoad functions
 				if (document.head.innerHTML.includes(accountNameVarName)) { 
 					document.head.innerHTML = document.head.innerHTML.replaceAll(accountNameVarName, name);
 				}
 				document.body.innerHTML = document.body.innerHTML.replaceAll(accountNameVarName, name);
+				lazyLoadCallbacks();
 			};
 			""");
+
+		js.append("function lazyLoadCallbacks() {");
+		for (String callback : callbacks) {
+			js.append(callback).append(";\n");
+		}
+		js.append("}");
 
 		// Run functions for any persons
 		for (int i=0; i < personDatas.size(); i++) {
@@ -108,5 +121,13 @@ public class LazyLoadAccountNameScript extends Script {
 	@Override
 	public int hashCode() {
 		return Objects.hash(accountNameVars, personDatas);
+	}
+
+	/**
+	 * Adds a callback. These will be run after each name has been loaded.
+	 * @param js The js to run
+	 */
+	public void addCallback(String js) {
+		callbacks.add(js);
 	}
 }
