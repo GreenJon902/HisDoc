@@ -15,6 +15,7 @@ public class TimelineFilter extends RadioButton {
 			"This has no effect on whether events will be shown", "Events with this will be shown, given they are not excluded elsewhere");
 
 	public TimelineFilter(String groupName, @Nullable String defaultValue, String updateFunc) {
+		// If default value is null then that means Include
 		super(groupName, (defaultValue == null ? "Include" : defaultValue), values, tooltips, updateFunc);
 	}
 }

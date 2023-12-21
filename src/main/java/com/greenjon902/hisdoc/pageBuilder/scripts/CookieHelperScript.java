@@ -18,22 +18,27 @@ public class CookieHelperScript extends Script {
 	@Override
 	protected void writeScriptContents(HtmlOutputStream stream) throws IOException {
 		// Taken from w3 schools
-		stream.write("function setCookie(cname, cvalue) {\n" +
-				"  document.cookie = cname + \"=\" + cvalue + \";SameSite=Strict;path=/; \";\n" +
-				"}\n" +
-				"\n" +
-				"function getCookie(cname) {\n" +
-				"  let name = cname + \"=\";\n" +
-				"  let ca = document.cookie.split(';');\n" +
-				"  for(let i = 0; i < ca.length; i++) {\n" +
-				"    let c = ca[i];\n" +
-				"    while (c.charAt(0) == ' ') {\n" +
-				"      c = c.substring(1);\n" +
-				"    }\n" +
-				"    if (c.indexOf(name) == 0) {\n" +
-				"      return c.substring(name.length, c.length);\n" +
-				"    }\n" +
-				"  }\n" +
-				"}");
+		stream.write("""
+				function setCookie(cname, cvalue) {
+				  document.cookie = cname + "=" + cvalue + ";SameSite=Strict;path=/; ";
+				}
+
+				function getCookie(cname) {
+				  let name = cname + "=";
+				  let ca = document.cookie.split(';');
+				  for(let i = 0; i < ca.length; i++) {
+				    let c = ca[i];
+				    while (c.charAt(0) == ' ') {
+				      c = c.substring(1);
+				    }
+				    if (c.indexOf(name) == 0) {
+				      return c.substring(name.length, c.length);
+				    }
+				  }
+				}""");
+		stream.write("""
+				function eraseCookie(name) {  \s
+				    document.cookie = name+'=; Max-Age=-99999999;'; \s
+				}""");
 	}
 }
