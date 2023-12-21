@@ -67,7 +67,7 @@ public class AddEventCommand implements CommandExecutor {
 				}
 
 				String ip = null;
-				if (playerSender.getAddress() != null && ignoreIp) ip = playerSender.getAddress().getHostString();
+				if (playerSender.getAddress() != null && !ignoreIp) ip = playerSender.getAddress().getHostString();
 
 				logger.fine(sender.getName() + " was allocated the code \"" + code + "\", " +
 						"they are limited to the ip \"" + ip + "\", " +

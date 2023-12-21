@@ -148,11 +148,12 @@ public class PaperMcSessionHandlerImpl implements SessionHandler {
 		boolean removedAny = false;
 		while (true) {  // Just in case check for multiple occurrences of the pid and remove them all
 			String previousCode = getCodeFromPid(pid);
-			System.out.println(previousCode);
 
 			if (previousCode == null) {
 				break;
 			}
+
+			logger.finer("A previous verification with code " + code + " was found, removing");
 
 			codeToExpectedIpMap.remove(previousCode);
 			codeToPidMap.remove(previousCode);
@@ -169,3 +170,4 @@ public class PaperMcSessionHandlerImpl implements SessionHandler {
 		return removedAny;
 	}
 }
+//TEST THAT INGORE IP STILL WORKS, THEN CHECK WHY SOME DESCRIPTIONS WONT LOAD?
