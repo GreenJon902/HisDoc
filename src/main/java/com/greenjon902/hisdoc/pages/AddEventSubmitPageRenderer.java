@@ -100,6 +100,10 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 				throw new RuntimeException("Got a null value");
 			}
 
+			name = name.strip();
+			description = description.strip();
+			details = details.strip();
+
 			if (details.isBlank()) {
 				details = null;
 			}

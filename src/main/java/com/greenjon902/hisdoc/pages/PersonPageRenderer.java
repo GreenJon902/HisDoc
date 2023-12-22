@@ -123,7 +123,7 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 						"options: {title: {display: false}, legend: {display: false}," +
 									"scales: {yAxes: [{" +
 											"id: 'Y1', " +
-											"ticks: {stepSize: 1}" +
+											"ticks: {stepSize: 1, beginAtZero: true}" +
 											"}]}}}");
 		String url = chart.getUrl();
 		return new ImageBuilder(url);
