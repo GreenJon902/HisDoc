@@ -128,7 +128,19 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 				flexiDateTime = new CenteredFlexiDateTime(center, units, diff);
 
 			} else if (dateType.equals("Ranged")) {
+				So the issue is (and this goes for both date types), take Jimme here, Jimme lives in Bangladesh (GMT+06:00).
+				Jimme uses hisDoc (Which is running under GMT for example) to log an event on the 05/05/0005 02:45 Bangladesh Time.
+				However since time is cropped out, we log an event on 05/05/0005. But since timezones, 02:45 should become 08:45 GMT
+				on the day before? But we don't know the time, do we?
+				Since the current system assumes the time to be 00:00, it then would default to the day before, which works
+				for this example, but if Jimme had 05/05/0005 20:00 then hisDoc should would crop the time of and it would
+				become the day before again.
+
 				ZonedDateTime date1zdt = getZDT(dater1 + "T00:00", timezone);  // Add T00:00 to disguise it as a datetime
+				System.out.println(date1zdt);
+				System.out.println(date1zdt.toEpochSecond());
+				System.out.println(date1zdt.toEpochSecond() / (24 * 60 * 60));
+				System.out.println();
 				ZonedDateTime date2zdt = getZDT(dater2 + "T00:00", timezone);
 
 				// No need for truncation as is already in days
@@ -150,6 +162,8 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 		 * minute precision) and a timezone.
 		 */
 		 private static ZonedDateTime getZDT(String input, String timezone) {
+			 System.out.println(input);
+			 System.out.println(timezone);
 			 char[] chars = input.toCharArray();
 			 chars[10] = ' ';
 			 String fullDateTimeString = new String(chars) + " " + timezone;
