@@ -1,4 +1,4 @@
-SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.color, COUNT({prefix}Tag.tid) AS count
+SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.color, {prefix}Tag.description, COUNT({prefix}Tag.tid) AS count
 FROM {prefix}Tag
 RIGHT JOIN (
     SELECT {prefix}EventTagRelation.tid FROM {prefix}EventTagRelation
