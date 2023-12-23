@@ -92,11 +92,11 @@ public class LazyLoadAccountNameScript extends Script {
 			};
 			""");
 
-		js.append("function lazyLoadCallbacks() {");
+		js.append("function lazyLoadCallbacks() {\n");
 		for (String callback : callbacks) {
 			js.append(callback).append(";\n");
 		}
-		js.append("}");
+		js.append("};\n");
 
 		// Run functions for any persons
 		for (int i=0; i < personDatas.size(); i++) {

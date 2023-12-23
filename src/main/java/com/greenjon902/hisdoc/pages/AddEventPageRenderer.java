@@ -55,6 +55,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 				pageBuilder.addScript(contentSortingScript);
 				LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();
 				lazyLoadAccountNameScript.addCallback("sortElements()");
+				lazyLoadAccountNameScript.addCallback("setOffset()");
 				pageBuilder.addScript(lazyLoadAccountNameScript);
 				UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
 						"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");

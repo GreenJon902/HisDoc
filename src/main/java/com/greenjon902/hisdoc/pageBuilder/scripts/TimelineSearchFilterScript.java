@@ -151,9 +151,9 @@ public class TimelineSearchFilterScript extends Script {
 			stream.write("\"");
 			stream.write(event.eventName);
 			stream.write("\": [new Date(");
-			stream.write(String.valueOf(dateInfo.earliestUnix()));
+			stream.write(String.valueOf(dateInfo.earliestUnix() + dateInfo.offset() * 60L));
 			stream.write(" * 1000), new Date(");
-			stream.write(String.valueOf(dateInfo.latestUnix()));
+			stream.write(String.valueOf(dateInfo.latestUnix() + dateInfo.offset() * 60L));
 			stream.write(" * 1000)], ");
 		}
 		stream.write("};\n\n");

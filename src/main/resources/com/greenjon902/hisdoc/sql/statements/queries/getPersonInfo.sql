@@ -16,7 +16,7 @@ WHERE {prefix}Event.postedPid = {pid};
 SELECT COUNT(*) AS count FROM {prefix}EventPersonRelation
 WHERE {prefix}EventPersonRelation.pid = {pid};
 
-SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.eventDateType, {prefix}Event.eventDate1,
+SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.eventDateType, {prefix}Event.eventDate1, {prefix}Event.eventDateTimeOffset,
                                             {prefix}Event.eventDateUnits, {prefix}Event.eventDateDiff,
                                             {prefix}Event.eventDate2, {prefix}Event.description FROM {prefix}Event
 RIGHT JOIN (
@@ -37,7 +37,7 @@ ORDER BY
 DESC
 LIMIT 10;
 
-SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.eventDateType, {prefix}Event.eventDate1,
+SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.eventDateType, {prefix}Event.eventDate1, {prefix}Event.eventDateTimeOffset,
                                             {prefix}Event.eventDateUnits, {prefix}Event.eventDateDiff,
                                             {prefix}Event.eventDate2, {prefix}Event.description FROM {prefix}Event
 WHERE {prefix}Event.postedPid = {pid}

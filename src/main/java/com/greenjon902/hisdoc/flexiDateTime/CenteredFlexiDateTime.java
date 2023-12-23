@@ -17,17 +17,20 @@ public class CenteredFlexiDateTime extends FlexiDateTime {
 	public final long center;
 	public final @NotNull Units units;
 	public final long diff;
+	public final int offset;
 
 	/**
 	 * Creates a new centered flexi date time.
-	 * @param center The center, in whatever units that is stored in value
+	 * @param center The center, in whatever units that is stored in value, from '1970-01-01 00:00:00' UTC
 	 * @param units What each number is worth, this applies to both center and diff
 	 * @param diff The difference, in whatever units that is stored in value
+	 * @param offset The offset, in minutes, from UTC
 	 */
-	public CenteredFlexiDateTime(long center, @NotNull Units units, long diff) {
+	public CenteredFlexiDateTime(long center, @NotNull Units units, long diff, int offset) {
 		this.center = center;
 		this.units = units;
 		this.diff = diff;
+		this.offset = offset;
 	}
 
 	@Override
@@ -36,6 +39,7 @@ public class CenteredFlexiDateTime extends FlexiDateTime {
 				"center=" + center +
 				", units=" + units +
 				", diff=" + diff +
+				", offset=" + offset +
 				'}';
 	}
 
@@ -50,6 +54,11 @@ public class CenteredFlexiDateTime extends FlexiDateTime {
 	}
 
 	@Override
+	public int offset() {
+		return offset;
+	}
+
+	@Override
 	public String formatString() {
 		String pattern =
 				switch (units) {
@@ -60,14 +69,16 @@ public class CenteredFlexiDateTime extends FlexiDateTime {
 				};
 
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
-		format.setTimeZone(TimeZone.getTimeZone("Europe/London"));
 
 		String centerString = format.format(new Date(center * units.value * 1000));  // Takes in ms
 		String diffString = "";
 		if (diff != 0) {
 			diffString = " ±" + diff + units.sqlId.toUpperCase(Locale.ROOT);
 		}
-		return centerString + diffString;
+
+		String timezoneInfo = formatOffset();
+
+		return centerString + timezoneInfo + diffString;
 	}
 
 	/**
