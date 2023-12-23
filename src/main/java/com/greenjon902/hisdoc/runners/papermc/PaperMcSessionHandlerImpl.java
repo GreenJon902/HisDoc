@@ -170,4 +170,3 @@ public class PaperMcSessionHandlerImpl implements SessionHandler {
 		return removedAny;
 	}
 }
-//TEST THAT INGORE IP STILL WORKS, THEN CHECK WHY SOME DESCRIPTIONS WONT LOAD?
