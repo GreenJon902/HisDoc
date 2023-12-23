@@ -30,7 +30,8 @@ public class UnpackHelper {
 	 * This looks at the columns date, authorPid, authorInfo, and description.
 	 */
 	public static ChangeInfo getChangeInfo(ResultSet result) throws SQLException {
-		return new ChangeInfo(new CenteredFlexiDateTime(result.getLong("date"), CenteredFlexiDateTime.Units.SECOND, 0),
+		return new ChangeInfo(
+				new CenteredFlexiDateTime(result.getLong("date"), CenteredFlexiDateTime.Units.SECOND, 0, 0),
 				new PersonLink(result.getInt("authorPid"), getPersonData(result)),
 				result.getString("description"));
 	}
@@ -47,15 +48,17 @@ public class UnpackHelper {
 		if (type.equals("c")) {
 			long center = result.getLong("eventDate1");
 			long diff = result.getLong("eventDateDiff");
+			int offset = result.getInt("eventDateTimeOffset");
 			CenteredFlexiDateTime.Units units = CenteredFlexiDateTime.Units.decode(result.getString("eventDateUnits"));
 
-			return new CenteredFlexiDateTime(center, units, diff);
+			return new CenteredFlexiDateTime(center, units, diff, offset);
 
 		} else if (type.equals("r")) {
 			long date1 = result.getLong("eventDate1");
 			long date2 = result.getLong("eventDate2");
+			int offset = result.getInt("eventDateTimeOffset");
 
-			return new RangedFlexiDate(date1, date2);
+			return new RangedFlexiDate(date1, date2, offset);
 
 		} else {
 			throw new RuntimeException("Unknown date type \""  + type + "\"");
@@ -139,7 +142,7 @@ public class UnpackHelper {
 		if (postedDateLong == null) {
 			postedDate = null;
 		} else {
-			postedDate = new CenteredFlexiDateTime(postedDateLong, CenteredFlexiDateTime.Units.SECOND, 0);
+			postedDate = new CenteredFlexiDateTime(postedDateLong, CenteredFlexiDateTime.Units.SECOND, 0, 0);
 		}
 
 		return new EventInfo(

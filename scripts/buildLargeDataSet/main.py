@@ -14,6 +14,8 @@ eventtagrelation_val = 0.25
 eventpersonrelation_val = 0.03
 tagColMin = 0
 tagColMax = 16581375
+minEventDateTimeOffset = -1440
+maxEventDateTimeOffset = 1440
 
 persons = (
         ('mc', '16ad067c-2be5-44e3-8218-58ba4ffba574'),
@@ -135,10 +137,10 @@ changelogs = list(open(changelogs_file, "r").read().split("\n"))
 
 def make_event_list():
     c_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDateUnits, eventDateDiff, "
-               "postedDate, description, postedPid, details)"
+               "postedDate, description, postedPid, details, eventDateTimeOffset)"
                "VALUES \n")
     r_dates = ("INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDate2, "
-               "postedDate, description, postedPid, details)"
+               "postedDate, description, postedPid, details, eventDateTimeOffset)"
                "VALUES \n")
 
     eid = 1
@@ -151,16 +153,17 @@ def make_event_list():
         if postedPid == 0:
             postedPid = "NULL"
         detail = "'" + choice(details) + "'" if randint(0, 1) == 1 else "NULL"
+        eventDateOffset = randint(minEventDateTimeOffset, maxEventDateTimeOffset)
 
         if randint(0, 1) == 0:  # C Date
             date_units = ["d", "h", "m"][randint(0, 2)]
             date_diff = randint(0, date_c_max_diff)
 
-            c_dates += f"({eid}, '{name}', 'c', {date1}, '{date_units}', {date_diff}, {postedDate}, '{description}', {postedPid}, {detail}), \n"
+            c_dates += f"({eid}, '{name}', 'c', {date1}, '{date_units}', {date_diff}, {postedDate}, '{description}', {postedPid}, {detail}, {eventDateOffset}), \n"
         else:  # R Date
             date2 = (date1 + randint(min_date, max_date))
 
-            r_dates += f"({eid}, '{name}', 'r', {date1}, {date2}, {postedDate}, '{description}', {postedPid}, {detail}), \n"
+            r_dates += f"({eid}, '{name}', 'r', {date1}, {date2}, {postedDate}, '{description}', {postedPid}, {detail}, {eventDateOffset}), \n"
 
         eid += 1
 

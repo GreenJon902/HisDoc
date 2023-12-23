@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -101,24 +102,28 @@ class HttpHandlerImpl implements HttpHandler {
 			exchange.getResponseHeaders().set("Content-Type", pageRenderer.contentType());
 			rendered = pageRenderer.render(query, null, user);
 
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			rendered = "Sorry, we experienced an error, please send this page to Jon\n\n" + sw;
 
 			exchange.getResponseHeaders().set("Content-Type", "text/plain");
-			exchange.sendResponseHeaders(200, rendered.length());
+			exchange.sendResponseHeaders(200, 0);
 			OutputStream os = exchange.getResponseBody();
 			os.write(rendered.getBytes());
 			os.close();
 
 			logger.log(Level.WARNING, "An error occurred while responding to a request", e);
-			throw new RuntimeException(e);
+			try {
+				throw e;  // Try and throw it as it is
+			} catch (SQLException ex) {
+				throw new RuntimeException(ex);  // If we have to then wrap it as a runtime exception
+			}
 		}
 
 
-		exchange.sendResponseHeaders(200, rendered.length());
+		exchange.sendResponseHeaders(200, 0);
 		OutputStream os = exchange.getResponseBody();
 		os.write(rendered.getBytes());
 		os.close();
