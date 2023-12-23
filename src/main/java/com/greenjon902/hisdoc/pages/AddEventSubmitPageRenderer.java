@@ -9,14 +9,15 @@ import com.greenjon902.hisdoc.webDriver.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
-	private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm z");
-	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd z");
+	private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 	private final Dispatcher dispatcher;
 	private final SessionHandler sessionHandler;
@@ -87,7 +88,7 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 			String sEventIds = query.get("events");
 
 			String dateType = query.get("dateType");
-			String timezone = query.get("timezone");
+			String stringTimeOffset = query.get("offset");
 			String datec = query.get("datec");
 			String datecUnits = query.get("datecUnits");
 			String datecDiff = query.get("datecDiff");
@@ -96,7 +97,7 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 
 			if (name == null || description == null || details == null || sEventIds == null || dateType == null ||
 					datecUnits == null || dater1 == null || datecDiff == null || dater2 == null ||
-					timezone == null) {
+					stringTimeOffset == null) {
 				throw new RuntimeException("Got a null value");
 			}
 
@@ -115,40 +116,29 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 				eventIds = Collections.emptySet();
 			}
 
-			FlexiDateTime flexiDateTime;
+			int timeOffset = timeToMins(stringTimeOffset);
 
+			FlexiDateTime flexiDateTime;
 			if (dateType.equals("Centered")) {
-				ZonedDateTime zonedDateTime = getZDT(datec, timezone);
+				LocalDateTime dateTime = getLDT(datec);
 				CenteredFlexiDateTime.Units units = CenteredFlexiDateTime.Units.decode(datecUnits);
 				long diff = Long.parseLong(datecDiff);
 
-				zonedDateTime = zonedDateTime.truncatedTo(units.temporalUnit); // Hours + Minutes only exist as the html form has to have them, so remove them here if need be
-				long center = zonedDateTime.toEpochSecond() / units.value;
+				dateTime = dateTime.truncatedTo(units.temporalUnit); // Hours + Minutes only exist as the html form has to have them, so remove them here if need be
+				long center = dateTime.toEpochSecond(ZoneOffset.UTC) / units.value;  // Can use UTC as have offset
 
-				flexiDateTime = new CenteredFlexiDateTime(center, units, diff);
+				flexiDateTime = new CenteredFlexiDateTime(center, units, diff, timeOffset);
 
 			} else if (dateType.equals("Ranged")) {
-				So the issue is (and this goes for both date types), take Jimme here, Jimme lives in Bangladesh (GMT+06:00).
-				Jimme uses hisDoc (Which is running under GMT for example) to log an event on the 05/05/0005 02:45 Bangladesh Time.
-				However since time is cropped out, we log an event on 05/05/0005. But since timezones, 02:45 should become 08:45 GMT
-				on the day before? But we don't know the time, do we?
-				Since the current system assumes the time to be 00:00, it then would default to the day before, which works
-				for this example, but if Jimme had 05/05/0005 20:00 then hisDoc should would crop the time of and it would
-				become the day before again.
-
-				ZonedDateTime date1zdt = getZDT(dater1 + "T00:00", timezone);  // Add T00:00 to disguise it as a datetime
-				System.out.println(date1zdt);
-				System.out.println(date1zdt.toEpochSecond());
-				System.out.println(date1zdt.toEpochSecond() / (24 * 60 * 60));
-				System.out.println();
-				ZonedDateTime date2zdt = getZDT(dater2 + "T00:00", timezone);
+				LocalDateTime date1ldt = getLDT(dater1 + "T00:00");  // Add T00:00 to disguise it as a datetime
+				LocalDateTime date2ldt = getLDT(dater2 + "T00:00");
 
 				// No need for truncation as is already in days
 
-				long date1 = date1zdt.toEpochSecond() / (24 * 60 * 60);  // Convert to days since epoch
-				long date2 = date2zdt.toEpochSecond() / (24 * 60 * 60);
+				long date1 = date1ldt.toEpochSecond(ZoneOffset.UTC) / (24 * 60 * 60);  // Convert to days since epoch
+				long date2 = date2ldt.toEpochSecond(ZoneOffset.UTC) / (24 * 60 * 60);  // Can use UTC as have offset
 
-				flexiDateTime = new RangedFlexiDate(date1, date2);
+				flexiDateTime = new RangedFlexiDate(date1, date2, timeOffset);
 
 			} else {
 				throw new RuntimeException("Unknown date type \""  + dateType + "\"");
@@ -157,17 +147,27 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 			return new SubmittedEvent(name, description, details, tagIds, personIds, eventIds, flexiDateTime, postedBy);
 		}
 
+		private static int timeToMins(String stringTime) {
+			if (!(stringTime.startsWith("+") || stringTime.startsWith("-"))) stringTime = "+" + stringTime;
+
+			boolean isPositive = stringTime.charAt(0) == '+';
+
+			String[] parts = stringTime.substring(1).split(":");
+			int mins = Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
+			mins = mins * (isPositive ? 1 : -1);
+
+			return mins;
+		}
+
 		/**
-		 * Gets the {@link ZonedDateTime} from a html dateTime (with
+		 * Gets the {@link java.time.LocalDateTime} from a html dateTime (with
 		 * minute precision) and a timezone.
 		 */
-		 private static ZonedDateTime getZDT(String input, String timezone) {
-			 System.out.println(input);
-			 System.out.println(timezone);
+		 private static LocalDateTime getLDT(String input) {
 			 char[] chars = input.toCharArray();
 			 chars[10] = ' ';
-			 String fullDateTimeString = new String(chars) + " " + timezone;
-			 return ZonedDateTime.parse(fullDateTimeString, dateTimeFormat);
+			 String fullDateTimeString = new String(chars);
+			 return LocalDateTime.parse(fullDateTimeString, dateTimeFormat);
 		 }
 	}
 }

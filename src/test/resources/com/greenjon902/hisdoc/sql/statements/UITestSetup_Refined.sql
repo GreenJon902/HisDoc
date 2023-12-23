@@ -8,13 +8,13 @@ INSERT INTO {prefix}Tag (tid, name, description, color) VALUES
 (2, 'Building', 'Activities centered around construction and architecture.', 8290620),
 (3, 'Mcmmo', 'A plugin i dont like but others do so fair enough ig?', 000000);  -- Mcmmo should not be linked to
 
-INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDateUnits, eventDateDiff, postedDate, description, postedPid) VALUES
-(1, 'Monkey', 'c', 200, 'h', 20, 1, 'Jon and aj made monkey ;)', 1),
-(2, 'NoMonkey', 'c', 199, 'h', 20, 2, 'monkey not yet :(', 1),
-(3, 'MonkeyMake', 'c', 201, 'h', 20, 4, 'half of monkey, kinda manky i can see its brain', 1),
-(4, 'Null PostedPid', 'c', 100, 'h', 20, 3, 'Look at title', NULL),
-(5, 'Null PostedDate', 'c', 100, 'h', 20, NULL, 'Look at title', 1),
-(6, 'Null PostedPid & PostedDate', 'c', 100, 'h', 20, NULL, 'Look at title', NULL);
+INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDateUnits, eventDateDiff, postedDate, description, postedPid, eventDateTimeOffset) VALUES
+(1, 'Monkey', 'c', 201, 'h', 20, 1, 'Jon and aj made monkey ;)', 1, 345),  -- Time offset is (+05:45)
+(2, 'NoMonkey', 'c', 199, 'h', 20, 2, 'monkey not yet :(', 1, -540),  -- Time offset is alaska (-9:00)
+(3, 'MonkeyMake', 'c', 200, 'h', 20, 4, 'half of monkey, kinda manky i can see its brain', 1, 0),
+(4, 'Null PostedPid', 'c', 100, 'h', 20, 3, 'Look at title', NULL, 0),
+(5, 'Null PostedDate', 'c', 100, 'h', 20, NULL, 'Look at title', 1, 0),
+(6, 'Null PostedPid & PostedDate', 'c', 100, 'h', 20, NULL, 'Look at title', NULL, 0);
 
 INSERT INTO {prefix}EventPersonRelation (eid, pid) VALUES (1, 1), (1, 2);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (2, 1);

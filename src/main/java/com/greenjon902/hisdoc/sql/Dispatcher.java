@@ -147,29 +147,31 @@ public class Dispatcher {
 		logger.finer(() -> "Adding event link for " + submittedEvent);
 		PreparedStatement ps = prepareWithArgs("upload/addEvent");
 		ps.setString(1, submittedEvent.name());
-		ps.setString(10, submittedEvent.name());  // For getting the event id
+		ps.setString(11, submittedEvent.name());  // For getting the event id
 		ps.setString(2, submittedEvent.description());
 		ps.setString(3, submittedEvent.details());
 
 		if (submittedEvent.dateInfo() instanceof CenteredFlexiDateTime centeredFlexiDateTime) {
 			ps.setString(4, "c");
 			ps.setLong(5, centeredFlexiDateTime.center);
-			ps.setString(6, centeredFlexiDateTime.units.sqlId);
-			ps.setLong(7, centeredFlexiDateTime.diff);
-			ps.setNull(8, Types.BIGINT);
+			ps.setLong(6, centeredFlexiDateTime.offset);
+			ps.setString(7, centeredFlexiDateTime.units.sqlId);
+			ps.setLong(8, centeredFlexiDateTime.diff);
+			ps.setNull(9, Types.BIGINT);
 
 		} else if (submittedEvent.dateInfo() instanceof RangedFlexiDate rangedFlexiDate) {
 			ps.setString(4, "r");
 			ps.setLong(5, rangedFlexiDate.start);
-			ps.setNull(6, Types.VARCHAR);
-			ps.setNull(7, Types.BIGINT);
-			ps.setLong(8, rangedFlexiDate.end);
+			ps.setLong(6, rangedFlexiDate.offset);
+			ps.setNull(7, Types.VARCHAR);
+			ps.setNull(8, Types.BIGINT);
+			ps.setLong(9, rangedFlexiDate.end);
 
 		} else {
 			throw new RuntimeException("Unknown date type " + submittedEvent.dateInfo().getClass());
 		}
 
-		ps.setInt(9, submittedEvent.postedBy());
+		ps.setInt(10, submittedEvent.postedBy());
 		ps.execute();
 
 		// Get eid

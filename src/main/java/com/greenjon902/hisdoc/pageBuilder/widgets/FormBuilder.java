@@ -142,9 +142,6 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 
 			stream.write("<div style=\"display: grid;\" onkeydown=\"return event.key != 'Enter';\">");
 
-			stream.write("<input id=\"timezone\" name=\"timezone\" type=\"hidden\">");
-			stream.write("<script>document.getElementById(\"timezone\").value = Intl.DateTimeFormat().resolvedOptions().timeZone;</script>");
-
 			stream.write("<label id=\"datecLabel\" for=\"datec\">Center: </label>");
 			stream.write("<input id=\"datec\" name=\"datec\" type=\"datetime-local\" step=\"60\" value=\"" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm")) + "\">");
 
@@ -166,10 +163,30 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 			stream.write("<label id=\"daterLabel2\" for=\"dater2\" hidden>End: </label>");
 			stream.write("<input id=\"dater2\" name=\"dater2\" type=\"date\" value=\"" + LocalDate.now() + "\" hidden/>");
 
-
-
-			stream.write("<span>Your timezone was detected as <span id=\"timezoneLabel\"></span></span>");
-			stream.write("<script>document.getElementById(\"timezoneLabel\").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;</script>");
+			stream.write("<label for=\"offset\">The time offset from UTC: </label>");
+			stream.write("<input id=\"offset\" name=\"offset\" type=\"text\"></input>"); // Text so we can have negative dates
+			stream.write("""
+					<script>
+					function setOffset() {
+						let diff = new Date().getTimezoneOffset();
+						
+						let hours = "" + Math.trunc(diff / 60);
+						if ((hours.includes("-") && hours.length) == 2 || hours.length == 1) {
+							let newHours = "0" + Math.abs(diff / 60);
+							if (hours.includes("-")) {
+								newHours = "-" + newHours;
+							}
+							hours = newHours;
+						}
+						let mins = "" + Math.abs(diff % 60);
+						if (mins.length == 1) {
+							mins = "0" + Math.abs(diff / 60);
+						}
+						document.getElementById("offset").value = hours + ":" + mins;
+					}
+					setOffset();
+					</script>"""); // FIXME: This is a function as the replacing in lazy account loader breaks it. So we run this as a callback on it
+			stream.write("<span>This should autofill correctly, if not (or if you entering a date from a different time zone) please check <a href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" target=\"_blank\">this list</a></span>");
 			stream.write("</div>");
 		}
 	}

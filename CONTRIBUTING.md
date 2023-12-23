@@ -26,7 +26,19 @@ that this is a minecraft account with that uuid, so the program can then load th
 Or just put any random text in there (obvi excluding prefix) to say its not linked to anything, e.g. `Dave123`
 
 # Dates
-Store all dates as longs.
+So the issue is (and this goes for both date types), take Jimme here, Jimme lives in Bangladesh (GMT+06:00).
+Jimme uses hisDoc (Which is running under GMT for example) to log an event on the 05/05/0005 02:45 Bangladesh Time.
+However since time is cropped out, we log an event on 05/05/0005. But since timezones, 02:45 should become 08:45 GMT
+on the day before? But we don't know the time, do we?
+Since the current system assumes the time to be 00:00, it then would default to the day before, which works
+for this example, but if Jimme had 05/05/0005 20:00 then hisDoc should would crop the time of and it would
+become the day before again.
+
+Therefor the date system becomes even more convoluted, we will just talk about singular dates here, not ranges.  
+We store datetimes as longs since the unix epoch (1 January 1970, 00:00:00) but in their timezone. If we do not (or might not) store minutes or below,
+we also store an offset, in minutes between the time this datetime is and UTC. 
+This means we can  say also the exact start and end possible dates of an event without worrying about
+day overlaps
 
 # Prepared statements and sql safety
 for integers, we can just replace which also helps incase info has to be repeated.
