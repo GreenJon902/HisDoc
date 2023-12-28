@@ -1,16 +1,13 @@
 package com.greenjon902.hisdoc.person;
 
-import de.saibotk.jmaw.ApiResponseException;
-import de.saibotk.jmaw.MojangAPI;
-import de.saibotk.jmaw.PlayerProfile;
+import org.shanerx.mojang.Mojang;
+import org.shanerx.mojang.PlayerProfile;
 
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public record MinecraftPerson(UUID uuid) implements Person {
-	private static final MojangAPI mojangAPI = new MojangAPI();
+	private static final Mojang mojang = new Mojang().connect();
 	private static final HashMap<UUID, String> cachedNames = new HashMap<>();
 
 	@Override
@@ -19,22 +16,13 @@ public record MinecraftPerson(UUID uuid) implements Person {
 	}
 
 	private static String resolvePlayerNameFromUUID(UUID uuid) {
-		try {
+		// TODO: Find some way to get logger here.
+		System.out.println("Loading player name for " + uuid + "...");
+		PlayerProfile playerProfile = mojang.getPlayerProfile(uuid.toString());
 
-			// TODO: Find some way to get logger here.
-			System.out.println("Loading player name for " + uuid + "...");
-			Optional<PlayerProfile> playerProfile = mojangAPI.getPlayerProfile(uuid.toString());
-			if (playerProfile.isEmpty()) {
-				throw new IllegalStateException("Unknown user with id " + uuid);
-			}
-
-			String username = playerProfile.get().getUsername();
-			System.out.println("Got " + username);
-			return username;
-
-		} catch (ApiResponseException e) {
-			throw new RuntimeException(e);
-		}
+		String username = playerProfile.getUsername();
+		System.out.println("Got " + username);
+		return username;
 	}
 
 	@Override

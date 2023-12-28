@@ -122,9 +122,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.saibotk</groupId>
-            <artifactId>JMAW</artifactId>
-            <version>0.3.3</version>
+            <groupId>com.github.SparklingComet</groupId>
+            <artifactId>java-mojang-api</artifactId>
+            <version>592fabf3e2</version>
         </dependency>
 
     </dependencies>
