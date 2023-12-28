@@ -3,6 +3,7 @@ package com.greenjon902.hisdoc.sql;
 import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
 import com.greenjon902.hisdoc.pages.AddEventSubmitPageRenderer;
+import com.greenjon902.hisdoc.person.PersonType;
 import com.greenjon902.hisdoc.sql.results.*;
 
 import java.io.IOException;
@@ -21,7 +22,7 @@ public class Dispatcher {
 		this.logger = logger;
 	}
 
-	public PreparedStatement prepare(String... codes) throws SQLException {
+	public String loadCodes(String... codes) throws SQLException {
 		StringBuilder sql = new StringBuilder();
 		sql.append(checkStatement("statement/start"));
 		for (int i=0; i<codes.length; i++) {
@@ -32,9 +33,9 @@ public class Dispatcher {
 		}
 		sql.append(checkStatement("statement/end"));
 
-		logger.finest(() -> "Prepared \"" + Arrays.toString(codes) + "\":\n" + sql);
+		logger.finest(() -> "Loaded \"" + Arrays.toString(codes) + "\":\n" + sql);
 
-		return conn.prepareStatement(sql.toString());
+		return sql.toString();
 	}
 
 	public PreparedStatement prepareWithArgs(String code, Object... arguments) throws SQLException {
@@ -55,6 +56,10 @@ public class Dispatcher {
 		return conn.prepareStatement(sql.toString());
 	}
 
+	public PreparedStatement prepare(String code) throws SQLException {
+		return prepareWithArgs(code);
+	}
+
 	private String checkStatement(String code) {
 		if (!statements.containsKey(code)) {
 			try {
@@ -72,13 +77,23 @@ public class Dispatcher {
 
 	public void createTables() throws SQLException {
 		logger.finer("Creating tables");
-		prepare("createTables/tag",
+		String sql = loadCodes("createTables/tag",
 		"createTables/person",
 		"createTables/event",
 		"createTables/eventEventRelation",
 		"createTables/eventTagRelation",
 		"createTables/eventPersonRelation",
-		"createTables/changeLog").execute();
+		"createTables/changeLog");
+
+		PersonType[] personTypes = PersonType.values();
+		// Replace with ? so we can then set them in the prepared statement
+		sql = sql.replace("{personTypes}", String.join(", ", Collections.nCopies(personTypes.length, "?")));
+
+		PreparedStatement ps = conn.prepareStatement(sql);
+		for (int i=0; i<personTypes.length; i++) {
+			ps.setString(i + 1, personTypes[i].name());
+		}
+		ps.execute();
 	}
 
 	public EventInfo getEventInfo(int eid) throws SQLException {

@@ -18,6 +18,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import static com.greenjon902.hisdoc.SessionHandler.VerifyResult.*;
@@ -138,7 +139,7 @@ class TestSessionHandlerImpl implements SessionHandler {
 
 class TestMcPlaytimeSupplierImpl implements McPlaytimeSupplier {
 	@Override
-	public int getTicks(String uuid) {
+	public int getTicks(UUID uuid) {
 		return 0;
 	}
 }

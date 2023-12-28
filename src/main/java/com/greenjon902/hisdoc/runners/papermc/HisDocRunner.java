@@ -6,11 +6,13 @@ import com.greenjon902.hisdoc.runners.papermc.command.AddEventCommand;
 import com.greenjon902.hisdoc.runners.papermc.command.RestartHisDocCommand;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
+import com.greenjon902.hisdoc.webDriver.User;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +21,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -86,6 +89,19 @@ public class HisDocRunner extends JavaPlugin {
 		} catch (SQLException | IOException e) {
 			throw new RuntimeException(e);
 		}
+
+		BukkitScheduler scheduler = this.getServer().getScheduler();
+		// FIXME: Find a better way to load the cache
+		scheduler.runTaskAsynchronously(this, () -> {
+			try {
+				// Schedule this async to not delay loading times.
+
+				// Render the persons page as most of the names we will need will be cached by that
+				new PersonsPageRenderer(dispatcher).render(Collections.emptyMap(), null, User.empty());
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	@Override

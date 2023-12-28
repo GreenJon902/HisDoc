@@ -3,25 +3,33 @@ package com.greenjon902.hisdoc.sql;
 import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
+import com.greenjon902.hisdoc.person.MinecraftPerson;
+import com.greenjon902.hisdoc.person.MiscellaneousPerson;
+import com.greenjon902.hisdoc.person.Person;
+import com.greenjon902.hisdoc.person.PersonType;
 import com.greenjon902.hisdoc.sql.results.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-
 public class UnpackHelper {
 	/**
-	 * Unpacks a singular {@link PersonData} from a {@link ResultSet}, this expects the current result to be the one we are
-	 * getting (meaning we do not use {@link ResultSet#next()}).
+	 * Unpacks a singular {@link com.greenjon902.hisdoc.person.Person} from a {@link ResultSet}, this expects the current result to be the one we are
+	 * getting (meaning we do not use {@link ResultSet#next()}). This will identify the type of person and create the
+	 * appropriate class.
 	 * This looks at the columns personType, and personData.
 	 */
-	public static PersonData getPersonData(ResultSet result) throws SQLException {
-		return new PersonData(result.getString("personType"), result.getString("personData"));
+	public static Person getPersonData(ResultSet result) throws SQLException {
+		PersonType type = PersonType.valueOf(result.getString("personType"));
+		String data = result.getString("personData");
+
+		return switch (type) {
+			case MINECRAFT -> new MinecraftPerson(UUID.fromString(data));
+			case MISCELLANEOUS -> new MiscellaneousPerson(data);
+		};
 	}
 
 	/**

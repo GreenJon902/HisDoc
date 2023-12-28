@@ -1,7 +1,7 @@
 INSERT INTO {prefix}Person (pid, personType, personData) VALUES
-(1, 'mc', 'a6f2f5da-5773-4432-b7b4-8ec0b34a104a'),
-(2, 'mc', '86f5d3d8-0d4b-4230-9852-77a40baf39bd'),
-(3, 'mc', '0dbffb6c-6165-40e4-b0f6-0fab4dcd5511');  -- Omega should not be linked to
+(1, 'MINECRAFT', 'a6f2f5da-5773-4432-b7b4-8ec0b34a104a'),
+(2, 'MINECRAFT', '86f5d3d8-0d4b-4230-9852-77a40baf39bd'),
+(3, 'MINECRAFT', '0dbffb6c-6165-40e4-b0f6-0fab4dcd5511');  -- Omega should not be linked to
 
 INSERT INTO {prefix}Tag (tid, name, description, color) VALUES
 (1, 'Exploration', 'An event related to the discovery of new territories and landmarks.', 14219360),

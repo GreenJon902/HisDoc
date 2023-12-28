@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class PaperMcPlaytimeSupplierImpl implements McPlaytimeSupplier {
 	@Override
-	public int getTicks(String uuid) {
-		return Bukkit.getOfflinePlayer(UUID.fromString(uuid)).getStatistic(Statistic.PLAY_ONE_MINUTE);
+	public int getTicks(UUID uuid) {
+		return Bukkit.getOfflinePlayer(uuid).getStatistic(Statistic.PLAY_ONE_MINUTE);
 	}
 }

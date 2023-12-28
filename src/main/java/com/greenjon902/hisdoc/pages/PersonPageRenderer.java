@@ -2,9 +2,9 @@ package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.McPlaytimeSupplier;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
-import com.greenjon902.hisdoc.pageBuilder.PageVariable;
-import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
+import com.greenjon902.hisdoc.person.MinecraftPerson;
+import com.greenjon902.hisdoc.person.MiscellaneousPerson;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonInfo;
 import com.greenjon902.hisdoc.sql.results.TagLink;
@@ -44,15 +44,11 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 		}
 
 		PageBuilder pageBuilder = new PageBuilder();
-		PageVariable accountNameVar = pageBuilder.addVariable("account-name");
-		pageBuilder.title(accountNameVar.toString());
-
-		pageBuilder.addScript(new LazyLoadAccountNameScript(personInfo.data(), accountNameVar));
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
-		ContainerWidgetBuilder left = makeLeft(personInfo, accountNameVar);
-		ContainerWidgetBuilder right = makeRight(personInfo, accountNameVar);
+		ContainerWidgetBuilder left = makeLeft(personInfo);
+		ContainerWidgetBuilder right = makeRight(personInfo);
 
 		ColumnLayoutBuilder columnLayoutBuilder = new ColumnLayoutBuilder();
 		columnLayoutBuilder.add(left);
@@ -62,11 +58,11 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 		return pageBuilder.render(user);
 	}
 
-	private ContainerWidgetBuilder makeLeft(PersonInfo personInfo, PageVariable accountNameVar) {
+	private ContainerWidgetBuilder makeLeft(PersonInfo personInfo) {
 		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
 
 		TextBuilder titleBuilder = new TextBuilder(TITLE);
-		titleBuilder.add(accountNameVar);
+		titleBuilder.add(personInfo.person().name());
 		left.add(titleBuilder);
 
 		TextBuilder idTextBuilder = new TextBuilder(MISC);
@@ -129,18 +125,20 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 		return new ImageBuilder(url);
 	}
 
-	private ContainerWidgetBuilder makeRight(PersonInfo personInfo, PageVariable accountNameVar) {
-		return switch (personInfo.data().type()) {
-			case MINECRAFT -> makeMcRight(personInfo, accountNameVar);
+	private ContainerWidgetBuilder makeRight(PersonInfo personInfo) {
+		return switch (personInfo.person().type()) {
+			case MINECRAFT -> makeMcRight(personInfo);
 			case MISCELLANEOUS -> makeMiscRight(personInfo);
 		};
 	}
 
-	private ContainerWidgetBuilder makeMcRight(PersonInfo personInfo, PageVariable accountNameVar) {
+	private ContainerWidgetBuilder makeMcRight(PersonInfo personInfo) {
+		MinecraftPerson person = (MinecraftPerson) personInfo.person();
+
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
 
 		// Encoded is https://crafatar.com/renders/body/
-		IframeBuilder iframeBuilder = new IframeBuilder("https://corsproxy.io/?https%3A%2F%2Fcrafatar.com%2Frenders%2Fbody%2F" + personInfo.data().personData() + "?overlay");
+		IframeBuilder iframeBuilder = new IframeBuilder("https://corsproxy.io/?https%3A%2F%2Fcrafatar.com%2Frenders%2Fbody%2F" + person.uuid() + "?overlay");
 		right.add(iframeBuilder);
 
 		TextBuilder attributionText = new TextBuilder(MISC);
@@ -151,11 +149,11 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 		right.add(new BreakBuilder());
 
 		TextBuilder miscInfo = new TextBuilder(MISC, "\n", null);
-		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + personInfo.data().personData(), false);
-		miscInfo.add("UUID: " + personInfo.data().personData());
+		miscInfo.add("See on NameMC", "https://namemc.com/profile/" + person.uuid(), false);
+		miscInfo.add("UUID: " + person.uuid());
 		miscInfo.add("Post Count: " + personInfo.postCount());
 		miscInfo.add("Event Count: " + personInfo.eventCount());
-		miscInfo.add("Ticks: " + mcPlaytimeSupplier.getTicks(personInfo.data().personData()));
+		miscInfo.add("Ticks: " + mcPlaytimeSupplier.getTicks(person.uuid()));
 		right.add(miscInfo);
 
 		return right;
