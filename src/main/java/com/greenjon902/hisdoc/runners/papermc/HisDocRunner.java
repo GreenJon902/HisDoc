@@ -119,15 +119,15 @@ public class HisDocRunner extends JavaPlugin {
 
 	private static Map<String, PageRenderer> createMap(Dispatcher dispatcher, SessionHandler sessionHandler, File dataFolder) {
 		return Map.ofEntries(Map.entry("/hs/", new HomePageRenderer()),
-			Map.entry("/hs/event", new EventPageRenderer(dispatcher)),
-			Map.entry("/hs/tag", new TagPageRenderer(dispatcher)),
-			Map.entry("/hs/tags", new TagsPageRenderer(dispatcher)),
-			Map.entry("/hs/person", new PersonPageRenderer(dispatcher, new PaperMcPlaytimeSupplierImpl())),
-			Map.entry("/hs/persons", new PersonsPageRenderer(dispatcher)),
-			Map.entry("/hs/timeline", new TimelinePageRenderer(dispatcher)),
-			Map.entry("/hs/add", new AddEventPageRenderer(dispatcher, sessionHandler, true)),
-			Map.entry("/hs/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, sessionHandler)),
-			Map.entry("/hs/themes", new CssPageRenderer()));
+			Map.entry("/event", new EventPageRenderer(dispatcher)),
+			Map.entry("/tag", new TagPageRenderer(dispatcher)),
+			Map.entry("/tags", new TagsPageRenderer(dispatcher)),
+			Map.entry("/person", new PersonPageRenderer(dispatcher, new PaperMcPlaytimeSupplierImpl())),
+			Map.entry("/persons", new PersonsPageRenderer(dispatcher)),
+			Map.entry("/timeline", new TimelinePageRenderer(dispatcher)),
+			Map.entry("/add", new AddEventPageRenderer(dispatcher, sessionHandler, true)),
+			Map.entry("/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, sessionHandler)),
+			Map.entry("/themes", new CssPageRenderer()));
 	}
 
 	private FileHandler makeLoggerFileHandler() {
