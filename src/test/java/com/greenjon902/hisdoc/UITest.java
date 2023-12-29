@@ -12,14 +12,18 @@ import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
-import org.jetbrains.annotations.NotNull;
+import org.shanerx.mojang.Mojang;
+import org.shanerx.mojang.PlayerProfile;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
+import static com.greenjon902.hisdoc.SessionHandler.VerifyResult.*;
 import static com.greenjon902.hisdoc.Utils.getTestLogger;
 
 public class UITest {
@@ -59,7 +63,7 @@ public class UITest {
 		database.createDB(dbName);
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/" + dbName + "?allowMultiQueries=true");
 
-		Dispatcher dispatcher = new Dispatcher(connection, logger);
+		Dispatcher dispatcher = new Dispatcher(connection, logger, new TestMinecraftInfoSupplierImpl());
 		dispatcher.createTables();
 		dispatcher.prepare(sqlScriptName).execute();  // Fill with test data
 		
@@ -119,9 +123,19 @@ class TestPermissionHandlerImpl implements PermissionHandler {
 	}
 }
 
-class TestMcPlaytimeSupplierImpl implements McPlaytimeSupplier {
+class TestMinecraftInfoSupplierImpl implements MinecraftInfoSupplier {
 	@Override
-	public int getTicks(String uuid) {
+	public int getTicks(UUID uuid) {
 		return 0;
+	}
+
+	@Override
+	public String getUsername(UUID uuid) {
+		System.out.println("Loading player name for " + uuid + "...");
+		PlayerProfile playerProfile = new Mojang().connect().getPlayerProfile(uuid.toString());
+
+		String username = playerProfile.getUsername();
+		System.out.println("Got " + username);
+		return username;
 	}
 }

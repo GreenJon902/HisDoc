@@ -3,9 +3,6 @@ package com.greenjon902.hisdoc.pages;
 import com.greenjon902.hisdoc.Permission;
 import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
-import com.greenjon902.hisdoc.pageBuilder.PageVariable;
-import com.greenjon902.hisdoc.pageBuilder.scripts.ContentSortingScript;
-import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.UnloadMessageSenderScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
@@ -46,18 +43,11 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		if (permissionHandler.hasPermission(user.pid(), Permission.ADD_EVENT)) {
-			ContentSortingScript contentSortingScript = new ContentSortingScript("add-person-container",
-					"a.children[1].textContent.localeCompare(b.children[1].textContent)", false);
-			pageBuilder.addScript(contentSortingScript);
-			LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();
-			lazyLoadAccountNameScript.addCallback("sortElements()");
-			lazyLoadAccountNameScript.addCallback("setOffset()");
-			pageBuilder.addScript(lazyLoadAccountNameScript);
 			UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
 					"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
 			pageBuilder.addScript(unloadMessageSenderScript);
 
-			renderValid(pageBuilder, user, lazyLoadAccountNameScript, query);
+			renderValid(pageBuilder, user, query);
 
 		} else {
 			renderInvalid(pageBuilder);
@@ -67,7 +57,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 	}
 
 
-	private void renderValid(PageBuilder pageBuilder, User user, LazyLoadAccountNameScript lazyLoadAccountNameScript, Map<String, String> query) throws SQLException {
+	private void renderValid(PageBuilder pageBuilder, User user, Map<String, String> query) throws SQLException {
 
 		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, "addEventSubmit");
 
@@ -104,7 +94,7 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 				Please add all the people that were in this event.
 				If someone that does not exist participated, please put it in details.""");}});
 		form.add(new BreakBuilder());
-		makePersonSelector(form, pageBuilder, lazyLoadAccountNameScript);
+		makePersonSelector(form);
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Events");}});
 		form.add(new TextBuilder(NORMAL) {{
@@ -149,16 +139,15 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		form.add(new BreakBuilder());
 	}
 
-	private void makePersonSelector(FormBuilder form, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript) throws SQLException {
-		Set<PersonLink> personLinks = dispatcher.getAllPersonLinks();
+	private void makePersonSelector(FormBuilder form) throws SQLException {
+		ArrayList<PersonLink> personLinks = new ArrayList<>(dispatcher.getAllPersonLinks());  // List so we can sort them
+		personLinks.sort(Comparator.comparing(o -> o.person().name()));
 
 		ContainerWidgetBuilder container = new ContainerWidgetBuilder("add-person-container", "add-person-container", "");
 		for (PersonLink personLink : personLinks) {
 
 			TextBuilder personNameText = new TextBuilder(NORMAL, "\n", null);
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
-			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
-			personNameText.add(pageVariable.toString());
+			personNameText.add(personLink.person().name());
 
 			CheckBoxBuilder checkBoxBuilder = new CheckBoxBuilder(personNameText, "person" + personLink.id());
 

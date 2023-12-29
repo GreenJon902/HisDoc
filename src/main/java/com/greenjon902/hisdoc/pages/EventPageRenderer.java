@@ -1,14 +1,14 @@
 package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
-import com.greenjon902.hisdoc.pageBuilder.PageVariable;
-import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.*;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,13 +42,10 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title(eventInfo.name());
 
-		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
-		pageBuilder.addScript(lazyLoadAccountNameScript);
-
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
-		ContainerWidgetBuilder left = makeLeft(eventInfo, lazyLoadAccountNameScript, pageBuilder);
-		ContainerWidgetBuilder right = makeRight(eventInfo, lazyLoadAccountNameScript, pageBuilder);
+		ContainerWidgetBuilder left = makeLeft(eventInfo);
+		ContainerWidgetBuilder right = makeRight(eventInfo);
 
 
 		ColumnLayoutBuilder columnLayoutBuilder = new ColumnLayoutBuilder();
@@ -59,7 +56,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		return pageBuilder.render(user);
 	}
 
-	private ContainerWidgetBuilder makeLeft(EventInfo eventInfo, LazyLoadAccountNameScript lazyLoadAccountNameScript, PageBuilder pageBuilder) {
+	private ContainerWidgetBuilder makeLeft(EventInfo eventInfo) {
 		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
 
 		TextBuilder titleBuilder = new TextBuilder(TITLE);
@@ -85,13 +82,13 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		TextBuilder changelogTitleBuilder = new TextBuilder(SUBTITLE);
 		changelogTitleBuilder.add("Changelog");
 		left.add(changelogTitleBuilder);
-		WidgetBuilder changelogTextBuilder = makeChangelogContents(eventInfo, lazyLoadAccountNameScript, pageBuilder);
+		WidgetBuilder changelogTextBuilder = makeChangelogContents(eventInfo);
 		left.add(changelogTextBuilder);
 
 		return left;
 	}
 
-	private ContainerWidgetBuilder makeRight(EventInfo eventInfo, LazyLoadAccountNameScript lazyLoadAccountNameScript, PageBuilder pageBuilder) {
+	private ContainerWidgetBuilder makeRight(EventInfo eventInfo) {
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
 
 		TextBuilder date = new TextBuilder(MISC);
@@ -104,7 +101,10 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		tagTitles.add("Tags");
 		right.add(tagTitles);
 		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
-		for (TagLink tagLink : eventInfo.tagLinks()) {
+
+		ArrayList<TagLink> tagLinks = new ArrayList<>(eventInfo.tagLinks());  // List so we can sort them
+		tagLinks.sort(Comparator.comparing(TagLink::name));
+		for (TagLink tagLink : tagLinks) {
 			tagContainer.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
 		}
 		right.add(tagContainer);
@@ -124,17 +124,18 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		relatedPersonTitles.add("Related Persons");
 		right.add(relatedPersonTitles);
 		TextBuilder relatedPersons = new TextBuilder(NORMAL, "\n", null);
-		for (PersonLink personLink : eventInfo.relatedPlayerInfos()) {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
-			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
-			relatedPersons.add(pageVariable.toString(), "person?id=" + personLink.id(), false);
+
+		List<PersonLink> personLinks = new ArrayList<>(eventInfo.relatedPlayerInfos());
+		personLinks.sort(Comparator.comparing(o -> o.person().name()));
+		for (PersonLink personLink : personLinks) {
+			relatedPersons.add(personLink.person().name(), "person?id=" + personLink.id(), false);
 		}
 		right.add(relatedPersons);
 
 		return right;
 	}
 
-	private WidgetBuilder makeChangelogContents(EventInfo eventInfo, LazyLoadAccountNameScript lazyLoadAccountNameScript, PageBuilder pageBuilder) {
+	private WidgetBuilder makeChangelogContents(EventInfo eventInfo) {
 		// Contents means not title, it does not mean only create table contents. (so we will use the <table> tag)
 
 		TableBuilder table = new TableBuilder(3, true);  // Date, Author, Description
@@ -145,22 +146,17 @@ public class EventPageRenderer extends HtmlPageRenderer {
 
 		if (eventInfo.postedBy() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown:"); }});
 		else {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + eventInfo.postedBy().data().personData());
-			lazyLoadAccountNameScript.add(eventInfo.postedBy().data(), pageVariable);
-			table.add(new TextBuilder(NORMAL) {{ add(pageVariable.toString(), "person?id=" + eventInfo.postedBy().id(), false); add(":"); }});
+			table.add(new TextBuilder(NORMAL) {{ add(eventInfo.postedBy().person().name(), "person?id=" + eventInfo.postedBy().id(), false); add(":"); }});
 		}
 		table.add(new TextBuilder(MISC) {{ add("This event was created!"); }});
 
 		// Then we add any changes
 		for (ChangeInfo changeInfo : eventInfo.changeInfos()) {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + changeInfo.author().data().personData());
-			lazyLoadAccountNameScript.add(changeInfo.author().data(), pageVariable);
-
 			if (changeInfo.date() == null) table.add(new TextBuilder(NORMAL) {{ add("Unknown"); }});
 			else table.add(new TextBuilder(NORMAL) {{ add(changeInfo.date().formatString()); }});
 
 
-			table.add(new TextBuilder(NORMAL) {{ add(pageVariable.toString(), "person?id=" + changeInfo.author().id(), false); add(":"); }});
+			table.add(new TextBuilder(NORMAL) {{ add(changeInfo.author().person().name(), "person?id=" + changeInfo.author().id(), false); add(":"); }});
 			table.add(new TextBuilder(MISC) {{ add(changeInfo.description()); }});
 		}
 
