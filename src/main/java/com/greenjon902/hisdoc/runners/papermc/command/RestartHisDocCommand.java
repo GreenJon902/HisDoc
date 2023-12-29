@@ -6,9 +6,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.logging.Logger;
 
-public class RestartHisDocCommand implements CommandExecutor {
+public class RestartHisDocCommand {
 	private final HisDocRunner hisDocRunner;
 	private final Logger logger;
 
@@ -17,11 +18,10 @@ public class RestartHisDocCommand implements CommandExecutor {
 		this.logger = logger;
 	}
 
-	@Override
-	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-		if (args.length != 1 || !args[0].equals("confirm")) {
+	public boolean run(@NotNull CommandSender sender, String label, ArgStream argStream) {
+		if (argStream.remaining(0) || !argStream.consume().equals("confirm")) {
 			sender.sendMessage("Are you sure you want to do this? This will remove all current verifications and may break!\n" +
-					"To confirm, please type /restarthisdoc confirm");
+					"To confirm, please type /" + label + " restarthisdoc confirm");
 		} else {
 			sender.sendMessage("Restarting HisDoc...");
 			logger.warning("Restarting HisDoc... ---------------------------------------------------------------");
@@ -30,5 +30,9 @@ public class RestartHisDocCommand implements CommandExecutor {
 		}
 
 		return true;
+	}
+
+	public List<String> tabComplete(CommandSender sender, ArgStream argStream) {
+		return null;
 	}
 }

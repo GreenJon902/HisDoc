@@ -13,9 +13,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class AddEventCommand implements CommandExecutor {
+public class AddEventCommand {
 	private final Dispatcher dispatcher;
 	private final PaperMcSessionHandlerImpl sessionHandler;
 	private final Logger logger;
@@ -26,10 +28,9 @@ public class AddEventCommand implements CommandExecutor {
 		this.logger = logger;
 	}
 
-	@Override
-	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+	public boolean run(@NotNull CommandSender sender, @NotNull ArgStream argStream) {
 		if (sender instanceof Player playerSender) {
-			logger.fine(sender.getName() + " ( " + playerSender.getUniqueId() + " ) ran /addevent");
+			logger.fine(sender.getName() + " ( " + playerSender.getUniqueId() + " ) ran the add event command");
 			Integer pid;
 			try {
 				pid = dispatcher.getPersonIdFromMinecraftUUID(playerSender.getUniqueId());
@@ -47,7 +48,7 @@ public class AddEventCommand implements CommandExecutor {
 
 				boolean ignoreIp = false;
 				boolean persist = false;
-				for (String arg : args) {
+				for (String arg : argStream.consumeRemaining()) {
 					switch (arg) {
 						case "--ignore-ip" -> {
 							if (sender.hasPermission("hisdoc.addevent.ingoreip")) ignoreIp = true;
@@ -85,5 +86,16 @@ public class AddEventCommand implements CommandExecutor {
 			sender.sendMessage("Only players can add events!");
 		}
 		return true;
+	}
+
+	public List<String> tabComplete(CommandSender sender, ArgStream argStream) {
+		ArrayList<String> list = new ArrayList<>();
+		if (sender.hasPermission("hisdoc.addevent.ingoreip")) {
+			list.add("--ignore-ip");
+		}
+		if (sender.hasPermission("hisdoc.addevent.persist")) {
+			list.add("--persist");
+		}
+		return list;
 	}
 }
