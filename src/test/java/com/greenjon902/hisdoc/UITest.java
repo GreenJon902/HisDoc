@@ -12,6 +12,8 @@ import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
+import org.shanerx.mojang.Mojang;
+import org.shanerx.mojang.PlayerProfile;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -55,7 +57,7 @@ public class UITest {
 		database.createDB(dbName);
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/" + dbName + "?allowMultiQueries=true");
 
-		Dispatcher dispatcher = new Dispatcher(connection, logger);
+		Dispatcher dispatcher = new Dispatcher(connection, logger, new TestMinecraftInfoSupplierImpl());
 		dispatcher.createTables();
 		dispatcher.prepare(sqlScriptName).execute();  // Fill with test data
 		
@@ -63,7 +65,7 @@ public class UITest {
 				Map.entry("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "tag", new TagPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "tags", new TagsPageRenderer(dispatcher)),
-				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher, new TestMcPlaytimeSupplierImpl())),
+				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "addS", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(NO_SESSION, false), false)),
@@ -137,9 +139,19 @@ class TestSessionHandlerImpl implements SessionHandler {
 	}
 }
 
-class TestMcPlaytimeSupplierImpl implements McPlaytimeSupplier {
+class TestMinecraftInfoSupplierImpl implements MinecraftInfoSupplier {
 	@Override
 	public int getTicks(UUID uuid) {
 		return 0;
+	}
+
+	@Override
+	public String getUsername(UUID uuid) {
+		System.out.println("Loading player name for " + uuid + "...");
+		PlayerProfile playerProfile = new Mojang().connect().getPlayerProfile(uuid.toString());
+
+		String username = playerProfile.getUsername();
+		System.out.println("Got " + username);
+		return username;
 	}
 }

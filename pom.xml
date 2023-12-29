@@ -125,6 +125,7 @@
             <groupId>com.github.SparklingComet</groupId>
             <artifactId>java-mojang-api</artifactId>
             <version>592fabf3e2</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

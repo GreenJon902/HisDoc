@@ -1,10 +1,8 @@
 package com.greenjon902.hisdoc.pages;
 
-import com.greenjon902.hisdoc.McPlaytimeSupplier;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.person.MinecraftPerson;
-import com.greenjon902.hisdoc.person.MiscellaneousPerson;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonInfo;
 import com.greenjon902.hisdoc.sql.results.TagLink;
@@ -18,11 +16,9 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
 public class PersonPageRenderer extends HtmlPageRenderer {
 	private final Dispatcher dispatcher;
-	private final McPlaytimeSupplier mcPlaytimeSupplier;
 
-	public PersonPageRenderer(Dispatcher dispatcher, McPlaytimeSupplier mcPlaytimeSupplier) {
+	public PersonPageRenderer(Dispatcher dispatcher) {
 		this.dispatcher = dispatcher;
-		this.mcPlaytimeSupplier = mcPlaytimeSupplier;
 	}
 
 	@Override
@@ -153,7 +149,7 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 		miscInfo.add("UUID: " + person.uuid());
 		miscInfo.add("Post Count: " + personInfo.postCount());
 		miscInfo.add("Event Count: " + personInfo.eventCount());
-		miscInfo.add("Ticks: " + mcPlaytimeSupplier.getTicks(person.uuid()));
+		miscInfo.add("Ticks: " + person.ticks());
 		right.add(miscInfo);
 
 		return right;

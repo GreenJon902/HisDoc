@@ -18,13 +18,11 @@ import java.util.logging.Logger;
 public class AddEventCommand implements CommandExecutor {
 	private final Dispatcher dispatcher;
 	private final PaperMcSessionHandlerImpl sessionHandler;
-	private final String addEventUrl;
 	private final Logger logger;
 
-	public AddEventCommand(Dispatcher dispatcher, PaperMcSessionHandlerImpl sessionHandler, String addEventUrl, Logger logger) {
+	public AddEventCommand(Dispatcher dispatcher, PaperMcSessionHandlerImpl sessionHandler, Logger logger) {
 		this.dispatcher = dispatcher;
 		this.sessionHandler = sessionHandler;
-		this.addEventUrl = addEventUrl;
 		this.logger = logger;
 	}
 
@@ -34,7 +32,7 @@ public class AddEventCommand implements CommandExecutor {
 			logger.fine(sender.getName() + " ( " + playerSender.getUniqueId() + " ) ran /addevent");
 			Integer pid;
 			try {
-				pid = dispatcher.getPersonIdFromMcUUID(playerSender.getUniqueId());
+				pid = dispatcher.getPersonIdFromMinecraftUUID(playerSender.getUniqueId());
 			} catch (SQLException e) {
 				sender.sendMessage("Sorry, We had an error getting your person id :(");
 				throw new RuntimeException(e);

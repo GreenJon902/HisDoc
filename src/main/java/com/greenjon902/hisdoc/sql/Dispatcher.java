@@ -1,5 +1,6 @@
 package com.greenjon902.hisdoc.sql;
 
+import com.greenjon902.hisdoc.MinecraftInfoSupplier;
 import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
 import com.greenjon902.hisdoc.pages.AddEventSubmitPageRenderer;
@@ -16,10 +17,12 @@ public class Dispatcher {
 	private final Map<String, String> statements = new HashMap<>();
 	private final Connection conn;
 	private final Logger logger;
+	private final UnpackHelper unpackHelper;
 
-	public Dispatcher(Connection conn, Logger logger) {
+	public Dispatcher(Connection conn, Logger logger, MinecraftInfoSupplier minecraftInfoSupplier) {
 		this.conn = conn;
 		this.logger = logger;
+		this.unpackHelper = new UnpackHelper(minecraftInfoSupplier);
 	}
 
 	public String loadCodes(String... codes) throws SQLException {
@@ -101,7 +104,7 @@ public class Dispatcher {
 		PreparedStatement ps = prepareWithArgs("queries/getEventInfo", "eid", eid);
 		ps.execute();
 
-		EventInfo eventInfo = UnpackHelper.getEventInfo(ps);
+		EventInfo eventInfo = unpackHelper.getEventInfo(ps);
 		logger.finest(() -> "Got " + eventInfo);
 		return eventInfo;
 	}
@@ -111,7 +114,7 @@ public class Dispatcher {
 		PreparedStatement ps = prepareWithArgs("queries/getPersonInfo", "pid", pid);
 		ps.execute();
 
-		PersonInfo personInfo = UnpackHelper.getPersonInfo(ps);
+		PersonInfo personInfo = unpackHelper.getPersonInfo(ps);
 		logger.finest(() -> "Got " + personInfo);
 		return personInfo;
 	}
@@ -122,7 +125,7 @@ public class Dispatcher {
 		PreparedStatement ps = prepareWithArgs("queries/getTagInfo", "tid", tid);
 		ps.execute();
 
-		TagInfo tagInfo = UnpackHelper.getTagInfo(ps);
+		TagInfo tagInfo = unpackHelper.getTagInfo(ps);
 		logger.finest(() -> "Got " + tagInfo);
 		return tagInfo;
 	}
@@ -132,7 +135,7 @@ public class Dispatcher {
 		PreparedStatement ps = prepareWithArgs("queries/getTimelineInfo");
 		ps.execute();
 
-		TimelineInfo timelineInfo = UnpackHelper.getTimelineInfo(ps);
+		TimelineInfo timelineInfo = unpackHelper.getTimelineInfo(ps);
 		logger.finest(() -> "Got " + timelineInfo);
 		return timelineInfo;
 	}
@@ -142,7 +145,7 @@ public class Dispatcher {
 		PreparedStatement ps = prepareWithArgs("queries/getAllTagLinks");
 		ps.execute();
 
-		Set<TagLink> tagLinks = UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getTagLink);
+		Set<TagLink> tagLinks = unpackHelper.getSet(ps.getResultSet(), unpackHelper::getTagLink);
 		logger.finest(() -> "Got " + tagLinks);
 		return tagLinks;
 	}
@@ -152,7 +155,7 @@ public class Dispatcher {
 		PreparedStatement ps = prepareWithArgs("queries/getAllPersonLinks");
 		ps.execute();
 
-		Set<PersonLink> personLinks = UnpackHelper.getSet(ps.getResultSet(), UnpackHelper::getPersonLink);
+		Set<PersonLink> personLinks = unpackHelper.getSet(ps.getResultSet(), unpackHelper::getPersonLink);
 		logger.finest(() -> "Got " + personLinks);
 		return personLinks;
 	}
@@ -229,7 +232,7 @@ public class Dispatcher {
 	/**
 	 * Gets the person id from a minecraft UUID, returns null if none found.
 	 */
-	public Integer getPersonIdFromMcUUID(UUID uniqueId) throws SQLException {
+	public Integer getPersonIdFromMinecraftUUID(UUID uniqueId) throws SQLException {
 		logger.finer("Getting player for mcUUID " + uniqueId);
 		PreparedStatement ps = prepareWithArgs("queries/getPerson");
 		ps.setString(1, "MC");
@@ -241,7 +244,7 @@ public class Dispatcher {
 		if (!result.next()) {
 			pid = null;
 		} else {
-			pid = UnpackHelper.getInteger(result, "pid");
+			pid = unpackHelper.getInteger(result, "pid");
 			if (result.next()) {
 				throw new RuntimeException("Got multiple persons with uuid " + uniqueId);
 			}
