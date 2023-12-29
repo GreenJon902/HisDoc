@@ -1,10 +1,12 @@
 package com.greenjon902.hisdoc.pages;
 
+import com.greenjon902.hisdoc.MinecraftInfoSupplier;
 import com.greenjon902.hisdoc.Permission;
 import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.scripts.UnloadMessageSenderScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
+import com.greenjon902.hisdoc.person.Person;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
@@ -116,15 +118,18 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		form.add(new FormBuilder.FlexiDateTimeInputBuilder());
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
-		String mcName = sessionHandler.getNameOf(user, query);
 		form.add(new TextBuilder(NORMAL, "\n", null) {{
-			add("This event will be submitted under the user " + mcName + ".");
+			add("This event will be submitted under the user " + getNameOf(user.pid()) + ".");
 			//add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");
 			// That message is planned to be added with event screening in v2
 		}});
 		form.add(new FormBuilder.SubmitButtonBuilder());
 
 		pageBuilder.add(form);
+	}
+
+	private String getNameOf(int pid) throws SQLException {
+		return dispatcher.getPersonInfo(pid).person().name();
 	}
 
 	private void makeTagSelector(FormBuilder form) throws SQLException {

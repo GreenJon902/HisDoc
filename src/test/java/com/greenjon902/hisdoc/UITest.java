@@ -2,28 +2,21 @@ package com.greenjon902.hisdoc;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
-import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
-import com.greenjon902.hisdoc.pageBuilder.widgets.NavBarBuilder;
-import com.greenjon902.hisdoc.pageBuilder.widgets.TextBuilder;
-import com.greenjon902.hisdoc.pageBuilder.widgets.TextType;
 import com.greenjon902.hisdoc.pages.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
-import com.greenjon902.hisdoc.webDriver.User;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
+import org.jetbrains.annotations.NotNull;
 import org.shanerx.mojang.Mojang;
 import org.shanerx.mojang.PlayerProfile;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
 
-import static com.greenjon902.hisdoc.SessionHandler.VerifyResult.*;
 import static com.greenjon902.hisdoc.Utils.getTestLogger;
 
 public class UITest {
@@ -71,27 +64,11 @@ public class UITest {
 				Map.entry("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "tag", new TagPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "tags", new TagsPageRenderer(dispatcher)),
-				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher, new TestMcPlaytimeSupplierImpl())),
+				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "add", new AddEventPageRenderer(dispatcher, permissionHandler)),
 				Map.entry("/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, permissionHandler)),
-				Map.entry("/" + pageNamePrefix + "add", new HtmlPageRenderer() {  // A helper page for choosing what to happen on adding
-					@Override
-					public String render(Map<String, String> query, String fragment, User user) {
-						PageBuilder pageBuilder = new PageBuilder();
-						pageBuilder.add(new NavBarBuilder(pageBuilder));
-						pageBuilder.add(new TextBuilder(TextType.NORMAL, "\n", null) {{
-							add("This is a testing page, please contact jon if your seeing this (given your not a developer)!\n");
-							add("NO_SESSION", "addS", false);
-							add("INVALID_IP", "addI", false);
-							add("VALID", "addV", false);
-							add("VALID & CONSUME", "c/addV", false);
-						}});
-
-						return pageBuilder.render(user);
-					}
-				}),
 				Map.entry("/" + pageNamePrefix + "themes", new CssPageRenderer()));
 	}
 }
