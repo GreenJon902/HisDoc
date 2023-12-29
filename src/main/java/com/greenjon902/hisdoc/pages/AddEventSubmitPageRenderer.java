@@ -1,6 +1,7 @@
 package com.greenjon902.hisdoc.pages;
 
-import com.greenjon902.hisdoc.SessionHandler;
+import com.greenjon902.hisdoc.Permission;
+import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
@@ -11,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,37 +20,30 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 	private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 	private final Dispatcher dispatcher;
-	private final SessionHandler sessionHandler;
+	private final PermissionHandler permissionHandler;
 
-	public AddEventSubmitPageRenderer(Dispatcher dispatcher, SessionHandler sessionHandler) {
+	public AddEventSubmitPageRenderer(Dispatcher dispatcher, PermissionHandler permissionHandler) {
 		this.dispatcher = dispatcher;
-		this.sessionHandler = sessionHandler;
+		this.permissionHandler = permissionHandler;
 	}
 
 	@Override
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
 		try {
-			if (sessionHandler.verify(user, query) != SessionHandler.VerifyResult.VALID) {
-				throw new IllegalStateException("You are not verified, you should not be on this page!");
+			if (permissionHandler.hasPermission(user.pid(), Permission.ADD_EVENT)) {
+				throw new IllegalStateException("You do not have permission, you should not be on this page!");
 			}
-			int postedBy = sessionHandler.getPersonId(user, query);
-			boolean consumed = sessionHandler.suggestConsumeVerification(user, query);
+			int postedBy = user.pid();
 
 			SubmittedEvent submittedEvent = SubmittedEvent.fromPost(user.post(), postedBy);
 			int eid = dispatcher.addEvent(submittedEvent);
 
-			if (consumed) {  // If it has been consumed, there is nothing to do but redirect them to the added event
-				return "<html><body><p>You are being redirected, please wait...</p></body>" +
-						"<script>window.location.href = 'event?id=" + eid + "';</script></html>";
+			return "<html><body><p>" +
+					"The event has been added, would you like to " +
+					"<a href=\"event?id=" + eid + "\" target=\"_blank\">see it</a> or " +  // target="_blank" means open new tab
+					"<a href=\"add\" target=\"_blank\">add a new event</a>" +
+					"</p></body></html>";
 
-			} else {  // If it has not been consumed, they might want to add an event again, so give them the option
-				String getPostAgainHref = sessionHandler.getPostUrl(postedBy);  // Gets the href for posting again
-				return "<html><body><p>" +
-						"The event has been added, would you like to " +
-						"<a href=\"event?id=" + eid + "\" target=\"_blank\">see it</a> or " +  // target="_blank" means open new tab
-						"<a href=\"" + getPostAgainHref + "\" target=\"_blank\">add a new event</a>" +
-						"</p></body></html>";
-			}
 
 		} catch (Exception e) {
 			throw new RuntimeException("An error occurred,\nquery=\n" + query + "\n\n", e);

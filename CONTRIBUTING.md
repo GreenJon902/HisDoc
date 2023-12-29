@@ -12,7 +12,7 @@ any widget tests will use the root pagebuilder so the html works
 
 css files should be layed out identifially.
 
-A "Person" refers to someone in the timeline
+A "Person" refers to someone in the timeline. Only refer to them as persons, not people!
 A "User" refers to someone using the website
 A "Session" refers to someone adding events who is linked to an ingame account
 

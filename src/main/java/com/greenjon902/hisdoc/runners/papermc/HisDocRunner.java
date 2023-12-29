@@ -1,6 +1,5 @@
 package com.greenjon902.hisdoc.runners.papermc;
 
-import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pages.*;
 import com.greenjon902.hisdoc.runners.papermc.command.AddEventCommand;
 import com.greenjon902.hisdoc.runners.papermc.command.RestartHisDocCommand;

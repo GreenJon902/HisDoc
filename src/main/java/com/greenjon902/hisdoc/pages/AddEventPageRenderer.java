@@ -1,12 +1,13 @@
 package com.greenjon902.hisdoc.pages;
 
+import com.greenjon902.hisdoc.Permission;
+import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.PageVariable;
 import com.greenjon902.hisdoc.pageBuilder.scripts.ContentSortingScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.UnloadMessageSenderScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
-import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
@@ -30,13 +31,11 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
  */
 public class AddEventPageRenderer extends HtmlPageRenderer {
 	private final Dispatcher dispatcher;
-	private final SessionHandler sessionHandler;
-	private final boolean feedforwardQuery; // Should the query info be given to the action page of the form too>
+	private final PermissionHandler permissionHandler;
 
-	public AddEventPageRenderer(Dispatcher dispatcher, SessionHandler sessionHandler, boolean feedforwardQuery) {
+	public AddEventPageRenderer(Dispatcher dispatcher, PermissionHandler permissionHandler) {
 		this.dispatcher = dispatcher;
-		this.sessionHandler = sessionHandler;
-		this.feedforwardQuery = feedforwardQuery;
+		this.permissionHandler = permissionHandler;
 	}
 
 	@Override
@@ -46,23 +45,22 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
-		switch (sessionHandler.verify(user, query)) {
-			case NO_SESSION -> renderNoSession(pageBuilder);
-			case INVALID_IP -> renderInvalidIp(pageBuilder, user);
-			case VALID -> {
-				ContentSortingScript contentSortingScript = new ContentSortingScript("add-person-container",
-						"a.children[1].textContent.localeCompare(b.children[1].textContent)", false);
-				pageBuilder.addScript(contentSortingScript);
-				LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();
-				lazyLoadAccountNameScript.addCallback("sortElements()");
-				lazyLoadAccountNameScript.addCallback("setOffset()");
-				pageBuilder.addScript(lazyLoadAccountNameScript);
-				UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
-						"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
-				pageBuilder.addScript(unloadMessageSenderScript);
+		if (permissionHandler.hasPermission(user.pid(), Permission.ADD_EVENT)) {
+			ContentSortingScript contentSortingScript = new ContentSortingScript("add-person-container",
+					"a.children[1].textContent.localeCompare(b.children[1].textContent)", false);
+			pageBuilder.addScript(contentSortingScript);
+			LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();
+			lazyLoadAccountNameScript.addCallback("sortElements()");
+			lazyLoadAccountNameScript.addCallback("setOffset()");
+			pageBuilder.addScript(lazyLoadAccountNameScript);
+			UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
+					"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
+			pageBuilder.addScript(unloadMessageSenderScript);
 
-				renderValid(pageBuilder, user, lazyLoadAccountNameScript, query);
-			}
+			renderValid(pageBuilder, user, lazyLoadAccountNameScript, query);
+
+		} else {
+			renderInvalid(pageBuilder);
 		}
 
 		return pageBuilder.render(user);
@@ -70,18 +68,8 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 
 
 	private void renderValid(PageBuilder pageBuilder, User user, LazyLoadAccountNameScript lazyLoadAccountNameScript, Map<String, String> query) throws SQLException {
-		StringBuilder action = new StringBuilder("addEventSubmit");
-		if (feedforwardQuery) {
-			action.append("?");
-			for (Map.Entry<String, String> entry : query.entrySet()) {
-				action.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)).append("&");
-			}
-			if (!query.isEmpty()) {  // Ran at least once - need to remove trailing "&"
-				action = new StringBuilder(action.substring(0, action.length() - 1));
-			}
-		}
 
-		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, action.toString());
+		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, "addEventSubmit");
 
 		form.add(new TextBuilder(TITLE) {{add("Add Event");}});
 
@@ -180,23 +168,10 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		form.add(new BreakBuilder());
 	}
 
-	private void renderInvalidIp(PageBuilder pageBuilder, User user) {
-		pageBuilder.add(new TextBuilder(TITLE) {{add("Invalid Ip");}});
-		pageBuilder.add(new TextBuilder(NORMAL) {{add("Your ip is different to what was expected, for spam prevention we" +
-				"require the ip of the player to be the same as the ip of the web browser unless explicitly stated.");}});
-		if (user.address() != null) {
-			pageBuilder.add(new TextBuilder(NORMAL) {{
-				add("If you would like to continue anyway, please run this command:");
-			}});
-			pageBuilder.add(new TextBuilder(CODE) {{
-				add("/addevent --ignore-ip");
-			}});
-		}
-	}
-
-	private void renderNoSession(PageBuilder pageBuilder) {
-		pageBuilder.add(new TextBuilder(TITLE) {{add("Invalid Session");}});
-		pageBuilder.add(new TextBuilder(NORMAL) {{add("We could not verify you as a player, please run this command in game:");}});
-		pageBuilder.add(new TextBuilder(CODE) {{add("/addevent");}});
+	private void renderInvalid(PageBuilder pageBuilder) {
+		pageBuilder.add(new TextBuilder(TITLE) {{add("You are not authorised to do that");}});
+		pageBuilder.add(new TextBuilder(NORMAL) {{add("Have you linked your account to HisDoc? Try typing: ");}});
+		pageBuilder.add(new TextBuilder(CODE) {{add("/hs link");}});
+		pageBuilder.add(new TextBuilder(NORMAL) {{add("If you have, and you think you should have permission, please contact your administrator!");}});
 	}
 }

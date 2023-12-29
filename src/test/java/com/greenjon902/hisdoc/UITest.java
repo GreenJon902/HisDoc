@@ -12,15 +12,14 @@ import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.User;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
-import static com.greenjon902.hisdoc.SessionHandler.VerifyResult.*;
 import static com.greenjon902.hisdoc.Utils.getTestLogger;
 
 public class UITest {
@@ -31,14 +30,19 @@ public class UITest {
 		DB database = DB.newEmbeddedDB(3306);
 		database.start();
 
+		SessionHandler sessionHandler = new TestSessionHandlerImpl(Map.of(
+				UUID.fromString("0000000-0000-0000-0000-000000000001"), 1
+		));
+		PermissionHandler permissionHandler = new TestPermissionHandlerImpl(Map.of());
+
 		HashMap<String, PageRenderer> map = new HashMap<>();
-		map.putAll(createTheThing(database, "HisDocUITest_Refined", "UITestSetup_Refined", "", logger));
-		map.putAll(createTheThing(database, "HisDocUITest_Large", "UITestSetup_Large", "l/", logger));
+		map.putAll(createTheThing(database, "HisDocUITest_Refined", "UITestSetup_Refined", "", logger, permissionHandler));
+		map.putAll(createTheThing(database, "HisDocUITest_Large", "UITestSetup_Large", "l/", logger, permissionHandler));
 
 		WebDriver webDriver = new WebDriver(new WebDriverConfig(
 				map,
 				8080, 0, 0, "com/greenjon902/hisdoc/logo.ico"
-		), logger);
+		), logger, sessionHandler, permissionHandler);
 		webDriver.start();
 	}
 
@@ -46,11 +50,12 @@ public class UITest {
 	 * Creates a new database with the given name, and fills it with information from the given sql file.
 	 * Then uses this to create a map from paths to page renderers.
 	 *
-	 * @param dbName The name of the database to create
-	 * @param sqlScriptName The name of the sql script that fills the database with test data
-	 * @param pageNamePrefix The text to prefix page names with, can be "", or could be "test/"
+	 * @param dbName            The name of the database to create
+	 * @param sqlScriptName     The name of the sql script that fills the database with test data
+	 * @param pageNamePrefix    The text to prefix page names with, can be "", or could be "test/"
+	 * @param permissionHandler The permission handler to supply to pages which require it
 	 */
-	private static Map<String, PageRenderer> createTheThing(DB database, String dbName, String sqlScriptName, String pageNamePrefix, Logger logger) throws ManagedProcessException, SQLException {
+	private static Map<String, PageRenderer> createTheThing(DB database, String dbName, String sqlScriptName, String pageNamePrefix, Logger logger, PermissionHandler permissionHandler) throws ManagedProcessException, SQLException {
 		database.createDB(dbName);
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/" + dbName + "?allowMultiQueries=true");
 
@@ -65,12 +70,8 @@ public class UITest {
 				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher, new TestMcPlaytimeSupplierImpl())),
 				Map.entry("/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher)),
-				Map.entry("/" + pageNamePrefix + "addS", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(NO_SESSION, false), false)),
-				Map.entry("/" + pageNamePrefix + "addI", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(INVALID_IP, false), false)),
-				Map.entry("/" + pageNamePrefix + "addV", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID, false), false)),
-				Map.entry("/c/" + pageNamePrefix + "addV", new AddEventPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID, true), false)),
-				Map.entry("/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID, false))),
-				Map.entry("/c/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, new TestSessionHandlerImpl(VALID, true))),
+				Map.entry("/" + pageNamePrefix + "add", new AddEventPageRenderer(dispatcher, permissionHandler)),
+				Map.entry("/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, permissionHandler)),
 				Map.entry("/" + pageNamePrefix + "add", new HtmlPageRenderer() {  // A helper page for choosing what to happen on adding
 					@Override
 					public String render(Map<String, String> query, String fragment, User user) {
@@ -93,46 +94,28 @@ public class UITest {
 
 
 class TestSessionHandlerImpl implements SessionHandler {
-	private final VerifyResult verifyResult;
-	private final boolean consumeVerifications;  // It won't actually consume them, but it will say whether it did or not
+	private final Map<UUID, @NotNull Integer> sessionToPidMap;
 
-	public TestSessionHandlerImpl(VerifyResult verifyResult, boolean consumeVerifications) {
-		this.verifyResult = verifyResult;
-		this.consumeVerifications = consumeVerifications;
+	TestSessionHandlerImpl(Map<UUID, @NotNull Integer> sessionToPidMap) {
+		this.sessionToPidMap = sessionToPidMap;
 	}
 
 	@Override
-	public VerifyResult verify(User user, Map<String, String> query) {
-		return verifyResult;
+	public int getPid(UUID sessionId) {
+		return sessionToPidMap.getOrDefault(sessionId, 0);
+	}
+}
+
+class TestPermissionHandlerImpl implements PermissionHandler {
+	private final Map<@NotNull Integer, Set<Permission>> pidToPermissionMap;
+
+	TestPermissionHandlerImpl(Map<@NotNull Integer, Set<Permission>> pidToPermissionMap) {
+		this.pidToPermissionMap = pidToPermissionMap;
 	}
 
 	@Override
-	public String getNameOf(User user, Map<String, String> query) {
-		return "TestUserName";
-	}
-
-	@Override
-	public boolean suggestConsumeVerification(User user, Map<String, String> query) {
-		if (verifyResult != VerifyResult.VALID) {
-			throw new RuntimeException("Cannot unverify user " + user + " as is not verified in the first place");
-		}
-		return consumeVerifications;
-	}
-
-	@Override
-	public int getPersonId(User user, Map<String, String> query) {
-		if (verifyResult != VerifyResult.VALID) {
-			throw new RuntimeException("Cannot get user " + user + " as is not verified");
-		}
-		return 1;
-	}
-
-	@Override
-	public String getPostUrl(int personId) {
-		if (verifyResult != VerifyResult.VALID) {
-			throw new IllegalStateException("Person with " + personId + " cannot add another event");
-		}
-		return "http://127.0.0.1:8080/addv";
+	public boolean hasPermission(int pid, Permission permission) {
+		return pidToPermissionMap.getOrDefault(pid, Collections.emptySet()).contains(permission);
 	}
 }
 

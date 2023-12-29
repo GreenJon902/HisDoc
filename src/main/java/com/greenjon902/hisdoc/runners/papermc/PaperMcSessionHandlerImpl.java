@@ -1,6 +1,5 @@
 package com.greenjon902.hisdoc.runners.papermc;
 
-import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.webDriver.User;
 import org.jetbrains.annotations.Nullable;
 

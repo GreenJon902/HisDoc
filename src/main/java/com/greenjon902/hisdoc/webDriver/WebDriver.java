@@ -1,5 +1,8 @@
 package com.greenjon902.hisdoc.webDriver;
 
+import com.greenjon902.hisdoc.Permission;
+import com.greenjon902.hisdoc.PermissionHandler;
+import com.greenjon902.hisdoc.SessionHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -20,7 +23,7 @@ public class WebDriver {
 	protected final WebDriverConfig webDriverConfig;
 	private final Logger logger;
 
-	public WebDriver(WebDriverConfig webDriverConfig, Logger logger) throws IOException {
+	public WebDriver(WebDriverConfig webDriverConfig, Logger logger, SessionHandler sessionHandler, PermissionHandler permissionHandler) throws IOException {
 		this.webDriverConfig = webDriverConfig;
 		this.logger = logger;
 
@@ -30,7 +33,7 @@ public class WebDriver {
 
 		logger.finer("Creating contexts...");
 		for (String path : webDriverConfig.pageRenderers().keySet()) {
-			server.createContext(path, new HttpHandlerImpl(webDriverConfig.pageRenderers().get(path), logger));
+			server.createContext(path, new HttpHandlerImpl(webDriverConfig.pageRenderers().get(path), logger, sessionHandler, permissionHandler));
 		}
 		server.createContext("/favicon.ico", new FaviconHandler(webDriverConfig.favicon()));
 	}
@@ -77,10 +80,14 @@ class FaviconHandler implements HttpHandler {
 class HttpHandlerImpl implements HttpHandler {
 	private final PageRenderer pageRenderer;
 	private final Logger logger;
+	private final SessionHandler sessionHandler;
+	private final PermissionHandler permissionHandler;
 
-	public HttpHandlerImpl(PageRenderer pageRenderer, Logger logger) {
+	public HttpHandlerImpl(PageRenderer pageRenderer, Logger logger, SessionHandler sessionHandler, PermissionHandler permissionHandler) {
 		this.pageRenderer = pageRenderer;
 		this.logger = logger;
+		this.sessionHandler = sessionHandler;
+		this.permissionHandler = permissionHandler;
 	}
 
 	@Override
@@ -90,9 +97,15 @@ class HttpHandlerImpl implements HttpHandler {
 		String rendered;
 		try {
 			User user = getUser(exchange);
-			logger.finer(() -> "Request is from " + user);
+			logger.finer(() -> "Request is from " + user + " and pid " + user.pid());
 			Map<String, String> query = getQuery(exchange);
 			logger.finer(() -> "\twith the query " + query);
+
+			if (!permissionHandler.hasPermission(user.pid(), Permission.LOAD_PAGE)) {
+				logger.finer("User does not have permission" + Permission.LOAD_PAGE + ", connection closed!");
+				exchange.close();
+				return;
+			}
 
 			exchange.getResponseHeaders().set("Content-Type", pageRenderer.contentType());
 			rendered = pageRenderer.render(query, null, user);
@@ -170,8 +183,10 @@ class HttpHandlerImpl implements HttpHandler {
 			cookies.addAll(Stream.of(cookieString.split(";")).map(String::trim).toList());
 		}
 
-		HashMap<String, String> otherCookies = new HashMap<>();
-		String theme = "";
+		String theme = ""; // Extract some cookies that will always (or mostly) be there.
+		UUID sessionId = null;
+		HashMap<String, String> otherCookies = new HashMap<>();  // Some we cannot, e.g. timeline filters
+
 		for (String cookie : cookies) {
 			String[] parts = cookie.split("=", 2);
 			if (parts.length != 2) {
@@ -180,12 +195,17 @@ class HttpHandlerImpl implements HttpHandler {
 			// Get cookies that will be used throughout the website into their own fields, page specific ones can be dealt with there
 			switch (parts[0]) {
 				case "theme" -> theme = parts[1];
+				case "session" -> sessionId = UUID.fromString(parts[1]);
 				default -> {
 					if (otherCookies.containsKey(parts[0])) throw new RuntimeException("Duplicate cookie key " + parts[0]);
 					otherCookies.put(parts[0], parts[1]);
 				}
 			}
 		}
-		return new User(theme, otherCookies, exchange.getRemoteAddress(), post);
+
+		int personId = sessionHandler.getPid(sessionId);
+		if (personId == 0) sessionId = null;  // If no pid then session is invalid
+
+		return new User(theme, sessionId, personId, otherCookies, exchange.getRemoteAddress(), post);
 	}
 }
