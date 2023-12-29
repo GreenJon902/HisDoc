@@ -1,9 +1,6 @@
 package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
-import com.greenjon902.hisdoc.pageBuilder.PageVariable;
-import com.greenjon902.hisdoc.pageBuilder.scripts.ContentSortingScript;
-import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.TimelineSearchFilterScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
@@ -42,12 +39,6 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title("Timeline");
 
-		ContentSortingScript contentSortingScript = new ContentSortingScript("personFilters",
-				"a.children[0].children[0].textContent.localeCompare(b.children[0].children[0].textContent)", false);
-		pageBuilder.addScript(contentSortingScript);
-		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
-		lazyLoadAccountNameScript.addCallback("sortElements()");
-		pageBuilder.addScript(lazyLoadAccountNameScript);
 		TimelineSearchFilterScript searchFilterScript = new TimelineSearchFilterScript(pageBuilder);  // Variables added elsewhere
 		pageBuilder.addScript(searchFilterScript);
 
@@ -61,7 +52,7 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 			pageBuilder.add(new TextBuilder(MAJOR_SUBTITLE) {{
 				add("Filters");
 			}});
-			pageBuilder.add(makeTop(timelineInfo, pageBuilder, lazyLoadAccountNameScript, user, searchFilterScript));
+			pageBuilder.add(makeTop(timelineInfo, pageBuilder, user, searchFilterScript));
 			pageBuilder.add(new TextBuilder(MAJOR_SUBTITLE) {{
 				add("Timeline");
 			}});
@@ -92,13 +83,13 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 			bottom.add(event);
 			searchFilterScript.add(event, Stream.concat(
 					timelineInfo.eventTagRelations().getOrDefault(eventLink, new ArrayList<>()).stream().map(TagLink::name),
-					timelineInfo.eventPersonRelations().getOrDefault(eventLink, new ArrayList<>()).stream().map(person -> person.data().personData())
+					timelineInfo.eventPersonRelations().getOrDefault(eventLink, new ArrayList<>()).stream().map(person -> person.person().name())
 			), eventLink.dateInfo());
 		}
 		return bottom;
 	}
 
-	private WidgetBuilder makeTop(TimelineInfo timelineInfo, PageBuilder pageBuilder, LazyLoadAccountNameScript lazyLoadAccountNameScript, User user, TimelineSearchFilterScript searchFilterScript) {
+	private WidgetBuilder makeTop(TimelineInfo timelineInfo, PageBuilder pageBuilder, User user, TimelineSearchFilterScript searchFilterScript) {
 		ContainerWidgetBuilder top = new ContainerWidgetBuilder();
 
 		ContainerWidgetBuilder filterButtons = new ContainerWidgetBuilder("filter-buttons-holder");
@@ -148,15 +139,16 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 
 		table = new TableBuilder(2, false, "personFilters");
 
-		for (PersonLink personLink : timelineInfo.personLinks()) {
+		ArrayList<PersonLink> personLinks = new ArrayList<>(timelineInfo.personLinks());  // List so we can sort them
+		personLinks.sort(Comparator.comparing(o -> o.person().name()));
+
+		for (PersonLink personLink : personLinks) {
 			TextBuilder personNameText = new TextBuilder(NORMAL, "\n", null);
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
-			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
-			personNameText.add(pageVariable.toString(), "person?id=" + personLink.id(), false);
+			personNameText.add(personLink.person().name(), "person?id=" + personLink.id(), false);
 
 			table.add(personNameText);
-			TimelineFilter timelineFilter = new TimelineFilter(personLink.data().personData(),
-					user.otherCookies().getOrDefault(personLink.data().personData(), "Include"), "filterChanged()");
+			TimelineFilter timelineFilter = new TimelineFilter(personLink.person().name(),
+					user.otherCookies().getOrDefault(personLink.person().name(), "Include"), "filterChanged()");
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}
