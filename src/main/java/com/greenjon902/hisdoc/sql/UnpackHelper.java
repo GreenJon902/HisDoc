@@ -1,27 +1,42 @@
 package com.greenjon902.hisdoc.sql;
 
+import com.greenjon902.hisdoc.MinecraftInfoSupplier;
 import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
+import com.greenjon902.hisdoc.person.MinecraftPerson;
+import com.greenjon902.hisdoc.person.MiscellaneousPerson;
+import com.greenjon902.hisdoc.person.Person;
+import com.greenjon902.hisdoc.person.PersonType;
 import com.greenjon902.hisdoc.sql.results.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.Callable;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-
 public class UnpackHelper {
+	private final MinecraftInfoSupplier minecraftInfoSupplier;
+
+	public UnpackHelper(MinecraftInfoSupplier minecraftInfoSupplier) {
+		this.minecraftInfoSupplier = minecraftInfoSupplier;
+	}
+
 	/**
-	 * Unpacks a singular {@link PersonData} from a {@link ResultSet}, this expects the current result to be the one we are
-	 * getting (meaning we do not use {@link ResultSet#next()}).
+	 * Unpacks a singular {@link com.greenjon902.hisdoc.person.Person} from a {@link ResultSet}, this expects the current result to be the one we are
+	 * getting (meaning we do not use {@link ResultSet#next()}). This will identify the type of person and create the
+	 * appropriate class.
 	 * This looks at the columns personType, and personData.
 	 */
-	public static PersonData getPersonData(ResultSet result) throws SQLException {
-		return new PersonData(result.getString("personType"), result.getString("personData"));
+	public Person getPersonData(ResultSet result) throws SQLException {
+		PersonType type = PersonType.valueOf(result.getString("personType"));
+		String data = result.getString("personData");
+
+		return switch (type) {
+			case MINECRAFT -> new MinecraftPerson(UUID.fromString(data), minecraftInfoSupplier);
+			case MISCELLANEOUS -> new MiscellaneousPerson(data);
+		};
 	}
 
 	/**
@@ -29,7 +44,7 @@ public class UnpackHelper {
 	 * getting (meaning we do not use {@link ResultSet#next()}).
 	 * This looks at the columns date, authorPid, authorInfo, and description.
 	 */
-	public static ChangeInfo getChangeInfo(ResultSet result) throws SQLException {
+	public ChangeInfo getChangeInfo(ResultSet result) throws SQLException {
 		return new ChangeInfo(
 				new CenteredFlexiDateTime(result.getLong("date"), CenteredFlexiDateTime.Units.SECOND, 0, 0),
 				new PersonLink(result.getInt("authorPid"), getPersonData(result)),
@@ -42,7 +57,7 @@ public class UnpackHelper {
 	 * This looks at the columns eventDateType, eventDate1, eventDateUnits, eventDateDiff and
 	 * eventDate2.
 	 */
-	public static FlexiDateTime getFlexiDateTime(ResultSet result) throws SQLException {
+	public FlexiDateTime getFlexiDateTime(ResultSet result) throws SQLException {
 		String type = result.getString("eventDateType");
 
 		if (type.equals("c")) {
@@ -70,7 +85,7 @@ public class UnpackHelper {
 	 * getting (meaning we do not use {@link ResultSet#next()}).
 	 * This looks at the columns eid, name.
 	 */
-	public static EventLink getEventLink(ResultSet result) throws SQLException {
+	public EventLink getEventLink(ResultSet result) throws SQLException {
 		return new EventLink(result.getInt("eid"), result.getString("name"), getFlexiDateTime(result),
 				result.getString("description"));
 	}
@@ -80,7 +95,7 @@ public class UnpackHelper {
 	 * getting (meaning we do not use {@link ResultSet#next()}).
 	 * This looks at the columns eid, name.
 	 */
-	public static TagLink getTagLink(ResultSet result) throws SQLException {
+	public TagLink getTagLink(ResultSet result) throws SQLException {
 		return new TagLink(
 				result.getInt("tid"),
 				result.getString("name"),
@@ -93,7 +108,7 @@ public class UnpackHelper {
 	 * getting (meaning we do not use {@link ResultSet#next()}).
 	 * This looks at the columns pid, personInfo.
 	 */
-	public static PersonLink getPersonLink(ResultSet result) throws SQLException {
+	public PersonLink getPersonLink(ResultSet result) throws SQLException {
 		return new PersonLink(result.getInt("pid"), getPersonData(result));
 	}
 
@@ -102,7 +117,7 @@ public class UnpackHelper {
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 * This looks at the columns used by {@link #getTagLink(ResultSet)} and count.
 	 */
-	public static Map<TagLink, Integer> getCountedTagLinks(ResultSet result) throws SQLException {
+	public Map<TagLink, Integer> getCountedTagLinks(ResultSet result) throws SQLException {
 		Map<TagLink, Integer> countedTagLinks = new HashMap<>();
 		while (result.next()) {
 			countedTagLinks.put(getTagLink(result), result.getInt("count"));
@@ -115,14 +130,14 @@ public class UnpackHelper {
 	 * first item to be unpacked, this also expects the next result to be the one we are
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 */
-	public static EventInfo getEventInfo(PreparedStatement ps) throws SQLException {
-		Set<TagLink> tagLinks = getSet(ps.getResultSet(), UnpackHelper::getTagLink);
+	public EventInfo getEventInfo(PreparedStatement ps) throws SQLException {
+		Set<TagLink> tagLinks = getSet(ps.getResultSet(), this::getTagLink);
 		nextResultSet(ps, "personLinks");
-		Set<PersonLink> personLinks = getSet(ps.getResultSet(), UnpackHelper::getPersonLink);
+		Set<PersonLink> personLinks = getSet(ps.getResultSet(), this::getPersonLink);
 		nextResultSet(ps, "eventLinks");
-		Set<EventLink> eventLinks = getSet(ps.getResultSet(), UnpackHelper::getEventLink);
+		Set<EventLink> eventLinks = getSet(ps.getResultSet(), this::getEventLink);
 		nextResultSet(ps, "changeInfos");
-		List<ChangeInfo> changeInfos = UnpackHelper.getList(ps.getResultSet(), UnpackHelper::getChangeInfo);
+		List<ChangeInfo> changeInfos = getList(ps.getResultSet(), this::getChangeInfo);
 
 		nextResultSet(ps, "event");
 		ResultSet result = ps.getResultSet();
@@ -165,7 +180,7 @@ public class UnpackHelper {
 	 * first item to be unpacked, this also expects the next result to be the one we are
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 */
-	public static PersonInfo getPersonInfo(PreparedStatement ps) throws SQLException {
+	public PersonInfo getPersonInfo(PreparedStatement ps) throws SQLException {
 		Map<TagLink, Integer> countedTagLinks = getCountedTagLinks(ps.getResultSet());
 
 		nextResultSet(ps, "postCount");
@@ -179,10 +194,10 @@ public class UnpackHelper {
 		int eventCount = ps.getResultSet().getInt("count");
 
 		nextResultSet(ps, "recentEvents");
-		List<EventLink> recentEvents = getList(ps.getResultSet(), UnpackHelper::getEventLink);
+		List<EventLink> recentEvents = getList(ps.getResultSet(), this::getEventLink);
 
 		nextResultSet(ps, "recentPosts");
-		List<EventLink> recentPosts = getList(ps.getResultSet(), UnpackHelper::getEventLink);
+		List<EventLink> recentPosts = getList(ps.getResultSet(), this::getEventLink);
 
 		nextResultSet(ps, "person");
 		result = ps.getResultSet();
@@ -202,8 +217,8 @@ public class UnpackHelper {
 	 * first item to be unpacked, this also expects the next result to be the one we are
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 */
-	public static TagInfo getTagInfo(PreparedStatement ps) throws SQLException {
-		List<EventLink> recentEventLinks = getList(ps.getResultSet(), UnpackHelper::getEventLink);
+	public TagInfo getTagInfo(PreparedStatement ps) throws SQLException {
+		List<EventLink> recentEventLinks = getList(ps.getResultSet(), this::getEventLink);
 		nextResultSet(ps, "tagInfo");
 		ResultSet result = ps.getResultSet();
 		if (!result.next()) {
@@ -219,11 +234,11 @@ public class UnpackHelper {
 		);
 	}
 
-	public static <T> List<T> getList(ResultSet result, CheckedFunction<ResultSet, T> getter) throws SQLException {
+	public <T> List<T> getList(ResultSet result, CheckedFunction<ResultSet, T> getter) throws SQLException {
 		return getCollection(result, getter, ArrayList::new);
 	}
 
-	public static <T> Set<T> getSet(ResultSet result, CheckedFunction<ResultSet, T> getter) throws SQLException {
+	public <T> Set<T> getSet(ResultSet result, CheckedFunction<ResultSet, T> getter) throws SQLException {
 		return getCollection(result, getter, HashSet::new);
 	}
 
@@ -237,7 +252,7 @@ public class UnpackHelper {
 	 * @param <T> The type that will fill the collection
 	 * @param <U> The type of collection
 	 */
-	private static <T, U extends Collection<T>> U getCollection(ResultSet result, CheckedFunction<ResultSet, T> getter, Callable<U> collectionGenerator) throws SQLException {
+	private <T, U extends Collection<T>> U getCollection(ResultSet result, CheckedFunction<ResultSet, T> getter, Callable<U> collectionGenerator) throws SQLException {
 		U collection;
 		try {
 			collection = collectionGenerator.call();
@@ -256,7 +271,7 @@ public class UnpackHelper {
 	 * If we do not require the next result set, as it is optional, then use {@link PreparedStatement#getMoreResults()}.
 	 * @param type A string of what the result set should hold, this is used for error formatting
 	 */
-	public static void nextResultSet(PreparedStatement ps, String type) throws SQLException {
+	public void nextResultSet(PreparedStatement ps, String type) throws SQLException {
 		if (!ps.getMoreResults()) {
 			throw new RuntimeException("Could not find results for " + type);
 		}
@@ -268,7 +283,7 @@ public class UnpackHelper {
 	 * @param type A string of what the result set should hold, this is used for error formatting
 	 * @param number A string of where the next result will be (e.g. "next", or "first")
 	 */
-	public static void next(ResultSet result, String type, String number) throws SQLException {
+	public void next(ResultSet result, String type, String number) throws SQLException {
 		if (!result.next()) {
 			throw new RuntimeException("Could not find " + number + " result for " + type);
 		}
@@ -277,7 +292,7 @@ public class UnpackHelper {
 	/**
 	 * A helper function to get a nullable integer from sql.
 	 */
-	public static Integer getInteger(ResultSet result, String name) throws SQLException {
+	public Integer getInteger(ResultSet result, String name) throws SQLException {
 		Integer integer = result.getInt(name);
 		if (result.wasNull()) {
 			integer = null;
@@ -288,7 +303,7 @@ public class UnpackHelper {
 	/**
 	 * A helper function to get a nullable long from sql.
 	 */
-	public static Long getLong(ResultSet result, String name) throws SQLException {
+	public Long getLong(ResultSet result, String name) throws SQLException {
 		Long loong = result.getLong(name);
 		if (result.wasNull()) {
 			loong = null;
@@ -301,12 +316,12 @@ public class UnpackHelper {
 	 * first item to be unpacked, this also expects the next result to be the one we are
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 */
-	public static TimelineInfo getTimelineInfo(PreparedStatement ps) throws SQLException {
-		List<EventLink> eventLinks = getList(ps.getResultSet(), UnpackHelper::getEventLink);
+	public TimelineInfo getTimelineInfo(PreparedStatement ps) throws SQLException {
+		List<EventLink> eventLinks = getList(ps.getResultSet(), this::getEventLink);
 		nextResultSet(ps, "tagLinks");
-		Set<TagLink> tagLinks = getSet(ps.getResultSet(), UnpackHelper::getTagLink);
+		Set<TagLink> tagLinks = getSet(ps.getResultSet(), this::getTagLink);
 		nextResultSet(ps, "personLinks");
-		Set<PersonLink> personLinks = getSet(ps.getResultSet(), UnpackHelper::getPersonLink);
+		Set<PersonLink> personLinks = getSet(ps.getResultSet(), this::getPersonLink);
 		nextResultSet(ps, "eventTagRelations");
 		HashMap<EventLink, ArrayList<TagLink>> eventTagRelations = getRelationsFromRaw(ps.getResultSet(), "eid", "tid", eventLinks, tagLinks);
 		nextResultSet(ps, "eventPersonRelations");
@@ -321,7 +336,7 @@ public class UnpackHelper {
 	 * getting (meaning we run {@link ResultSet#next()} before doing any unpacking).
 	 * This returns a hash map, where the key is the first id, and the value is a list of all the values for the given key.
 	 */
-	public static <K extends Idable, V extends Idable> HashMap<K, ArrayList<V>> getRelationsFromRaw(ResultSet resultSet, String keyName, String valueName, Collection<K> keyValues, Collection<V> valueValues) throws SQLException {
+	public <K extends Idable, V extends Idable> HashMap<K, ArrayList<V>> getRelationsFromRaw(ResultSet resultSet, String keyName, String valueName, Collection<K> keyValues, Collection<V> valueValues) throws SQLException {
 		HashMap<Integer, K> keyMap = new HashMap<>();
 		keyValues.forEach(k -> keyMap.put(k.id(), k));
 		HashMap<Integer, V> valueMap = new HashMap<>();

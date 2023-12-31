@@ -14,7 +14,6 @@ import java.util.Set;
 
 public class PageBuilder extends AbstractContainerWidgetBuilder {
 	private String title;
-	private final Set<PageVariable> pageVariables = new HashSet<>();
 	private final List<Script> scripts = new ArrayList<>();  // List as some scripts add their dependencies
 
 
@@ -95,16 +94,6 @@ public class PageBuilder extends AbstractContainerWidgetBuilder {
 
 	public void title(String title) {
 		this.title = title;
-	}
-
-	public PageVariable addVariable(String id) {
-		PageVariable pageVariable;
-		do {
-			pageVariable = new PageVariable(id);
-		} while (pageVariables.contains(pageVariable));  // So we don't accidentally have duplicates
-
-		pageVariables.add(pageVariable);
-		return pageVariable;
 	}
 
 	public void addScript(Script script) {

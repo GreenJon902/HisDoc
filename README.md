@@ -1,5 +1,7 @@
 NOTE: The branch you are currently looking for is a modified version for my server, it is public incase it can help, but is weird and not properly documented (not that the master is either tbf) or programmed.
 
+[![CodeFactor](https://www.codefactor.io/repository/github/greenjon902/hisdoc/badge/master)](https://www.codefactor.io/repository/github/greenjon902/hisdoc/overview/master)
+
 I don't rly feel like writing a whole explanation again so ill give you the start page description
 
 # Welcome

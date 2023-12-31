@@ -1,18 +1,15 @@
 package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
-import com.greenjon902.hisdoc.pageBuilder.PageVariable;
-import com.greenjon902.hisdoc.pageBuilder.scripts.ContentSortingScript;
-import com.greenjon902.hisdoc.pageBuilder.scripts.LazyLoadAccountNameScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.NavBarBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.TextBuilder;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
+import com.greenjon902.hisdoc.sql.results.TagLink;
 import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.NORMAL;
 
@@ -25,26 +22,17 @@ public class PersonsPageRenderer extends HtmlPageRenderer {
 	}
 
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
-		Set<PersonLink> personLinks = dispatcher.getAllPersonLinks();
+		List<PersonLink> personLinks = new ArrayList<> (dispatcher.getAllPersonLinks());
+		personLinks.sort(Comparator.comparing(o -> o.person().name()));
 
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title("People");
-
-		ContentSortingScript contentSortingScript = new ContentSortingScript("personContainer",
-				"a.textContent.localeCompare(b.textContent)", false);
-		pageBuilder.addScript(contentSortingScript);
-
-		LazyLoadAccountNameScript lazyLoadAccountNameScript = new LazyLoadAccountNameScript();  // Variables added elsewhere
-		lazyLoadAccountNameScript.addCallback("sortElements()");  // TODO: Should we only run after all have loaded?
-		pageBuilder.addScript(lazyLoadAccountNameScript);
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
 		TextBuilder persons = new TextBuilder(NORMAL, "", "personContainer");
 		for (PersonLink personLink : personLinks) {
-			PageVariable pageVariable = pageBuilder.addVariable("account-name-for-" + personLink.data().personData());
-			lazyLoadAccountNameScript.add(personLink.data(), pageVariable);
-			persons.add(pageVariable.toString() + "\n", "person?id=" + personLink.id(), false);
+			persons.add(personLink.person().name() + "\n", "person?id=" + personLink.id(), false);
 		}
 		pageBuilder.add(persons);
 

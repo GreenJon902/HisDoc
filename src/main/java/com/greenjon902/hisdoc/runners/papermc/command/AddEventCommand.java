@@ -13,28 +13,27 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class AddEventCommand implements CommandExecutor {
+public class AddEventCommand extends SubCommand {
 	private final Dispatcher dispatcher;
 	private final PaperMcSessionHandlerImpl sessionHandler;
-	private final String addEventUrl;
 	private final Logger logger;
 
-	public AddEventCommand(Dispatcher dispatcher, PaperMcSessionHandlerImpl sessionHandler, String addEventUrl, Logger logger) {
+	public AddEventCommand(Dispatcher dispatcher, PaperMcSessionHandlerImpl sessionHandler, Logger logger) {
 		this.dispatcher = dispatcher;
 		this.sessionHandler = sessionHandler;
-		this.addEventUrl = addEventUrl;
 		this.logger = logger;
 	}
 
-	@Override
-	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+	public void run(@NotNull CommandSender sender, String label, @NotNull ArgStream argStream) {
 		if (sender instanceof Player playerSender) {
-			logger.fine(sender.getName() + " ( " + playerSender.getUniqueId() + " ) ran /addevent");
+			logger.fine(sender.getName() + " ( " + playerSender.getUniqueId() + " ) ran the add event command");
 			Integer pid;
 			try {
-				pid = dispatcher.getPersonIdFromMcUUID(playerSender.getUniqueId());
+				pid = dispatcher.getPersonIdFromMinecraftUUID(playerSender.getUniqueId());
 			} catch (SQLException e) {
 				sender.sendMessage("Sorry, We had an error getting your person id :(");
 				throw new RuntimeException(e);
@@ -49,7 +48,7 @@ public class AddEventCommand implements CommandExecutor {
 
 				boolean ignoreIp = false;
 				boolean persist = false;
-				for (String arg : args) {
+				for (String arg : argStream.consumeRemaining()) {
 					switch (arg) {
 						case "--ignore-ip" -> {
 							if (sender.hasPermission("hisdoc.addevent.ingoreip")) ignoreIp = true;
@@ -86,6 +85,22 @@ public class AddEventCommand implements CommandExecutor {
 		} else {
 			sender.sendMessage("Only players can add events!");
 		}
-		return true;
+	}
+
+	public List<String> tabComplete(CommandSender sender, ArgStream argStream) {
+		// All args are now just switches, so add any that have permissions, then remove any that have been used already
+		ArrayList<String> list = new ArrayList<>();
+		if (sender.hasPermission("hisdoc.addevent.ingoreip")) {
+			list.add("--ignore-ip");
+		}
+		if (sender.hasPermission("hisdoc.addevent.persist")) {
+			list.add("--persist");
+		}
+
+		for (String arg : argStream.consumeRemaining()) {
+			list.remove(arg); // Remove if it exists
+		}
+
+		return list;
 	}
 }

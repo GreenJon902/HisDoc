@@ -3,6 +3,7 @@ package com.greenjon902.hisdoc.runners.papermc;
 import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pages.*;
 import com.greenjon902.hisdoc.runners.papermc.command.AddEventCommand;
+import com.greenjon902.hisdoc.runners.papermc.command.CommandHandler;
 import com.greenjon902.hisdoc.runners.papermc.command.RestartHisDocCommand;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
@@ -65,18 +66,17 @@ public class HisDocRunner extends JavaPlugin {
 			connection = DriverManager.getConnection(url, mysqlUser, mysqlPassword);
 
 			logger.fine("Connected to " + connection);
-			dispatcher = new Dispatcher(connection, logger);
+			dispatcher = new Dispatcher(connection, logger, new PaperMinecraftInfoSupplierImpl(logger));
 			dispatcher.createTables();
 
 			// Set up commands -----------------------
 			logger.fine("Setting up commands...");
 			sessionHandler = new PaperMcSessionHandlerImpl(logger, addEventUrl);
-			getCommand("addevent").setExecutor(new AddEventCommand(dispatcher, sessionHandler, addEventUrl, logger));
-			getCommand("restarthisdoc").setExecutor(new RestartHisDocCommand(this, logger));
+			getCommand("hisdoc").setExecutor(new CommandHandler(dispatcher, sessionHandler, logger, this));
 
 			// Set up website stuffs -----------------------
 			logger.fine("Starting webdriver...");
-			Map<String, PageRenderer> map = createMap(dispatcher, sessionHandler, getDataFolder());
+			Map<String, PageRenderer> map = createMap(dispatcher, sessionHandler);
 			webDriver = new WebDriver(new WebDriverConfig(
 					map,
 					webDriverPort, 0, 0, "com/greenjon902/hisdoc/logo.ico"
@@ -118,17 +118,17 @@ public class HisDocRunner extends JavaPlugin {
 		}
 	}
 
-	private static Map<String, PageRenderer> createMap(Dispatcher dispatcher, SessionHandler sessionHandler, File dataFolder) {
+	private static Map<String, PageRenderer> createMap(Dispatcher dispatcher, SessionHandler sessionHandler) {
 		return Map.ofEntries(Map.entry("/hs/", new HomePageRenderer()),
-			Map.entry("/hs/event", new EventPageRenderer(dispatcher)),
-			Map.entry("/hs/tag", new TagPageRenderer(dispatcher)),
-			Map.entry("/hs/tags", new TagsPageRenderer(dispatcher)),
-			Map.entry("/hs/person", new PersonPageRenderer(dispatcher, new PaperMcPlaytimeSupplierImpl())),
-			Map.entry("/hs/persons", new PersonsPageRenderer(dispatcher)),
-			Map.entry("/hs/timeline", new TimelinePageRenderer(dispatcher)),
-			Map.entry("/hs/add", new AddEventPageRenderer(dispatcher, sessionHandler, true)),
-			Map.entry("/hs/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, sessionHandler)),
-			Map.entry("/hs/themes", new CssPageRenderer()));
+			Map.entry("/event", new EventPageRenderer(dispatcher)),
+			Map.entry("/tag", new TagPageRenderer(dispatcher)),
+			Map.entry("/tags", new TagsPageRenderer(dispatcher)),
+			Map.entry("/person", new PersonPageRenderer(dispatcher)),
+			Map.entry("/persons", new PersonsPageRenderer(dispatcher)),
+			Map.entry("/timeline", new TimelinePageRenderer(dispatcher)),
+			Map.entry("/add", new AddEventPageRenderer(dispatcher, sessionHandler, true)),
+			Map.entry("/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, sessionHandler)),
+			Map.entry("/themes", new CssPageRenderer()));
 	}
 
 	private FileHandler makeLoggerFileHandler() {

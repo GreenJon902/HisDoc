@@ -1,7 +1,7 @@
 INSERT INTO {prefix}Person (pid, personType, personData) VALUES
-(1, 'mc', 'a6f2f5da-5773-4432-b7b4-8ec0b34a104a'),
-(2, 'mc', '86f5d3d8-0d4b-4230-9852-77a40baf39bd'),
-(3, 'mc', '0dbffb6c-6165-40e4-b0f6-0fab4dcd5511');  -- Omega should not be linked to
+(1, 'MINECRAFT', 'a6f2f5da-5773-4432-b7b4-8ec0b34a104a'),
+(2, 'MINECRAFT', '86f5d3d8-0d4b-4230-9852-77a40baf39bd'),
+(3, 'MINECRAFT', '0dbffb6c-6165-40e4-b0f6-0fab4dcd5511');  -- Omega should not be linked to
 
 INSERT INTO {prefix}Tag (tid, name, description, color) VALUES
 (1, 'Exploration', 'An event related to the discovery of new territories and landmarks.', 14219360),
@@ -14,7 +14,9 @@ INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDateUnits,
 (3, 'MonkeyMake', 'c', 200, 'h', 20, 4, 'half of monkey, kinda manky i can see its brain', 1, 0),
 (4, 'Null PostedPid', 'c', 100, 'h', 20, 3, 'Look at title', NULL, 0),
 (5, 'Null PostedDate', 'c', 100, 'h', 20, NULL, 'Look at title', 1, 0),
-(6, 'Null PostedPid & PostedDate', 'c', 100, 'h', 20, NULL, 'Look at title', NULL, 0);
+(6, 'Null PostedPid & PostedDate', 'c', 100, 'h', 20, NULL, 'Look at title', NULL, 0),
+(7, 'Speech mark " in title', 'c', 100, 'h', 20, NULL, 'Look at title', NULL, 0),
+(8, 'Speech mark in description', 'c', 100, 'h', 20, NULL, 'Oh no: "', NULL, 0);
 
 INSERT INTO {prefix}EventPersonRelation (eid, pid) VALUES (1, 1), (1, 2);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (2, 1);
@@ -22,3 +24,5 @@ INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (3, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (4, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (5, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (6, 1);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (7, 1);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (8, 1);
