@@ -17,6 +17,9 @@ public class NavBarBuilder implements WidgetBuilder {
 
 		columnLayoutBuilder2.add(new LogoBuilder());
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{
+			add(new IconBuilder(G_DEM), "..", false, "G-Dem Home Page");
+		}});
+		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{
 			add(new IconBuilder(TIMELINE), "timeline", false, "Timeline");
 		}});
 		columnLayoutBuilder2.add(new TextBuilder(TextType.NORMAL) {{
