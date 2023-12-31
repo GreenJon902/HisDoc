@@ -36,7 +36,7 @@ public class ArgStream {
 	 * Returns the remaining parameters in an array and move the pointer to the end
 	 */
 	public String[] consumeRemaining() {
-		String[] strings = new String[args.length - pointer - 1];
+		String[] strings = new String[args.length - pointer];
 		System.arraycopy(args, pointer, strings, 0, strings.length);
 		pointer = args.length;
 		return strings;
