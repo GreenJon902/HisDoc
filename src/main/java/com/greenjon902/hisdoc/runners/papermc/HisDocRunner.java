@@ -2,8 +2,7 @@ package com.greenjon902.hisdoc.runners.papermc;
 
 import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.pages.*;
-import com.greenjon902.hisdoc.runners.papermc.command.AddEventCommand;
-import com.greenjon902.hisdoc.runners.papermc.command.RestartHisDocCommand;
+import com.greenjon902.hisdoc.runners.papermc.command.CommandHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
@@ -75,8 +74,8 @@ public class HisDocRunner extends JavaPlugin {
 
 			// Set up commands -----------------------
 			logger.fine("Setting up commands...");
-			getCommand("addevent").setExecutor(new AddEventCommand(dispatcher, sessionHandler, logger));
-			getCommand("restarthisdoc").setExecutor(new RestartHisDocCommand(this, logger));
+			sessionHandler = new PaperMcSessionHandlerImpl(dispatcher, sessionHandler, logger);
+			getCommand("hisdoc").setExecutor(new CommandHandler(dispatcher, sessionHandler, logger, this));
 
 			// Set up website stuffs -----------------------
 			logger.fine("Starting webdriver...");
