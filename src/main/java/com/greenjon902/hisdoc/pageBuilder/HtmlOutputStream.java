@@ -24,9 +24,11 @@ public class HtmlOutputStream {
 
 	/**
 	 * Same as {@link #write(String)} but throws no errors.
+	 * @param escapeQuotes Should quotes be replaced with \"
 	 */
-	public void writeNoErr(String string) {
+	public void writeNoErr(String string, boolean escapeQuotes) {
 		try {
+			if (escapeQuotes) string = string.replace("\"", "\\\"");
 			write(string);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
