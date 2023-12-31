@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class RestartHisDocCommand {
+public class RestartHisDocCommand extends SubCommand {
 	private final HisDocRunner hisDocRunner;
 	private final Logger logger;
 
@@ -18,7 +18,7 @@ public class RestartHisDocCommand {
 		this.logger = logger;
 	}
 
-	public boolean run(@NotNull CommandSender sender, String label, ArgStream argStream) {
+	public void run(@NotNull CommandSender sender, String label, ArgStream argStream) {
 		if (argStream.remaining(0) || !argStream.consume().equals("confirm")) {
 			sender.sendMessage("Are you sure you want to do this? This will remove all current verifications and may break!\n" +
 					"To confirm, please type /" + label + " restarthisdoc confirm");
@@ -28,8 +28,6 @@ public class RestartHisDocCommand {
 			hisDocRunner.onDisable();
 			hisDocRunner.onEnable();
 		}
-
-		return true;
 	}
 
 	public List<String> tabComplete(CommandSender sender, ArgStream argStream) {

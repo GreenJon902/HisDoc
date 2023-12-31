@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class AddEventCommand {
+public class AddEventCommand extends SubCommand {
 	private final Dispatcher dispatcher;
 	private final PaperMcSessionHandlerImpl sessionHandler;
 	private final Logger logger;
@@ -28,7 +28,7 @@ public class AddEventCommand {
 		this.logger = logger;
 	}
 
-	public boolean run(@NotNull CommandSender sender, @NotNull ArgStream argStream) {
+	public void run(@NotNull CommandSender sender, String label, @NotNull ArgStream argStream) {
 		if (sender instanceof Player playerSender) {
 			logger.fine(sender.getName() + " ( " + playerSender.getUniqueId() + " ) ran the add event command");
 			Integer pid;
@@ -85,7 +85,6 @@ public class AddEventCommand {
 		} else {
 			sender.sendMessage("Only players can add events!");
 		}
-		return true;
 	}
 
 	public List<String> tabComplete(CommandSender sender, ArgStream argStream) {
@@ -96,6 +95,11 @@ public class AddEventCommand {
 		if (sender.hasPermission("hisdoc.addevent.persist")) {
 			list.add("--persist");
 		}
+
+		for (String arg : argStream.consumeRemaining()) {
+			list.remove(arg); // Remove if it exists
+		}
+
 		return list;
 	}
 }

@@ -13,7 +13,7 @@ public class ArgStream {
 	 * Checks if there is a minimum of n arguments remaining.
 	 */
 	public boolean minimum(int n) {
-		return args.length - pointer - 1 >= n;
+		return args.length >= pointer + n;
 	}
 
 	/**
@@ -29,7 +29,7 @@ public class ArgStream {
 	 * Checks if there is exactly n arguments remaining.
 	 */
 	public boolean remaining(int n) {
-		return args.length - pointer - 1 == n;
+		return args.length == pointer + n;
 	}
 
 	/**
