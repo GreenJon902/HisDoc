@@ -88,6 +88,7 @@ public class AddEventCommand extends SubCommand {
 	}
 
 	public List<String> tabComplete(CommandSender sender, ArgStream argStream) {
+		// All args are now just switches, so add any that have permissions, then remove any that have been used already
 		ArrayList<String> list = new ArrayList<>();
 		if (sender.hasPermission("hisdoc.addevent.ingoreip")) {
 			list.add("--ignore-ip");

@@ -31,6 +31,7 @@ public class RestartHisDocCommand extends SubCommand {
 	}
 
 	public List<String> tabComplete(CommandSender sender, ArgStream argStream) {
+		// Don't return the argument, let the user type it, so they have more time to think about it
 		return null;
 	}
 }
