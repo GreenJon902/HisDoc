@@ -132,9 +132,14 @@ public class TimelineSearchFilterScript extends Script {
 			Stream<String> eventFilterNames = eventsFilterNames.get(i);
 
 			stream.write("\"");
-			stream.write(event.eventName);
+			stream.writeNoErr(event.eventName, true);  // Just so we can have quotes replace
+			// We don't want writeSafe as that escapes other chars like "&" which breaks IDs
 			stream.write("\": [");
-			eventFilterNames.forEach(string -> stream.writeNoErr("\"" + string + "\", "));
+			eventFilterNames.forEach(string -> {
+				stream.writeNoErr("\"", false);
+				stream.writeNoErr(string, true);  // If it has a speech mark in or something, that causes problems
+				stream.writeNoErr("\", ", false);
+			});
 			stream.write("], ");
 		}
 		stream.write("};\n\n");
@@ -149,7 +154,7 @@ public class TimelineSearchFilterScript extends Script {
 			FlexiDateTime dateInfo  = eventsDates.get(i);
 
 			stream.write("\"");
-			stream.write(event.eventName);
+			stream.writeSafe(event.eventName);
 			stream.write("\": [new Date(");
 			stream.write(String.valueOf(dateInfo.earliestUnix() + dateInfo.offset() * 60L));
 			stream.write(" * 1000), new Date(");
@@ -164,7 +169,9 @@ public class TimelineSearchFilterScript extends Script {
 		for (int i=0; i<timelineFilters.size(); i++) {
 			TimelineFilter filter  = timelineFilters.get(i);
 
-			stream.write("\"" + filter.id() + "\", ");
+			stream.write("\"");
+			stream.writeSafe(filter.id());
+			stream.write("\", ");
 		}
 		stream.write("];\n\n");
 	}
