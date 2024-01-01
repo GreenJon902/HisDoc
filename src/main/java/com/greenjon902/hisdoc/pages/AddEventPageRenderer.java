@@ -1,24 +1,21 @@
 package com.greenjon902.hisdoc.pages;
 
-import com.greenjon902.hisdoc.MinecraftInfoSupplier;
 import com.greenjon902.hisdoc.Permission;
 import com.greenjon902.hisdoc.PermissionHandler;
+import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.scripts.UnloadMessageSenderScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
-import com.greenjon902.hisdoc.person.Person;
+import com.greenjon902.hisdoc.runners.papermc.PaperMcSessionHandlerImpl;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
 import com.greenjon902.hisdoc.webDriver.User;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.Set;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
@@ -31,10 +28,12 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 public class AddEventPageRenderer extends HtmlPageRenderer {
 	private final Dispatcher dispatcher;
 	private final PermissionHandler permissionHandler;
+	private final SessionHandler sessionHandler;
 
-	public AddEventPageRenderer(Dispatcher dispatcher, PermissionHandler permissionHandler) {
+	public AddEventPageRenderer(Dispatcher dispatcher, PermissionHandler permissionHandler, SessionHandler sessionHandler) {
 		this.dispatcher = dispatcher;
 		this.permissionHandler = permissionHandler;
+		this.sessionHandler = sessionHandler;
 	}
 
 	@Override
@@ -49,17 +48,17 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 					"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
 			pageBuilder.addScript(unloadMessageSenderScript);
 
-			renderValid(pageBuilder, user, query);
+			renderValid(pageBuilder, user);
 
 		} else {
-			renderInvalid(pageBuilder);
+			renderInvalid(pageBuilder, user);
 		}
 
 		return pageBuilder.render(user);
 	}
 
 
-	private void renderValid(PageBuilder pageBuilder, User user, Map<String, String> query) throws SQLException {
+	private void renderValid(PageBuilder pageBuilder, User user) throws SQLException {
 
 		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, "addEventSubmit");
 
@@ -162,10 +161,10 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		form.add(new BreakBuilder());
 	}
 
-	private void renderInvalid(PageBuilder pageBuilder) {
+	private void renderInvalid(PageBuilder pageBuilder, User user) {
 		pageBuilder.add(new TextBuilder(TITLE) {{add("You are not authorised to do that");}});
 		pageBuilder.add(new TextBuilder(NORMAL) {{add("Have you linked your account to HisDoc? Try typing: ");}});
-		pageBuilder.add(new TextBuilder(CODE) {{add("/hs link");}});
+		pageBuilder.add(new TextBuilder(CODE) {{add(((PaperMcSessionHandlerImpl) sessionHandler).makeCommand(user.sessionId()));}});
 		pageBuilder.add(new TextBuilder(NORMAL) {{add("If you have, and you think you should have permission, please contact your administrator!");}});
 	}
 }

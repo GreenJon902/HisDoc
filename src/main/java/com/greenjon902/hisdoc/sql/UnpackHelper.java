@@ -29,7 +29,7 @@ public class UnpackHelper {
 	 * appropriate class.
 	 * This looks at the columns personType, and personData.
 	 */
-	public Person getPersonData(ResultSet result) throws SQLException {
+	public Person getPerson(ResultSet result) throws SQLException {
 		PersonType type = PersonType.valueOf(result.getString("personType"));
 		String data = result.getString("personData");
 
@@ -47,7 +47,7 @@ public class UnpackHelper {
 	public ChangeInfo getChangeInfo(ResultSet result) throws SQLException {
 		return new ChangeInfo(
 				new CenteredFlexiDateTime(result.getLong("date"), CenteredFlexiDateTime.Units.SECOND, 0, 0),
-				new PersonLink(result.getInt("authorPid"), getPersonData(result)),
+				new PersonLink(result.getInt("authorPid"), getPerson(result)),
 				result.getString("description"));
 	}
 
@@ -109,7 +109,7 @@ public class UnpackHelper {
 	 * This looks at the columns pid, personInfo.
 	 */
 	public PersonLink getPersonLink(ResultSet result) throws SQLException {
-		return new PersonLink(result.getInt("pid"), getPersonData(result));
+		return new PersonLink(result.getInt("pid"), getPerson(result));
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class UnpackHelper {
 		Integer postedPid;
 		PersonLink postedPerson = null;
 		if ((postedPid = getInteger(result, "postedPid")) != null) {
-			postedPerson = new PersonLink(postedPid, getPersonData(result));
+			postedPerson = new PersonLink(postedPid, getPerson(result));
 		}
 
 		Long postedDateLong = getLong(result, "postedDate");
@@ -207,7 +207,7 @@ public class UnpackHelper {
 
 		return new PersonInfo(
 				result.getInt("pid"),
-				getPersonData(result),
+				getPerson(result),
 				countedTagLinks,
 				postCount, eventCount, recentEvents, recentPosts);
 	}

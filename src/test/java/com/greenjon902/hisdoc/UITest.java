@@ -30,11 +30,14 @@ public class UITest {
 		SessionHandler sessionHandler = new TestSessionHandlerImpl(Map.of(
 				UUID.fromString("0000000-0000-0000-0000-000000000001"), 1
 		));
-		PermissionHandler permissionHandler = new TestPermissionHandlerImpl(Map.of());
+		PermissionHandler permissionHandler = new TestPermissionHandlerImpl(Map.of(
+				0, Set.of(Permission.LOAD_PAGE),
+				1, Set.of(Permission.LOAD_PAGE, Permission.ADD_EVENT)
+		));
 
 		HashMap<String, PageRenderer> map = new HashMap<>();
-		map.putAll(createTheThing(database, "HisDocUITest_Refined", "UITestSetup_Refined", "", logger, permissionHandler));
-		map.putAll(createTheThing(database, "HisDocUITest_Large", "UITestSetup_Large", "l/", logger, permissionHandler));
+		map.putAll(createTheThing(database, "HisDocUITest_Refined", "UITestSetup_Refined", "", logger, permissionHandler, sessionHandler));
+		map.putAll(createTheThing(database, "HisDocUITest_Large", "UITestSetup_Large", "l/", logger, permissionHandler, sessionHandler));
 
 		WebDriver webDriver = new WebDriver(new WebDriverConfig(
 				map,
@@ -52,7 +55,7 @@ public class UITest {
 	 * @param pageNamePrefix    The text to prefix page names with, can be "", or could be "test/"
 	 * @param permissionHandler The permission handler to supply to pages which require it
 	 */
-	private static Map<String, PageRenderer> createTheThing(DB database, String dbName, String sqlScriptName, String pageNamePrefix, Logger logger, PermissionHandler permissionHandler) throws ManagedProcessException, SQLException {
+	private static Map<String, PageRenderer> createTheThing(DB database, String dbName, String sqlScriptName, String pageNamePrefix, Logger logger, PermissionHandler permissionHandler, SessionHandler sessionHandler) throws ManagedProcessException, SQLException {
 		database.createDB(dbName);
 		Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/" + dbName + "?allowMultiQueries=true");
 
@@ -67,7 +70,7 @@ public class UITest {
 				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "persons", new PersonsPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher)),
-				Map.entry("/" + pageNamePrefix + "add", new AddEventPageRenderer(dispatcher, permissionHandler)),
+				Map.entry("/" + pageNamePrefix + "add", new AddEventPageRenderer(dispatcher, permissionHandler, sessionHandler)),
 				Map.entry("/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, permissionHandler)),
 				Map.entry("/" + pageNamePrefix + "themes", new CssPageRenderer()));
 	}
@@ -83,6 +86,7 @@ class TestSessionHandlerImpl implements SessionHandler {
 
 	@Override
 	public int getPid(UUID sessionId) {
+		if (sessionId == null) return 0;
 		return sessionToPidMap.getOrDefault(sessionId, 0);
 	}
 }
