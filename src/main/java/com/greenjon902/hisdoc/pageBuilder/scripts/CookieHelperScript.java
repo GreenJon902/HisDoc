@@ -38,7 +38,7 @@ public class CookieHelperScript extends Script {
 				}""");
 		stream.write("""
 				function eraseCookie(name) {  \s
-				    document.cookie = name+'=; Max-Age=-99999999;'; \s
+				    document.cookie = name+'=; Max-Age=-99999999;SameSite=Strict;'; \s
 				}""");
 	}
 }

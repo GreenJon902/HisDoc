@@ -28,7 +28,7 @@ public class HtmlOutputStream {
 	 */
 	public void writeNoErr(String string, boolean escapeQuotes) {
 		try {
-			if (escapeQuotes) string = string.replace("\"", "\\\"");
+			if (escapeQuotes) string = string.replace("\"", "&quot;");
 			write(string);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

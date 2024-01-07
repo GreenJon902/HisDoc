@@ -16,7 +16,9 @@ INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDateUnits,
 (5, 'Null PostedDate', 'c', 100, 'h', 20, NULL, 'Look at title', 1, 0),
 (6, 'Null PostedPid & PostedDate', 'c', 100, 'h', 20, NULL, 'Look at title', NULL, 0),
 (7, 'Speech mark " in title', 'c', 100, 'h', 20, NULL, 'Look at title', NULL, 0),
-(8, 'Speech mark in description', 'c', 100, 'h', 20, NULL, 'Oh no: "', NULL, 0);
+(8, 'Speech mark in description', 'c', 100, 'h', 20, NULL, 'Oh no: "', NULL, 0),
+(9, 'Single quote \' or ’ in title', 'c', 100, 'h', 20, NULL, 'Look at title', NULL, 0),
+(10, 'Single quote in description', 'c', 100, 'h', 20, NULL, 'Oh no: \' or ’', NULL, 0);
 
 INSERT INTO {prefix}EventPersonRelation (eid, pid) VALUES (1, 1), (1, 2);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (2, 1);
@@ -26,3 +28,5 @@ INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (5, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (6, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (7, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (8, 1);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (9, 1);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (10, 1);

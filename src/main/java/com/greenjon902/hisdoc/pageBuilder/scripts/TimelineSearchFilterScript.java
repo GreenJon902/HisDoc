@@ -32,6 +32,11 @@ public class TimelineSearchFilterScript extends Script {
 		pageBuilder.addScript(new CookieHelperScript());
 	}
 
+	/**
+	 * @param event The actual event to be hidden and shown
+	 * @param filterNames The names of the filters that affect this (aka the people and tags related to this event)
+	 * @param dateInfo When this event took place
+	 */
 	public void add(FilterableEvent event, Stream<String> filterNames, FlexiDateTime dateInfo) {
 		events.add(event);
 		eventsFilterNames.add(filterNames);
@@ -131,14 +136,9 @@ public class TimelineSearchFilterScript extends Script {
 			FilterableEvent event  = events.get(i);
 			Stream<String> eventFilterNames = eventsFilterNames.get(i);
 
-			stream.write("\"");
-			stream.writeNoErr(event.eventName, true);  // Just so we can have quotes replace
-			// We don't want writeSafe as that escapes other chars like "&" which breaks IDs
-			stream.write("\": [");
+			stream.write("\"" + event.eventName.hashCode() + "\": [");
 			eventFilterNames.forEach(string -> {
-				stream.writeNoErr("\"", false);
-				stream.writeNoErr(string, true);  // If it has a speech mark in or something, that causes problems
-				stream.writeNoErr("\", ", false);
+				stream.writeNoErr("\"" + string.hashCode() + "\", ", false);
 			});
 			stream.write("], ");
 		}
@@ -154,7 +154,7 @@ public class TimelineSearchFilterScript extends Script {
 			FlexiDateTime dateInfo  = eventsDates.get(i);
 
 			stream.write("\"");
-			stream.writeSafe(event.eventName);
+			stream.write(String.valueOf(event.eventName.hashCode()));
 			stream.write("\": [new Date(");
 			stream.write(String.valueOf(dateInfo.earliestUnix() + dateInfo.offset() * 60L));
 			stream.write(" * 1000), new Date(");
