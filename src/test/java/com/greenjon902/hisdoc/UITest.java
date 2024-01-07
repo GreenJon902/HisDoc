@@ -35,6 +35,7 @@ public class UITest {
 		database.start();
 
 		HashMap<String, PageRenderer> map = new HashMap<>();
+		map.putAll(createTheThing(database, "HisDocUITest_Empty", "UITestSetup_Empty", "e/", logger));
 		map.putAll(createTheThing(database, "HisDocUITest_Refined", "UITestSetup_Refined", "", logger));
 		map.putAll(createTheThing(database, "HisDocUITest_Large", "UITestSetup_Large", "l/", logger));
 

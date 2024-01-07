@@ -1,0 +1,1 @@
+SELECT "Ignore me";  -- So query is not empty

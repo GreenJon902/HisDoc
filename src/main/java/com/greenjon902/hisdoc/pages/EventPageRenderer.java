@@ -166,6 +166,11 @@ public class EventPageRenderer extends HtmlPageRenderer {
 	public static WidgetBuilder makeRecentEventContents(List<EventLink> recentEvents) {
 		// Contents means not title, it does not mean only create table contents. (so we will use the <table> tag)
 
+		if (recentEvents.isEmpty()) {
+			return new TextBuilder(NORMAL) {{
+				add("No events exist"); }};
+		}
+
 		TableBuilder table = new TableBuilder(2, false);  // Date, Event
 
 		for (EventLink eventLink : recentEvents) {
