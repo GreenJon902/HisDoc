@@ -31,57 +31,65 @@ public class AddEventCommand extends SubCommand {
 	public void run(@NotNull CommandSender sender, String label, @NotNull ArgStream argStream) {
 		if (sender instanceof Player playerSender) {
 			logger.fine(sender.getName() + " ( " + playerSender.getUniqueId() + " ) ran the add event command");
-			Integer pid;
-			try {
-				pid = dispatcher.getPersonIdFromMinecraftUUID(playerSender.getUniqueId());
-			} catch (SQLException e) {
-				sender.sendMessage("Sorry, We had an error getting your person id :(");
-				throw new RuntimeException(e);
-			}
-			logger.fine(sender.getName() + "'s pid is " + pid);
-			if (pid == null) {
-				sender.sendMessage("Sorry, but you are not yet in our database, please contact your HisDoc administrator");
-			} else {
 
-				// So everything is good, we now need to add a verification
-				String code = RandomStringUtils.random(7, true, true);
+			if (sender.hasPermission("hisdoc.add")) {
 
-				boolean ignoreIp = false;
-				boolean persist = false;
-				for (String arg : argStream.consumeRemaining()) {
-					switch (arg) {
-						case "--ignore-ip" -> {
-							if (sender.hasPermission("hisdoc.addevent.ingoreip")) ignoreIp = true;
-							else sender.sendMessage(Component.text("You do not have permission to use \"--ignore-ip\", ignoring!")
-									.color(TextColor.color(0xFF0000)));
-						}
-						case "--persist" -> {
-							if (sender.hasPermission("hisdoc.addevent.persist")) persist = true;
-							else sender.sendMessage(Component.text("You do not have permission to use \"--persist\", ignoring!")
-									.color(TextColor.color(0xFF0000)));
-						}
-						default -> sender.sendMessage(Component.text("Unknown argument \"" + arg + "\", ignoring!")
-								.color(TextColor.color(0xFF0000)));
-					}
+				Integer pid;
+				try {
+					pid = dispatcher.getPersonIdFromMinecraftUUID(playerSender.getUniqueId());
+				} catch (SQLException e) {
+					sender.sendMessage("Sorry, We had an error getting your person id :(");
+					throw new RuntimeException(e);
 				}
+				logger.fine(sender.getName() + "'s pid is " + pid);
+				if (pid == null) {
+					sender.sendMessage("Sorry, but you are not yet in our database, please contact your HisDoc administrator");
+				} else {
 
-				String ip = null;
-				if (playerSender.getAddress() != null && !ignoreIp) ip = playerSender.getAddress().getHostString();
+					// So everything is good, we now need to add a verification
+					String code = RandomStringUtils.random(7, true, true);
 
-				logger.fine(sender.getName() + " was allocated the code \"" + code + "\", " +
-						"they are limited to the ip \"" + ip + "\", " +
-						"persist is set to " + persist);
+					boolean ignoreIp = false;
+					boolean persist = false;
+					for (String arg : argStream.consumeRemaining()) {
+						switch (arg) {
+							case "--ignore-ip" -> {
+								if (sender.hasPermission("hisdoc.add.ingoreip")) ignoreIp = true;
+								else
+									sender.sendMessage(Component.text("You do not have permission to use \"--ignore-ip\", ignoring!")
+											.color(TextColor.color(0xFF0000)));
+							}
+							case "--persist" -> {
+								if (sender.hasPermission("hisdoc.add.persist")) persist = true;
+								else
+									sender.sendMessage(Component.text("You do not have permission to use \"--persist\", ignoring!")
+											.color(TextColor.color(0xFF0000)));
+							}
+							default -> sender.sendMessage(Component.text("Unknown argument \"" + arg + "\", ignoring!")
+									.color(TextColor.color(0xFF0000)));
+						}
+					}
 
-				boolean replaced = sessionHandler.addVerification(code, pid, playerSender.getName(), ip, persist);
-				if (replaced) sender.sendMessage(Component.text("Previous verifications for you were removed").color(TextColor.color(0xA32E00)));
+					String ip = null;
+					if (playerSender.getAddress() != null && !ignoreIp) ip = playerSender.getAddress().getHostString();
 
-				String url = sessionHandler.getPostUrl(pid);
-				sender.sendMessage(Component.text("Use this link to add your event:").append(Component.newline()).append(
-						Component.text(url)
-								.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, url))
-				));
+					logger.fine(sender.getName() + " was allocated the code \"" + code + "\", " +
+							"they are limited to the ip \"" + ip + "\", " +
+							"persist is set to " + persist);
+
+					boolean replaced = sessionHandler.addVerification(code, pid, playerSender.getName(), ip, persist);
+					if (replaced)
+						sender.sendMessage(Component.text("Previous verifications for you were removed").color(TextColor.color(0xA32E00)));
+
+					String url = sessionHandler.getPostUrl(pid);
+					sender.sendMessage(Component.text("Use this link to add your event:").append(Component.newline()).append(
+							Component.text(url)
+									.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, url))
+					));
+				}
+			} else {
+				sender.sendMessage("Sorry, you do not have permission to do this action!");
 			}
-
 		} else {
 			sender.sendMessage("Only players can add events!");
 		}
