@@ -3,7 +3,7 @@ package com.greenjon902.hisdoc;
 import com.greenjon902.hisdoc.webDriver.User;
 
 /**
- * A class to help check if a {@link User} is allowed to do a certain action.
+ * A class to help check if a {@link User} is allowed to do a certain action on the website.
  * See also {@link Permission}.
  */
 public interface PermissionHandler {

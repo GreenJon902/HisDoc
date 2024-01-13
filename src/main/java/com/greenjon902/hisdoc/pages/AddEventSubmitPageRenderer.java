@@ -30,7 +30,7 @@ public class AddEventSubmitPageRenderer extends HtmlPageRenderer {
 	@Override
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
 		try {
-			if (permissionHandler.hasPermission(user.pid(), Permission.ADD_EVENT)) {
+			if (!permissionHandler.hasPermission(user.pid(), Permission.ADD_EVENT)) {
 				throw new IllegalStateException("You do not have permission, you should not be on this page!");
 			}
 			int postedBy = user.pid();

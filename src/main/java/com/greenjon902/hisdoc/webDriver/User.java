@@ -10,6 +10,7 @@ import java.util.UUID;
 
 /**
  * @param pid Set to 0 for null / unknown
+ * @param sessionId This does not mean a user is linked, they can have one without being linked
  */
 public record User(@NotNull String theme, @Nullable UUID sessionId, int pid, @NotNull Map<String, String> otherCookies, @Nullable InetSocketAddress address,
 				   Map<String, String> post) {

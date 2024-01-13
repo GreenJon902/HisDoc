@@ -70,7 +70,7 @@ public class HisDocRunner extends JavaPlugin {
 
 			// Set session tracking and permissions -----------------------
 			logger.fine("Setting up session tracking and permissions...");
-			sessionHandler = new PaperMcSessionHandlerImpl();
+			sessionHandler = new PaperMcSessionHandlerImpl(logger);
 			permissionHandler = new PaperMcPermissionHandlerImpl();
 
 			// Set up commands -----------------------
@@ -89,9 +89,6 @@ public class HisDocRunner extends JavaPlugin {
 		} catch (SQLException | IOException e) {
 			throw new RuntimeException(e);
 		}
-
-
-		SO FOR UITEST, THE linking and permissions works. Just have to do linking for minecraft, then do a bit of documentation
 	}
 
 	@Override

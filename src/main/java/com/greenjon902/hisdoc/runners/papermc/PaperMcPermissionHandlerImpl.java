@@ -9,6 +9,10 @@ import org.bukkit.Bukkit;
 
 import java.sql.SQLException;
 
+/**
+ * See {@link PermissionHandler}.
+ * Ingame permissions are handled via Bukkit
+ */
 public class PaperMcPermissionHandlerImpl implements PermissionHandler {
 	@Override
 	public boolean hasPermission(int pid, Permission permission) {
@@ -17,8 +21,8 @@ public class PaperMcPermissionHandlerImpl implements PermissionHandler {
 		// try to avoid that.
 
 		switch (permission) {
-			case LOAD_PAGE:  // We allow anyone to load the page
-			case ADD_EVENT: return true;  // If they had the permission to type the command then they can add an event
+			case LOAD_PAGE: return true; // We allow anyone to load the page
+			case ADD_EVENT: return pid != 0;  // If they have permission to link accounts then we can allow it
 		}
 
 		throw new IllegalStateException("PaperMcPermissionHandlerImpl cannot check for permission " + permission);

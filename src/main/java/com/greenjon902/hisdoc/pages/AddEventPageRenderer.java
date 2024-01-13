@@ -4,6 +4,7 @@ import com.greenjon902.hisdoc.Permission;
 import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
+import com.greenjon902.hisdoc.pageBuilder.scripts.EnsureSessionIdScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.UnloadMessageSenderScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.runners.papermc.PaperMcSessionHandlerImpl;
@@ -165,6 +166,8 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		pageBuilder.add(new TextBuilder(TITLE) {{add("You are not authorised to do that");}});
 		pageBuilder.add(new TextBuilder(NORMAL) {{add("Have you linked your account to HisDoc? Try typing: ");}});
 		pageBuilder.add(new TextBuilder(CODE) {{add(((PaperMcSessionHandlerImpl) sessionHandler).makeCommand(user.sessionId()));}});
+		pageBuilder.add(new TextBuilder(NORMAL) {{add("And then reloading this page.");}});
 		pageBuilder.add(new TextBuilder(NORMAL) {{add("If you have, and you think you should have permission, please contact your administrator!");}});
+		pageBuilder.addScript(new EnsureSessionIdScript(pageBuilder));
 	}
 }

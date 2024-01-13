@@ -234,7 +234,7 @@ public class Dispatcher {
 	 */
 	public Integer getPersonIdFromMinecraftUUID(UUID uniqueId) throws SQLException {
 		logger.finer("Getting player for mcUUID " + uniqueId);
-		PreparedStatement ps = prepareWithArgs("queries/getPerson");
+		PreparedStatement ps = prepareWithArgs("queries/getPersonId");
 		ps.setString(1, PersonType.MINECRAFT.name());
 		ps.setString(2, uniqueId.toString());
 		ps.execute();

@@ -204,7 +204,6 @@ class HttpHandlerImpl implements HttpHandler {
 		}
 
 		int personId = sessionHandler.getPid(sessionId);
-		if (personId == 0) sessionId = null;  // If no pid then session is invalid
 
 		return new User(theme, sessionId, personId, otherCookies, exchange.getRemoteAddress(), post);
 	}
