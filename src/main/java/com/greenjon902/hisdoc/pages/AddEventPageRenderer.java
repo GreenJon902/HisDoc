@@ -1,21 +1,22 @@
 package com.greenjon902.hisdoc.pages;
 
+import com.greenjon902.hisdoc.Permission;
+import com.greenjon902.hisdoc.PermissionHandler;
+import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
+import com.greenjon902.hisdoc.pageBuilder.scripts.EnsureSessionIdScript;
 import com.greenjon902.hisdoc.pageBuilder.scripts.UnloadMessageSenderScript;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
-import com.greenjon902.hisdoc.SessionHandler;
+import com.greenjon902.hisdoc.runners.papermc.PaperMcSessionHandlerImpl;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
 import com.greenjon902.hisdoc.webDriver.User;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.Set;
 
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
@@ -27,13 +28,13 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
  */
 public class AddEventPageRenderer extends HtmlPageRenderer {
 	private final Dispatcher dispatcher;
+	private final PermissionHandler permissionHandler;
 	private final SessionHandler sessionHandler;
-	private final boolean feedforwardQuery; // Should the query info be given to the action page of the form too>
 
-	public AddEventPageRenderer(Dispatcher dispatcher, SessionHandler sessionHandler, boolean feedforwardQuery) {
+	public AddEventPageRenderer(Dispatcher dispatcher, PermissionHandler permissionHandler, SessionHandler sessionHandler) {
 		this.dispatcher = dispatcher;
+		this.permissionHandler = permissionHandler;
 		this.sessionHandler = sessionHandler;
-		this.feedforwardQuery = feedforwardQuery;
 	}
 
 	@Override
@@ -43,35 +44,24 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
-		switch (sessionHandler.verify(user, query)) {
-			case NO_SESSION -> renderNoSession(pageBuilder);
-			case INVALID_IP -> renderInvalidIp(pageBuilder, user);
-			case VALID -> {
-				UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
-						"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
-				pageBuilder.addScript(unloadMessageSenderScript);
+		if (permissionHandler.hasPermission(user.pid(), Permission.ADD_EVENT)) {
+			UnloadMessageSenderScript unloadMessageSenderScript = new UnloadMessageSenderScript(
+					"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
+			pageBuilder.addScript(unloadMessageSenderScript);
 
-				renderValid(pageBuilder, user, query);
-			}
+			renderValid(pageBuilder, user);
+
+		} else {
+			renderInvalid(pageBuilder, user);
 		}
 
 		return pageBuilder.render(user);
 	}
 
 
-	private void renderValid(PageBuilder pageBuilder, User user, Map<String, String> query) throws SQLException {
-		StringBuilder action = new StringBuilder("addEventSubmit");
-		if (feedforwardQuery) {
-			action.append("?");
-			for (Map.Entry<String, String> entry : query.entrySet()) {
-				action.append(entry.getKey()).append("=").append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)).append("&");
-			}
-			if (!query.isEmpty()) {  // Ran at least once - need to remove trailing "&"
-				action = new StringBuilder(action.substring(0, action.length() - 1));
-			}
-		}
+	private void renderValid(PageBuilder pageBuilder, User user) throws SQLException {
 
-		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, action.toString());
+		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, "addEventSubmit");
 
 		form.add(new TextBuilder(TITLE) {{add("Add Event");}});
 
@@ -128,15 +118,18 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		form.add(new FormBuilder.FlexiDateTimeInputBuilder());
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
-		String mcName = sessionHandler.getNameOf(user, query);
 		form.add(new TextBuilder(NORMAL, "\n", null) {{
-			add("This event will be submitted under the user " + mcName + ".");
+			add("This event will be submitted under the user " + getNameOf(user.pid()) + ".");
 			//add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");
 			// That message is planned to be added with event screening in v2
 		}});
 		form.add(new FormBuilder.SubmitButtonBuilder());
 
 		pageBuilder.add(form);
+	}
+
+	private String getNameOf(int pid) throws SQLException {
+		return dispatcher.getPersonInfo(pid).person().name();
 	}
 
 	private void makeTagSelector(FormBuilder form) throws SQLException {
@@ -169,23 +162,12 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 		form.add(new BreakBuilder());
 	}
 
-	private void renderInvalidIp(PageBuilder pageBuilder, User user) {
-		pageBuilder.add(new TextBuilder(TITLE) {{add("Invalid Ip");}});
-		pageBuilder.add(new TextBuilder(NORMAL) {{add("Your ip is different to what was expected, for spam prevention we" +
-				"require the ip of the player to be the same as the ip of the web browser unless explicitly stated.");}});
-		if (user.address() != null) {
-			pageBuilder.add(new TextBuilder(NORMAL) {{
-				add("If you would like to continue anyway, please run this command:");
-			}});
-			pageBuilder.add(new TextBuilder(CODE) {{
-				add("/addevent --ignore-ip");
-			}});
-		}
-	}
-
-	private void renderNoSession(PageBuilder pageBuilder) {
-		pageBuilder.add(new TextBuilder(TITLE) {{add("Invalid Session");}});
-		pageBuilder.add(new TextBuilder(NORMAL) {{add("We could not verify you as a player, please run this command in game:");}});
-		pageBuilder.add(new TextBuilder(CODE) {{add("/addevent");}});
+	private void renderInvalid(PageBuilder pageBuilder, User user) {
+		pageBuilder.add(new TextBuilder(TITLE) {{add("You are not authorised to do that");}});
+		pageBuilder.add(new TextBuilder(NORMAL) {{add("Have you linked your account to HisDoc? Try typing: ");}});
+		pageBuilder.add(new TextBuilder(CODE) {{add(((PaperMcSessionHandlerImpl) sessionHandler).makeCommand(user.sessionId()));}});
+		pageBuilder.add(new TextBuilder(NORMAL) {{add("And then reloading this page.");}});
+		pageBuilder.add(new TextBuilder(NORMAL) {{add("If you have, and you think you should have permission, please contact your administrator!");}});
+		pageBuilder.addScript(new EnsureSessionIdScript(pageBuilder));
 	}
 }

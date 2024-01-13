@@ -8,8 +8,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.checkerframework.checker.units.qual.A;
-import org.codehaus.plexus.util.StringInputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 // TODO: Add help command
 
@@ -26,8 +23,8 @@ public class CommandHandler implements TabExecutor {
 
 	public CommandHandler(Dispatcher dispatcher, PaperMcSessionHandlerImpl sessionHandler, Logger logger, HisDocRunner hisDocRunner) {
 		actions = Map.of(
-				"add", new AddEventCommand(dispatcher, sessionHandler, logger),
-				"restarthisdoc", new RestartHisDocCommand(hisDocRunner, logger)
+				"link", new LinkCommand(dispatcher, sessionHandler, logger),
+				"restart", new RestartHisDocCommand(hisDocRunner, logger)
 		);
 	}
 

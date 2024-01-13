@@ -1,10 +1,9 @@
 package com.greenjon902.hisdoc.runners.papermc;
 
+import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pages.*;
-import com.greenjon902.hisdoc.runners.papermc.command.AddEventCommand;
 import com.greenjon902.hisdoc.runners.papermc.command.CommandHandler;
-import com.greenjon902.hisdoc.runners.papermc.command.RestartHisDocCommand;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
@@ -37,6 +36,7 @@ public class HisDocRunner extends JavaPlugin {
 	private Dispatcher dispatcher;
 	private Connection connection;
 	private PaperMcSessionHandlerImpl sessionHandler;
+	private PaperMcPermissionHandlerImpl permissionHandler;
 	private Logger logger;
 
 
@@ -57,7 +57,6 @@ public class HisDocRunner extends JavaPlugin {
 			String mysqlHost = configLoader.get(MYSQL_HOST);
 			String mysqlUser = configLoader.get(MYSQL_USER);
 			String mysqlPassword = configLoader.get(MYSQL_PASSWORD);
-			String addEventUrl = configLoader.get(ADD_EVENT_URL);
 			int webDriverPort = Integer.parseInt(configLoader.get(WEBDRIVER_PORT));
 
 			// Create sql connection -----------------------
@@ -69,18 +68,22 @@ public class HisDocRunner extends JavaPlugin {
 			dispatcher = new Dispatcher(connection, logger, new PaperMinecraftInfoSupplierImpl(logger));
 			dispatcher.createTables();
 
+			// Set session tracking and permissions -----------------------
+			logger.fine("Setting up session tracking and permissions...");
+			sessionHandler = new PaperMcSessionHandlerImpl(logger);
+			permissionHandler = new PaperMcPermissionHandlerImpl();
+
 			// Set up commands -----------------------
 			logger.fine("Setting up commands...");
-			sessionHandler = new PaperMcSessionHandlerImpl(logger, addEventUrl);
 			getCommand("hisdoc").setExecutor(new CommandHandler(dispatcher, sessionHandler, logger, this));
 
 			// Set up website stuffs -----------------------
 			logger.fine("Starting webdriver...");
-			Map<String, PageRenderer> map = createMap(dispatcher, sessionHandler);
+			Map<String, PageRenderer> map = createMap(dispatcher, sessionHandler, permissionHandler);
 			webDriver = new WebDriver(new WebDriverConfig(
 					map,
 					webDriverPort, 0, 0, "com/greenjon902/hisdoc/logo.ico"
-			), logger);
+			), logger,sessionHandler, permissionHandler);
 
 			webDriver.start();
 		} catch (SQLException | IOException e) {
@@ -104,6 +107,7 @@ public class HisDocRunner extends JavaPlugin {
 		webDriver = null;
 		dispatcher = null;
 		sessionHandler = null;
+		permissionHandler = null;
 		try {
 			connection.close();
 		} catch (SQLException e) {
@@ -117,7 +121,7 @@ public class HisDocRunner extends JavaPlugin {
 		}
 	}
 
-	private static Map<String, PageRenderer> createMap(Dispatcher dispatcher, SessionHandler sessionHandler) {
+	private static Map<String, PageRenderer> createMap(Dispatcher dispatcher, SessionHandler sessionHandler, PermissionHandler permissionHandler) {
 		return Map.ofEntries(Map.entry("/", new HomePageRenderer()),
 			Map.entry("/event", new EventPageRenderer(dispatcher)),
 			Map.entry("/tag", new TagPageRenderer(dispatcher)),
@@ -125,8 +129,8 @@ public class HisDocRunner extends JavaPlugin {
 			Map.entry("/person", new PersonPageRenderer(dispatcher)),
 			Map.entry("/persons", new PersonsPageRenderer(dispatcher)),
 			Map.entry("/timeline", new TimelinePageRenderer(dispatcher)),
-			Map.entry("/add", new AddEventPageRenderer(dispatcher, sessionHandler, true)),
-			Map.entry("/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, sessionHandler)),
+			Map.entry("/add", new AddEventPageRenderer(dispatcher, permissionHandler, sessionHandler)),
+			Map.entry("/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, permissionHandler)),
 			Map.entry("/themes", new CssPageRenderer()));
 	}
 

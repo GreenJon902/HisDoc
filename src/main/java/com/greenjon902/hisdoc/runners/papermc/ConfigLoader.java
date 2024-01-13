@@ -44,7 +44,7 @@ public class ConfigLoader {
 
 	enum ConfigItem {
 		MYSQL_HOST("mysql-host.txt", true, true), MYSQL_USER("mysql-user.txt", true, true), WEBDRIVER_PORT("webdriver-port.txt", true, true),
-		MYSQL_PASSWORD("mysql-password.txt", true, false), ADD_EVENT_URL("add-event-url.txt", true, true);
+		MYSQL_PASSWORD("mysql-password.txt", true, false);
 
 		public final String filename;
 		private final boolean strip;

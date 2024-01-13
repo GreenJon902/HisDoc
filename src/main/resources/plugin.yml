@@ -13,17 +13,9 @@ commands:
     aliases: [hs]
 
 permissions:
-  hisdoc.add:
+  hisdoc.link:
     default: op
-    description: Should this person be able to add events
+    description: Should this person be able to link their accound and add events
 
-  hisdoc.add.ingoreip:
-    default: op
-    description: Should this person be able to add events while using a different IP to that which minecraft is on
-
-  hisdoc.add.persist:
-    default: op
-    description: Should this person be able to add events with the same code multiple times
-
-  hisdoc.restarthisdoc:
+  hisdoc.restart:
     default: op
