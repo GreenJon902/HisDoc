@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 // TODO: Add help command
@@ -55,7 +56,7 @@ public class CommandHandler implements TabExecutor {
 
 		// Arg 1 - Action
 		if (argStream.remaining(1)) {
-			return actions.keySet().stream().toList();
+			return actions.keySet().stream().filter(string -> sender.hasPermission("hisdoc." + string)).toList();
 		}
 
 		// Arg 2... - Let action figure that out themselves

@@ -30,11 +30,16 @@ public class PersonsPageRenderer extends HtmlPageRenderer {
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
-		TextBuilder persons = new TextBuilder(NORMAL, "", "personContainer");
-		for (PersonLink personLink : personLinks) {
-			persons.add(personLink.person().name() + "\n", "person?id=" + personLink.id(), false);
+		if (personLinks.isEmpty()) {
+			pageBuilder.add(new TextBuilder(NORMAL) {{
+				add("No people exist"); }});
+		} else {
+			TextBuilder persons = new TextBuilder(NORMAL, "", "personContainer");
+			for (PersonLink personLink : personLinks) {
+				persons.add(personLink.person().name() + "\n", "person?id=" + personLink.id(), false);
+			}
+			pageBuilder.add(persons);
 		}
-		pageBuilder.add(persons);
 
 		return pageBuilder.render(user);
 	}

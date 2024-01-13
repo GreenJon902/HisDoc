@@ -7,7 +7,8 @@ import com.greenjon902.hisdoc.webDriver.User;
 import java.io.IOException;
 
 /**
- * An event on the timeline that can be filtered, see the {@link TimelineFilter} and the {@link TimelineSearchFilterScript}
+ * An event on the timeline that can be filtered, see the {@link TimelineFilter} and the {@link TimelineSearchFilterScript}.
+ * Uses the {@link String#hashCode()} of the event name to set the id.
  */
 public class FilterableEvent extends AbstractContainerWidgetBuilder {
 	public final String eventName;
@@ -21,7 +22,7 @@ public class FilterableEvent extends AbstractContainerWidgetBuilder {
 	@Override
 	public void render(HtmlOutputStream stream, User user) throws IOException {
 		stream.write("<div id=\"");
-		stream.writeSafe(eventName);
+		stream.write(String.valueOf(eventName.hashCode()));  // Use hash to stop problems with certain characters
 		stream.write("\"");
 		if (defaultDisabled) {
 			stream.write(" disabled");

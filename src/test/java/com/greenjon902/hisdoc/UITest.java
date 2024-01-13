@@ -7,7 +7,6 @@ import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
 import com.greenjon902.hisdoc.webDriver.WebDriverConfig;
-import org.jetbrains.annotations.NotNull;
 import org.shanerx.mojang.Mojang;
 import org.shanerx.mojang.PlayerProfile;
 
@@ -36,6 +35,7 @@ public class UITest {
 		));
 
 		HashMap<String, PageRenderer> map = new HashMap<>();
+		map.putAll(createTheThing(database, "HisDocUITest_Empty", "UITestSetup_Empty", "e/", logger, permissionHandler, sessionHandler));
 		map.putAll(createTheThing(database, "HisDocUITest_Refined", "UITestSetup_Refined", "", logger, permissionHandler, sessionHandler));
 		map.putAll(createTheThing(database, "HisDocUITest_Large", "UITestSetup_Large", "l/", logger, permissionHandler, sessionHandler));
 
