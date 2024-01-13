@@ -19,14 +19,14 @@ public class RestartHisDocCommand extends SubCommand {
 	}
 
 	public void run(@NotNull CommandSender sender, String label, ArgStream argStream) {
-		if (!sender.hasPermission("hisdoc.restarthisdoc")) {
+		if (!sender.hasPermission("hisdoc.restart")) {
 			sender.sendMessage("Sorry, you do not have permission to do this action!");
 
 
 		} else {
 			if (argStream.remaining(0) || !argStream.consume().equals("confirm")) {
 				sender.sendMessage("Are you sure you want to do this? This will remove all current verifications and may break!\n" +
-						"To confirm, please type /" + label + " restarthisdoc confirm");
+						"To confirm, please type /" + label + " restart confirm");
 			} else {
 				sender.sendMessage("Restarting HisDoc...");
 				logger.warning("Restarting HisDoc... ---------------------------------------------------------------");

@@ -24,35 +24,41 @@ public class LinkCommand extends SubCommand {
 
 	@Override
 	public void run(@NotNull CommandSender sender, String label, ArgStream argStream) {
-		if (sender instanceof Player player) {
-			if (!argStream.minimum(1)) {
-				player.sendMessage("You must have a code to link to your account");
-				return;
-			}
+		if (!sender.hasPermission("hisdoc.link")) {
+			sender.sendMessage("Sorry, you do not have permission to do this action!");
 
-			String code = argStream.consume();
-			logger.fine(player + " ran the link command with code \"" + code + "\"");
-			Integer pid;
-			try {
-				pid = dispatcher.getPersonIdFromMinecraftUUID(player.getUniqueId());
-			} catch (SQLException e) {
-				player.sendMessage("A sql error has occurred");
-				throw new RuntimeException(e);
-			}
-			logger.finer("Got pid " + pid);
-			if (pid == null) {
-				player.sendMessage("No pid could be found, are you in our database?");
-			} else {
-				boolean result = sessionHandler.finishLink(code, pid);
-				logger.fine("Result was " + result);
-				if (result) {
-					player.sendMessage("You have been successfully linked");
-				} else {
-					player.sendMessage("Unknown code");
-				}
-			}
+
 		} else {
-			sender.sendMessage("Only players link accounts");
+			if (sender instanceof Player player) {
+				if (!argStream.minimum(1)) {
+					player.sendMessage("You must have a code to link to your account");
+					return;
+				}
+
+				String code = argStream.consume();
+				logger.fine(player + " ran the link command with code \"" + code + "\"");
+				Integer pid;
+				try {
+					pid = dispatcher.getPersonIdFromMinecraftUUID(player.getUniqueId());
+				} catch (SQLException e) {
+					player.sendMessage("A sql error has occurred");
+					throw new RuntimeException(e);
+				}
+				logger.finer("Got pid " + pid);
+				if (pid == null) {
+					player.sendMessage("No pid could be found, are you in our database?");
+				} else {
+					boolean result = sessionHandler.finishLink(code, pid);
+					logger.fine("Result was " + result);
+					if (result) {
+						player.sendMessage("You have been successfully linked");
+					} else {
+						player.sendMessage("Unknown code");
+					}
+				}
+			} else {
+				sender.sendMessage("Only players link accounts");
+			}
 		}
 	}
 

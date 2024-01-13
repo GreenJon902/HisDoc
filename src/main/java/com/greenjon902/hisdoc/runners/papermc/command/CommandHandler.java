@@ -24,7 +24,7 @@ public class CommandHandler implements TabExecutor {
 	public CommandHandler(Dispatcher dispatcher, PaperMcSessionHandlerImpl sessionHandler, Logger logger, HisDocRunner hisDocRunner) {
 		actions = Map.of(
 				"link", new LinkCommand(dispatcher, sessionHandler, logger),
-				"restarthisdoc", new RestartHisDocCommand(hisDocRunner, logger)
+				"restart", new RestartHisDocCommand(hisDocRunner, logger)
 		);
 	}
 
