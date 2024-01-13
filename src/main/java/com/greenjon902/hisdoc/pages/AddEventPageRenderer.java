@@ -26,15 +26,9 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
  * Data will be uploaded with cookies using the {@link AddEventSubmitPageRenderer}.
  * On a successful submit, data will then be cleared from local storage.
  */
-public class AddEventPageRenderer extends HtmlPageRenderer {
-	private final Dispatcher dispatcher;
-	private final PermissionHandler permissionHandler;
-	private final SessionHandler sessionHandler;
-
+public class AddEventPageRenderer extends AbstractAddEventPageRenderer {
 	public AddEventPageRenderer(Dispatcher dispatcher, PermissionHandler permissionHandler, SessionHandler sessionHandler) {
-		this.dispatcher = dispatcher;
-		this.permissionHandler = permissionHandler;
-		this.sessionHandler = sessionHandler;
+		super(dispatcher, permissionHandler, sessionHandler);
 	}
 
 	@Override
@@ -49,117 +43,13 @@ public class AddEventPageRenderer extends HtmlPageRenderer {
 					"Are you sure you want to leave, you will loose all submitted event info!", "addEventForm");
 			pageBuilder.addScript(unloadMessageSenderScript);
 
-			renderValid(pageBuilder, user);
+			renderValid(pageBuilder, user, null);
 
 		} else {
 			renderInvalid(pageBuilder, user);
 		}
 
 		return pageBuilder.render(user);
-	}
-
-
-	private void renderValid(PageBuilder pageBuilder, User user) throws SQLException {
-
-		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, "addEventSubmit");
-
-		form.add(new TextBuilder(TITLE) {{add("Add Event");}});
-
-		form.add(new TextBuilder(SUBTITLE) {{add("Name");}});
-		form.add(new TextBuilder(NORMAL) {{add("Please enter the event name, which should be short and concise. \n" +
-				"It is shown in bold at the top of the event page and will be used when other pages are linking to this event.");}});
-		form.add(new FormBuilder.TextInputBuilder("name", 1, ".*"));  // Pattern allows anything but newlines, it also locks it to one line anyway due to html stuffs
-
-		form.add(new TextBuilder(SUBTITLE) {{add("Description");}});
-		form.add(new TextBuilder(NORMAL) {{add("Please enter the event description, " +
-				"this should go over the details of the event and add any important pieces context or details. \n" +
-				"You may add fluff, however all implications (explicit and implicit) must by truthful!");}});
-		form.add(new FormBuilder.TextInputBuilder("description", 5));
-
-		form.add(new TextBuilder(SUBTITLE) {{add("Details");}});
-		form.add(new TextBuilder(NORMAL) {{add("Please enter details about unknown information, or information that " +
-				"needs to be added. \n" +
-				"This could be about when you believe the date is, extra information in the description to be confirmed, " +
-				"or just general todo + change suggestions!");}});
-		form.add(new FormBuilder.TextInputBuilder("details", 5));
-
-		form.add(new TextBuilder(SUBTITLE) {{add("Tags");}});
-		form.add(new TextBuilder(NORMAL) {{
-			add(" Please add tags that relate to this event. The ");
-			add("tag page", "tags", true);
-			add(" can link to tag descriptions.\n" +
-				"If you think a new tag (or multiple) should be added, please put it in details.");}});
-		makeTagSelector(form);
-
-		form.add(new TextBuilder(SUBTITLE) {{add("People");}});
-		form.add(new TextBuilder(NORMAL) {{add("""
-				Please add all the people that were in this event.
-				If someone that does not exist participated, please put it in details.""");}});
-		form.add(new BreakBuilder());
-		makePersonSelector(form);
-
-		form.add(new TextBuilder(SUBTITLE) {{add("Events");}});
-		form.add(new TextBuilder(NORMAL) {{
-			add("Please add all the other events that are related to this event.\n" +
-				"Using the ");
-			add("timeline", "timeline", true);
-			add(", click on an event and copy the eid (text in grey under the title) and paste it in this box, " +
-				"separate values with commas - e.g. 32,12,532,2");
-		}});
-		form.add(new FormBuilder.TextInputBuilder("events", 1, "^([0-9]*?,)*?[0-9]*$"));
-
-		form.add(new TextBuilder(SUBTITLE) {{add("Date");}});
-		form.add(new TextBuilder(NORMAL) {{
-			add("""
-					Please add when this event happened, there are two types of dates - "centered", and "between" - which are used to clarify uncertainty.
-					Centered dates have a center which has a precision, meaning it was somewhere on that date to the precision given. It also has a difference and a difference type, show how far either side the event could occurred.
-					Between dates mean that the event could've happened anywhere between the first and second date.""");
-		}});
-		form.add(new FormBuilder.FlexiDateTimeInputBuilder());
-
-		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
-		form.add(new TextBuilder(NORMAL, "\n", null) {{
-			add("This event will be submitted under the user " + getNameOf(user.pid()) + ".");
-			//add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");
-			// That message is planned to be added with event screening in v2
-		}});
-		form.add(new FormBuilder.SubmitButtonBuilder());
-
-		pageBuilder.add(form);
-	}
-
-	private String getNameOf(int pid) throws SQLException {
-		return dispatcher.getPersonInfo(pid).person().name();
-	}
-
-	private void makeTagSelector(FormBuilder form) throws SQLException {
-		ArrayList<TagLink> tagLinks = new ArrayList<>(dispatcher.getAllTagLinks());  // List so we can sort them
-		tagLinks.sort(Comparator.comparing(TagLink::name));
-
-		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
-		for (TagLink tagLink : tagLinks) {
-			tagContainer.add(new SelectableTagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
-		}
-		form.add(tagContainer);
-		form.add(new BreakBuilder());
-	}
-
-	private void makePersonSelector(FormBuilder form) throws SQLException {
-		ArrayList<PersonLink> personLinks = new ArrayList<>(dispatcher.getAllPersonLinks());  // List so we can sort them
-		personLinks.sort(Comparator.comparing(o -> o.person().name()));
-
-		ContainerWidgetBuilder container = new ContainerWidgetBuilder("add-person-container", "add-person-container", "");
-		for (PersonLink personLink : personLinks) {
-
-			TextBuilder personNameText = new TextBuilder(NORMAL, "\n", null);
-			personNameText.add(personLink.person().name());
-
-			CheckBoxBuilder checkBoxBuilder = new CheckBoxBuilder(personNameText, "person" + personLink.id());
-
-			container.add(checkBoxBuilder);
-		}
-		form.add(container);
-		form.add(new BreakBuilder());
 	}
 
 	private void renderInvalid(PageBuilder pageBuilder, User user) {
