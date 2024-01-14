@@ -1,16 +1,17 @@
-package com.greenjon902.hisdoc.pages;
+package com.greenjon902.hisdoc.pages.eventModification;
 
 import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
-import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
+import com.greenjon902.hisdoc.pages.HtmlPageRenderer;
+import com.greenjon902.hisdoc.person.MinecraftPerson;
+import com.greenjon902.hisdoc.person.Person;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.sql.results.EventInfo;
 import com.greenjon902.hisdoc.sql.results.EventLink;
 import com.greenjon902.hisdoc.sql.results.PersonLink;
 import com.greenjon902.hisdoc.sql.results.TagLink;
-import com.greenjon902.hisdoc.webDriver.User;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,20 +25,28 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.NORMAL;
 
 /**
- * Base for {@link AddEventPageRenderer} and {@link EditEventPageRenderer}
+ * Base for {@link AddEventPageRenderer} and {@link EditEventPageRenderer}.
+ * We call it the modify base, as adding is basically modifying nothing? It made more sense than modifying extending
+ * adding to me.
  */
-public abstract class AbstractAddEventPageRenderer extends HtmlPageRenderer {
+public abstract class AbstractModifyEventPageRenderer extends HtmlPageRenderer {
 	protected final Dispatcher dispatcher;
 	protected final PermissionHandler permissionHandler;
 	protected final SessionHandler sessionHandler;
 
-	public AbstractAddEventPageRenderer(Dispatcher dispatcher, PermissionHandler permissionHandler, SessionHandler sessionHandler) {
+	public AbstractModifyEventPageRenderer(Dispatcher dispatcher, PermissionHandler permissionHandler, SessionHandler sessionHandler) {
 		this.dispatcher = dispatcher;
 		this.permissionHandler = permissionHandler;
 		this.sessionHandler = sessionHandler;
 	}
 
-	protected void renderValid(PageBuilder pageBuilder, User user, EventInfo defaultContents) throws SQLException {
+	/**
+	 * Renders the form elements to do with the event, so names, tags, descriptions, dates, etc.
+	 * Note: This does not include the submit button.
+	 * @param defaultContents If not null, form elements will be prefilled with data from this
+	 * @param form The formBuilder to add the form elements to
+	 */
+	protected void renderEventFormItems(FormBuilder form, EventInfo defaultContents) throws SQLException {
 		// When modifying an event, we need to prefill the boxes
 		String defaultName;
 		String defaultDescription;
@@ -78,30 +87,23 @@ public abstract class AbstractAddEventPageRenderer extends HtmlPageRenderer {
 			defaultDate = defaultContents.eventDateInfo();
 		}
 
-
-
-
-		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, "addEventSubmit");
-
-		form.add(new TextBuilder(TITLE) {{add("Add Event");}});
-
 		form.add(new TextBuilder(SUBTITLE) {{add("Name");}});
 		form.add(new TextBuilder(NORMAL) {{add("Please enter the event name, which should be short and concise. \n" +
 				"It is shown in bold at the top of the event page and will be used when other pages are linking to this event.");}});
-		form.add(new FormBuilder.TextInputBuilder("name", 1, ".*", defaultName));  // Pattern allows anything but newlines, it also locks it to one line anyway due to html stuffs
+		form.add(new FormBuilder.TextInputBuilder("name", 1, ".*", defaultName, true));  // Pattern allows anything but newlines, it also locks it to one line anyway due to html stuffs
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Description");}});
 		form.add(new TextBuilder(NORMAL) {{add("Please enter the event description, " +
 				"this should go over the details of the event and add any important pieces context or details. \n" +
 				"You may add fluff, however all implications (explicit and implicit) must by truthful!");}});
-		form.add(new FormBuilder.TextInputBuilder("description", 5, defaultDescription));
+		form.add(new FormBuilder.TextInputBuilder("description", 5, defaultDescription, true));
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Details");}});
 		form.add(new TextBuilder(NORMAL) {{add("Please enter details about unknown information, or information that " +
 				"needs to be added. \n" +
 				"This could be about when you believe the date is, extra information in the description to be confirmed, " +
 				"or just general todo + change suggestions!");}});
-		form.add(new FormBuilder.TextInputBuilder("details", 5, defaultDetails));
+		form.add(new FormBuilder.TextInputBuilder("details", 5, defaultDetails, false));
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Tags");}});
 		form.add(new TextBuilder(NORMAL) {{
@@ -126,7 +128,7 @@ public abstract class AbstractAddEventPageRenderer extends HtmlPageRenderer {
 			add(", click on an event and copy the eid (text in grey under the title) and paste it in this box, " +
 					"separate values with commas - e.g. 32,12,532,2");
 		}});
-		form.add(new FormBuilder.TextInputBuilder("events", 1, "^([0-9]*?,)*?[0-9]*$", defaultRelatedEvents));
+		form.add(new FormBuilder.TextInputBuilder("events", 1, "^([0-9]*?,)*?[0-9]*$", defaultRelatedEvents, false));
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Date");}});
 		form.add(new TextBuilder(NORMAL) {{
@@ -136,20 +138,15 @@ public abstract class AbstractAddEventPageRenderer extends HtmlPageRenderer {
 					Between dates mean that the event could've happened anywhere between the first and second date.""");
 		}});
 		form.add(new FormBuilder.FlexiDateTimeInputBuilder(defaultDate));
-
-		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
-		form.add(new TextBuilder(NORMAL, "\n", null) {{
-			add("This event will be submitted under the user " + getNameOf(user.pid()) + ".");
-			//add("An administrator will then look over the event before making it public or contacting you over any modifications or clarifications.");
-			// That message is planned to be added with event screening in v2
-		}});
-		form.add(new FormBuilder.SubmitButtonBuilder());
-
-		pageBuilder.add(form);
 	}
 
-	private String getNameOf(int pid) throws SQLException {
-		return dispatcher.getPersonInfo(pid).person().name();
+	protected String getNameOf(int pid) throws SQLException {
+		Person person = dispatcher.getPersonInfo(pid).person();
+		String name = person.name();
+		if (person instanceof MinecraftPerson minecraftPerson) {
+			name += " (" + minecraftPerson.uuid() + ")";  // Incase user is unknown
+		}
+		return name;
 	}
 
 	private void makeTagSelector(FormBuilder form, Set<Integer> defaultSelected) throws SQLException {

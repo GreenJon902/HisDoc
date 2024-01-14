@@ -69,25 +69,34 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		private final String pattern;
 		private final String updateFunc;
 		private final String defaultContents;
+		private final boolean required;
 
-		public TextInputBuilder(String name, int rows, String defaultContents) {
-			this(name, rows, "", defaultContents);
+		public TextInputBuilder(String name, int rows, String defaultContents, boolean required) {
+			this(name, rows, "", defaultContents, required);
 		}
 
-		public TextInputBuilder(String name, int rows, @NotNull String pattern, @Nullable String updateFunc, @NotNull String defaultContents) {
+		/**
+		 * @param required True if this field can not be empty
+		 */
+		public TextInputBuilder(String name, int rows, @NotNull String pattern, @Nullable String updateFunc, @NotNull String defaultContents, boolean required) {
 			this.name = name;
 			this.rows = rows;
 			this.pattern = pattern;
 			this.updateFunc = updateFunc;
 			this.defaultContents = defaultContents;
+			this.required = required;
 
 			if (!pattern.isEmpty() && rows != 1) {
 				throw new IllegalArgumentException("Text builder cannot have a multi row text input when a pattern is set!");
 			}
 		}
 
-		public TextInputBuilder(String name, int rows, @NotNull String pattern, String defaultContents) {
-			this(name, rows, pattern, "", defaultContents);
+		public TextInputBuilder(String name, int rows, @NotNull String pattern, @Nullable String updateFunc, @NotNull String defaultContents) {
+			this(name, rows, pattern, updateFunc, defaultContents, false);
+		}
+
+		public TextInputBuilder(String name, int rows, @NotNull String pattern, String defaultContents, boolean required) {
+			this(name, rows, pattern, "", defaultContents, required);
 		}
 
 		@Override
@@ -112,6 +121,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 				stream.write("\" ");
 				stream.write("onkeydown=\"return event.key != 'Enter';\"");  // As pattern means one line, but don't want to accidentally submit
 			}
+			if (required) stream.write(" required");
 			stream.write(">");
 			if (pattern.isEmpty()) {
 				stream.write(defaultContents);

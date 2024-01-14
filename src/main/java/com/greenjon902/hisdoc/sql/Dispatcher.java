@@ -3,7 +3,7 @@ package com.greenjon902.hisdoc.sql;
 import com.greenjon902.hisdoc.MinecraftInfoSupplier;
 import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
-import com.greenjon902.hisdoc.pages.AddEventSubmitPageRenderer;
+import com.greenjon902.hisdoc.pages.eventModification.AddEventSubmitPageRenderer;
 import com.greenjon902.hisdoc.person.PersonType;
 import com.greenjon902.hisdoc.sql.results.*;
 

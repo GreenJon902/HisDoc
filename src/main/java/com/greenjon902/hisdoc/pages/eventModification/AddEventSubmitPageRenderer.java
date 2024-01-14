@@ -1,10 +1,11 @@
-package com.greenjon902.hisdoc.pages;
+package com.greenjon902.hisdoc.pages.eventModification;
 
 import com.greenjon902.hisdoc.Permission;
 import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
+import com.greenjon902.hisdoc.pages.HtmlPageRenderer;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.User;
 import org.jetbrains.annotations.NotNull;

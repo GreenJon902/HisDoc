@@ -3,6 +3,8 @@ package com.greenjon902.hisdoc.runners.papermc;
 import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pages.*;
+import com.greenjon902.hisdoc.pages.eventModification.AddEventPageRenderer;
+import com.greenjon902.hisdoc.pages.eventModification.AddEventSubmitPageRenderer;
 import com.greenjon902.hisdoc.runners.papermc.command.CommandHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
