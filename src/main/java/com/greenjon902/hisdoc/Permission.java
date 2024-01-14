@@ -9,5 +9,10 @@ public enum Permission {
 	/**
 	 * Can this person add an event.
 	 */
- 	ADD_EVENT
+ 	ADD_EVENT,
+
+	/**
+	 * Can this person modify events.
+	 */
+	EDIT_EVENT
 }

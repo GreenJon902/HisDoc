@@ -2,6 +2,7 @@ package com.greenjon902.hisdoc.pages;
 
 import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.SessionHandler;
+import com.greenjon902.hisdoc.flexiDateTime.FlexiDateTime;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
@@ -23,7 +24,7 @@ import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.NORMAL;
 
 /**
- * Base for {@link AddEventPageRenderer} and {@link ModifyEventPageRenderer}
+ * Base for {@link AddEventPageRenderer} and {@link EditEventPageRenderer}
  */
 public abstract class AbstractAddEventPageRenderer extends HtmlPageRenderer {
 	protected final Dispatcher dispatcher;
@@ -44,6 +45,8 @@ public abstract class AbstractAddEventPageRenderer extends HtmlPageRenderer {
 		String defaultRelatedEvents;
 		Set<Integer> defaultRelatedTags;
 		Set<Integer> defaultRelatedPersons;
+		FlexiDateTime defaultDate;
+
 		if (defaultContents == null) {  // No prexisiting info so set everything to a default value
 			defaultName = "";
 			defaultDescription = "";
@@ -51,13 +54,18 @@ public abstract class AbstractAddEventPageRenderer extends HtmlPageRenderer {
 			defaultRelatedEvents = "";
 			defaultRelatedTags = Collections.emptySet();
 			defaultRelatedPersons = Collections.emptySet();
+			defaultDate = null;
+
 		} else {
 			defaultName = defaultContents.name();
 			defaultDescription = defaultContents.description();
 			defaultDetails = defaultContents.details();
+			if (defaultDetails == null) {
+				defaultDetails = "";
+			}
 
 			// We need a string of ids for related events
-			ArrayList<Integer> relatedEventIds = new ArrayList(defaultContents.relatedEventLinks().size());
+			ArrayList<Integer> relatedEventIds = new ArrayList<>(defaultContents.relatedEventLinks().size());
 			for (EventLink eventLink : defaultContents.relatedEventLinks()) {
 				relatedEventIds.add(eventLink.id());
 			}
@@ -66,7 +74,11 @@ public abstract class AbstractAddEventPageRenderer extends HtmlPageRenderer {
 
 			defaultRelatedTags = defaultContents.tagLinks().stream().map(TagLink::id).collect(Collectors.toSet());
 			defaultRelatedPersons = defaultContents.relatedPersonLinks().stream().map(PersonLink::id).collect(Collectors.toSet());
+
+			defaultDate = defaultContents.eventDateInfo();
 		}
+
+
 
 
 		FormBuilder form = new FormBuilder("addEventForm", FormBuilder.Method.POST, "addEventSubmit");
@@ -123,7 +135,7 @@ public abstract class AbstractAddEventPageRenderer extends HtmlPageRenderer {
 					Centered dates have a center which has a precision, meaning it was somewhere on that date to the precision given. It also has a difference and a difference type, show how far either side the event could occurred.
 					Between dates mean that the event could've happened anywhere between the first and second date.""");
 		}});
-		form.add(new FormBuilder.FlexiDateTimeInputBuilder());
+		form.add(new FormBuilder.FlexiDateTimeInputBuilder(defaultDate));
 
 		form.add(new TextBuilder(SUBTITLE) {{add("Submit");}});
 		form.add(new TextBuilder(NORMAL, "\n", null) {{

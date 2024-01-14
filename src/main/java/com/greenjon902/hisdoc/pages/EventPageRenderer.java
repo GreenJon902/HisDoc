@@ -125,7 +125,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		right.add(relatedPersonTitles);
 		TextBuilder relatedPersons = new TextBuilder(NORMAL, "\n", null);
 
-		List<PersonLink> personLinks = new ArrayList<>(eventInfo.relatedPlayerInfos());
+		List<PersonLink> personLinks = new ArrayList<>(eventInfo.relatedPersonLinks());
 		personLinks.sort(Comparator.comparing(o -> o.person().name()));
 		for (PersonLink personLink : personLinks) {
 			relatedPersons.add(personLink.person().name(), "person?id=" + personLink.id(), false);

@@ -71,7 +71,7 @@ public class HisDocRunner extends JavaPlugin {
 			// Set session tracking and permissions -----------------------
 			logger.fine("Setting up session tracking and permissions...");
 			sessionHandler = new PaperMcSessionHandlerImpl(logger);
-			permissionHandler = new PaperMcPermissionHandlerImpl();
+			permissionHandler = new PaperMcPermissionHandlerImpl(dispatcher);
 
 			// Set up commands -----------------------
 			logger.fine("Setting up commands...");
