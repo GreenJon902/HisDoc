@@ -4,6 +4,7 @@ import com.greenjon902.hisdoc.MinecraftInfoSupplier;
 import com.greenjon902.hisdoc.flexiDateTime.CenteredFlexiDateTime;
 import com.greenjon902.hisdoc.flexiDateTime.RangedFlexiDate;
 import com.greenjon902.hisdoc.pages.eventModification.AddEventSubmitPageRenderer;
+import com.greenjon902.hisdoc.pages.eventModification.SubmittedEvent;
 import com.greenjon902.hisdoc.person.PersonType;
 import com.greenjon902.hisdoc.sql.results.*;
 
@@ -160,9 +161,9 @@ public class Dispatcher {
 		return personLinks;
 	}
 
-	public int addEvent(AddEventSubmitPageRenderer.SubmittedEvent submittedEvent) throws SQLException {
+	public int addEvent(SubmittedEvent submittedEvent, int postedBy) throws SQLException {
 		// Add the actual event
-		logger.finer(() -> "Adding event link for " + submittedEvent);
+		logger.finer(() -> "Adding event for " + submittedEvent);
 		PreparedStatement ps = prepareWithArgs("upload/addEvent");
 		ps.setString(1, submittedEvent.name());
 		ps.setString(11, submittedEvent.name());  // For getting the event id
@@ -189,7 +190,7 @@ public class Dispatcher {
 			throw new RuntimeException("Unknown date type " + submittedEvent.dateInfo().getClass());
 		}
 
-		ps.setInt(10, submittedEvent.postedBy());
+		ps.setInt(10, postedBy);
 		ps.execute();
 
 		// Get eid
@@ -227,6 +228,94 @@ public class Dispatcher {
 		}
 
 		return eid;
+	}
+
+	/** Updates a preexisting event with the data in the submitted event. THen create a changelog by the user `updatedBy`
+	 * with the change info in `changelog`.
+	 *
+	 * This won't delete the old event, only replace all the information, excluding the id, posted by and posted date.
+	 * However, all relations will be removed completely and recreated with the submitted data.
+	 *
+	 * @param eid The id of the event to update
+	 * @param submittedEvent The info to replace the old event data with
+	 */
+	public void updateEvent(int eid, SubmittedEvent submittedEvent, int updatedBy, String changelog) throws SQLException {
+		logger.info(() -> {  // Print out old data so we have it saved
+			try {
+				return "Warning, planning to update event " + eid + ". Previous contents was " + getEventInfo(eid);
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		});
+
+		// Update actual event and add changelog
+		logger.finer(() -> "Updating event " + eid + " for " + submittedEvent + ". Updated by " + updatedBy + " with changelog \"" + changelog + "\".");
+		PreparedStatement ps = prepareWithArgs("upload/updateEvent");
+		ps.setString(1, submittedEvent.name());
+		ps.setString(2, submittedEvent.description());
+		ps.setString(3, submittedEvent.details());
+
+		if (submittedEvent.dateInfo() instanceof CenteredFlexiDateTime centeredFlexiDateTime) {
+			ps.setString(4, "c");
+			ps.setLong(5, centeredFlexiDateTime.center);
+			ps.setLong(6, centeredFlexiDateTime.offset);
+			ps.setString(7, centeredFlexiDateTime.units.sqlId);
+			ps.setLong(8, centeredFlexiDateTime.diff);
+			ps.setNull(9, Types.BIGINT);
+
+		} else if (submittedEvent.dateInfo() instanceof RangedFlexiDate rangedFlexiDate) {
+			ps.setString(4, "r");
+			ps.setLong(5, rangedFlexiDate.start);
+			ps.setLong(6, rangedFlexiDate.offset);
+			ps.setNull(7, Types.VARCHAR);
+			ps.setNull(8, Types.BIGINT);
+			ps.setLong(9, rangedFlexiDate.end);
+
+		} else {
+			throw new RuntimeException("Unknown date type " + submittedEvent.dateInfo().getClass());
+		}
+
+		ps.setInt(10, eid);  // For where clause in update
+		ps.setInt(11, eid);  // For changelog
+		ps.setString(12, changelog);
+		ps.setInt(13, updatedBy);
+		ps.execute();
+
+
+		// Remove old relations, will be added back after
+		logger.finer("Removing old relations");
+		ps = prepareWithArgs("upload/removeRelationsForEvent");
+		ps.setInt(1, eid);
+		ps.setInt(2, eid);
+		ps.setInt(3, eid);
+		ps.setInt(4, eid);
+		ps.execute();
+
+
+  		// Add relations
+		logger.finer("Adding tag relations");
+		PreparedStatement tagPs = prepareWithArgs("upload/addTagRelation");
+		for (int tagId : submittedEvent.tagIds()) {
+			tagPs.setInt(1, eid);
+			tagPs.setInt(2, tagId);
+			tagPs.execute();
+		}
+
+		logger.finer("Adding person relations");
+		PreparedStatement personPs = prepareWithArgs("upload/addPersonRelation");
+		for (int personId : submittedEvent.personIds()) {
+			personPs.setInt(1, eid);
+			personPs.setInt(2, personId);
+			personPs.execute();
+		}
+
+		logger.finer("Adding event relations");
+		PreparedStatement eventPs = prepareWithArgs("upload/addEventRelation");
+		for (int eventId : submittedEvent.relatedEventIds()) {
+			eventPs.setInt(1, eid);
+			eventPs.setInt(2, eventId);
+			eventPs.execute();
+		};
 	}
 
 	/**

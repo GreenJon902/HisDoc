@@ -59,6 +59,27 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 		}
 	}
 
+	public static class HiddenInputBuilder implements WidgetBuilder {
+		private final String name;
+		private final String value;
+
+		public HiddenInputBuilder(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		@Override
+		public void render(HtmlOutputStream stream, User user) throws IOException {
+			stream.write("<input type=\"hidden\" name=\"");
+			stream.writeSafe(name);
+			stream.write("\" id=\"");
+			stream.writeSafe(name);
+			stream.write("\" value=\"");
+			stream.writeSafe(value);
+			stream.write("\">");
+		}
+	}
+
 	/**
 	 * Builds a text input field, this can be an input with type "text" if a pattern is set, or a textarea if none is set.
 	 * Note that due to HTML limitations, you cannot have both a pattern and multiple rows.
