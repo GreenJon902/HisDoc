@@ -73,4 +73,18 @@ public class RangedFlexiDate extends FlexiDateTime {
 		String timezoneInfo = formatOffset();
 		return "Somewhere between " + start + timezoneInfo + " and " + end + timezoneInfo;
 	}
+
+	/**
+	 * Format the start date.
+	 */
+	public String formatStart() {
+		return formatter.format(new Date(earliestUnix() * 1000));
+	}
+
+	/**
+	 * Format the end date.
+	 */
+	public String formatEnd() {
+		return formatter.format(new Date(latestUnix() * 1000));
+	}
 }

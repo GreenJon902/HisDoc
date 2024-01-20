@@ -2,6 +2,7 @@ package com.greenjon902.hisdoc.flexiDateTime;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
@@ -70,7 +71,7 @@ public class CenteredFlexiDateTime extends FlexiDateTime {
 
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
 
-		String centerString = format.format(new Date(center * units.value * 1000));  // Takes in ms
+		String centerString = formatCenter(format);  // Takes in ms
 		String diffString = "";
 		if (diff != 0) {
 			diffString = " ±" + diff + units.sqlId.toUpperCase(Locale.ROOT);
@@ -79,6 +80,13 @@ public class CenteredFlexiDateTime extends FlexiDateTime {
 		String timezoneInfo = formatOffset();
 
 		return centerString + timezoneInfo + diffString;
+	}
+
+	/**
+	 * Format the center date using the given formatter and adding no extra information.
+	 */
+	public String formatCenter(DateFormat format) {
+		return format.format(new Date(center * units.value * 1000));  // Takes in ms
 	}
 
 	/**

@@ -3,6 +3,10 @@ package com.greenjon902.hisdoc;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import com.greenjon902.hisdoc.pages.*;
+import com.greenjon902.hisdoc.pages.eventModification.AddEventPageRenderer;
+import com.greenjon902.hisdoc.pages.eventModification.AddEventSubmitPageRenderer;
+import com.greenjon902.hisdoc.pages.eventModification.EditEventPageRenderer;
+import com.greenjon902.hisdoc.pages.eventModification.EditEventSubmitPageRenderer;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
 import com.greenjon902.hisdoc.webDriver.WebDriver;
@@ -32,7 +36,7 @@ public class UITest {
 		));
 		PermissionHandler permissionHandler = new TestPermissionHandlerImpl(Map.of(
 				0, Set.of(Permission.LOAD_PAGE),
-				1, Set.of(Permission.LOAD_PAGE, Permission.ADD_EVENT)
+				1, Set.of(Permission.LOAD_PAGE, Permission.ADD_EVENT, Permission.EDIT_EVENT)
 		));
 
 		HashMap<String, PageRenderer> map = new HashMap<>();
@@ -65,7 +69,7 @@ public class UITest {
 		dispatcher.prepare(sqlScriptName).execute();  // Fill with test data
 		
 		return Map.ofEntries(Map.entry("/" + pageNamePrefix, new HomePageRenderer()),
-				Map.entry("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher)),
+				Map.entry("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher, permissionHandler)),
 				Map.entry("/" + pageNamePrefix + "tag", new TagPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "tags", new TagsPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher)),
@@ -73,6 +77,8 @@ public class UITest {
 				Map.entry("/" + pageNamePrefix + "timeline", new TimelinePageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "add", new AddEventPageRenderer(dispatcher, permissionHandler, sessionHandler)),
 				Map.entry("/" + pageNamePrefix + "addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, permissionHandler)),
+				Map.entry("/" + pageNamePrefix + "edit", new EditEventPageRenderer(dispatcher, permissionHandler, sessionHandler)),
+				Map.entry("/" + pageNamePrefix + "editEventSubmit", new EditEventSubmitPageRenderer(dispatcher, permissionHandler)),
 				Map.entry("/" + pageNamePrefix + "themes", new CssPageRenderer()));
 	}
 }

@@ -20,6 +20,13 @@ INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDateUnits,
 (9, 'Single quote \' or ’ in title', 'c', 100, 'h', 20, NULL, 'Look at title', NULL, 0),
 (10, 'Single quote in description', 'c', 100, 'h', 20, NULL, 'Oh no: \' or ’', NULL, 0);
 
+INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDate2, postedDate, description, postedPid, details, eventDateTimeOffset) VALUES
+(11, 'Ranged Date', 'r', 2301, 10138, 9425, 'Ranged', 1, null, 589),
+(12, 'details', 'r', 2301, 10138, 9425, 'tihs has details', 1, 'Um, haha, no idomt what to put here :(', 589);
+
+
+INSERT INTO {prefix}EventEventRelation (eid1, eid2) VALUES (1, 2), (2, 3), (1, 3);
+
 INSERT INTO {prefix}EventPersonRelation (eid, pid) VALUES (1, 1), (1, 2);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (2, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (3, 1);
@@ -30,3 +37,5 @@ INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (7, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (8, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (9, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (10, 1);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (11, 1);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (12, 1);

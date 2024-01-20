@@ -3,6 +3,8 @@ package com.greenjon902.hisdoc.runners.papermc;
 import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pages.*;
+import com.greenjon902.hisdoc.pages.eventModification.AddEventPageRenderer;
+import com.greenjon902.hisdoc.pages.eventModification.AddEventSubmitPageRenderer;
 import com.greenjon902.hisdoc.runners.papermc.command.CommandHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
@@ -71,7 +73,7 @@ public class HisDocRunner extends JavaPlugin {
 			// Set session tracking and permissions -----------------------
 			logger.fine("Setting up session tracking and permissions...");
 			sessionHandler = new PaperMcSessionHandlerImpl(logger);
-			permissionHandler = new PaperMcPermissionHandlerImpl();
+			permissionHandler = new PaperMcPermissionHandlerImpl(dispatcher);
 
 			// Set up commands -----------------------
 			logger.fine("Setting up commands...");
@@ -123,7 +125,7 @@ public class HisDocRunner extends JavaPlugin {
 
 	private static Map<String, PageRenderer> createMap(Dispatcher dispatcher, SessionHandler sessionHandler, PermissionHandler permissionHandler) {
 		return Map.ofEntries(Map.entry("/", new HomePageRenderer()),
-			Map.entry("/event", new EventPageRenderer(dispatcher)),
+			Map.entry("/event", new EventPageRenderer(dispatcher, permissionHandler)),
 			Map.entry("/tag", new TagPageRenderer(dispatcher)),
 			Map.entry("/tags", new TagsPageRenderer(dispatcher)),
 			Map.entry("/person", new PersonPageRenderer(dispatcher)),
