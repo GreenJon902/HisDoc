@@ -125,7 +125,7 @@ public class HisDocRunner extends JavaPlugin {
 
 	private static Map<String, PageRenderer> createMap(Dispatcher dispatcher, SessionHandler sessionHandler, PermissionHandler permissionHandler) {
 		return Map.ofEntries(Map.entry("/", new HomePageRenderer()),
-			Map.entry("/event", new EventPageRenderer(dispatcher)),
+			Map.entry("/event", new EventPageRenderer(dispatcher, permissionHandler)),
 			Map.entry("/tag", new TagPageRenderer(dispatcher)),
 			Map.entry("/tags", new TagsPageRenderer(dispatcher)),
 			Map.entry("/person", new PersonPageRenderer(dispatcher)),

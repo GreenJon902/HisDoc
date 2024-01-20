@@ -1,5 +1,7 @@
 package com.greenjon902.hisdoc.pages;
 
+import com.greenjon902.hisdoc.Permission;
+import com.greenjon902.hisdoc.PermissionHandler;
 import com.greenjon902.hisdoc.pageBuilder.PageBuilder;
 import com.greenjon902.hisdoc.pageBuilder.widgets.*;
 import com.greenjon902.hisdoc.sql.Dispatcher;
@@ -12,14 +14,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import static com.greenjon902.hisdoc.pageBuilder.widgets.IconBuilder.IconType.EDIT;
+import static com.greenjon902.hisdoc.pageBuilder.widgets.IconBuilder.IconType.TIMELINE;
 import static com.greenjon902.hisdoc.pageBuilder.widgets.TextType.*;
 
 public class EventPageRenderer extends HtmlPageRenderer {
 
 	private final Dispatcher dispatcher;
+	private final PermissionHandler permissionHandler;
 
-	public EventPageRenderer(Dispatcher dispatcher) {
+	public EventPageRenderer(Dispatcher dispatcher, PermissionHandler permissionHandler) {
 		this.dispatcher = dispatcher;
+		this.permissionHandler = permissionHandler;
 	}
 
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
@@ -44,7 +50,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 
 		pageBuilder.add(new NavBarBuilder(pageBuilder));
 
-		ContainerWidgetBuilder left = makeLeft(eventInfo);
+		ContainerWidgetBuilder left = makeLeft(eventInfo, user);
 		ContainerWidgetBuilder right = makeRight(eventInfo);
 
 
@@ -56,12 +62,24 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		return pageBuilder.render(user);
 	}
 
-	private ContainerWidgetBuilder makeLeft(EventInfo eventInfo) {
+	private ContainerWidgetBuilder makeLeft(EventInfo eventInfo, User user) {
 		ContainerWidgetBuilder left = new ContainerWidgetBuilder();
+
+
+		ColumnLayoutBuilder titleAndEditContainer = new ColumnLayoutBuilder();
 
 		TextBuilder titleBuilder = new TextBuilder(TITLE);
 		titleBuilder.add(eventInfo.name());
-		left.add(titleBuilder);
+		titleAndEditContainer.add(titleBuilder);
+
+		if (permissionHandler.hasPermission(user.pid(), Permission.EDIT_EVENT)) {
+			titleAndEditContainer.add(new TextBuilder(TextType.NORMAL) {{
+				add(new IconBuilder(EDIT), "edit?id=" + eventInfo.id(), false, "Edit this event");
+			}});
+		}
+
+		left.add(titleAndEditContainer);
+
 
 		TextBuilder idTextBuilder = new TextBuilder(MISC);
 		idTextBuilder.add("EID: " + eventInfo.id());

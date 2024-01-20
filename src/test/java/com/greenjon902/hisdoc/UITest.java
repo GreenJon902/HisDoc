@@ -69,7 +69,7 @@ public class UITest {
 		dispatcher.prepare(sqlScriptName).execute();  // Fill with test data
 		
 		return Map.ofEntries(Map.entry("/" + pageNamePrefix, new HomePageRenderer()),
-				Map.entry("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher)),
+				Map.entry("/" + pageNamePrefix + "event", new EventPageRenderer(dispatcher, permissionHandler)),
 				Map.entry("/" + pageNamePrefix + "tag", new TagPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "tags", new TagsPageRenderer(dispatcher)),
 				Map.entry("/" + pageNamePrefix + "person", new PersonPageRenderer(dispatcher)),
