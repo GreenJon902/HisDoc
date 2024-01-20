@@ -30,6 +30,8 @@ public class PaperMcPermissionHandlerImpl implements PermissionHandler {
 			case LOAD_PAGE: return true; // We allow anyone to load the page
 			case ADD_EVENT: return pid != 0;  // If they have permission to link accounts then we can allow it
 			case EDIT_EVENT: {
+				if (pid == 0) return false; // Don't bother checking if pid=0, also dispatcher.getPersonInfo(0) returns null
+
 				try {
 					// Require player to be online
 					Player player = Bukkit.getPlayer(((MinecraftPerson) dispatcher.getPersonInfo(pid).person()).uuid());

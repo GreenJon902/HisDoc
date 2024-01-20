@@ -5,6 +5,8 @@ import com.greenjon902.hisdoc.SessionHandler;
 import com.greenjon902.hisdoc.pages.*;
 import com.greenjon902.hisdoc.pages.eventModification.AddEventPageRenderer;
 import com.greenjon902.hisdoc.pages.eventModification.AddEventSubmitPageRenderer;
+import com.greenjon902.hisdoc.pages.eventModification.EditEventPageRenderer;
+import com.greenjon902.hisdoc.pages.eventModification.EditEventSubmitPageRenderer;
 import com.greenjon902.hisdoc.runners.papermc.command.CommandHandler;
 import com.greenjon902.hisdoc.sql.Dispatcher;
 import com.greenjon902.hisdoc.webDriver.PageRenderer;
@@ -133,6 +135,8 @@ public class HisDocRunner extends JavaPlugin {
 			Map.entry("/timeline", new TimelinePageRenderer(dispatcher)),
 			Map.entry("/add", new AddEventPageRenderer(dispatcher, permissionHandler, sessionHandler)),
 			Map.entry("/addEventSubmit", new AddEventSubmitPageRenderer(dispatcher, permissionHandler)),
+			Map.entry("/edit", new EditEventPageRenderer(dispatcher, permissionHandler, sessionHandler)),
+			Map.entry("/editEventSubmit", new EditEventSubmitPageRenderer(dispatcher, permissionHandler)),
 			Map.entry("/themes", new CssPageRenderer()));
 	}
 

@@ -20,6 +20,6 @@ permissions:
   hisdoc.restart:
     default: op
 
-  hisdoc.hisdoc.editevent:
+  hisdoc.editevent:
     default: op
     description: Should this person be able to edit events
