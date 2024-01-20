@@ -222,7 +222,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 					}
 					let mins = "" + Math.abs(diff % 60);
 					if (mins.length == 1) {
-						mins = "0" + Math.abs(diff / 60);
+						mins = "0" + Math.abs(diff % 60);
 					}
 					document.getElementById("offset").value = hours + ":" + mins;
 					</script>""");
