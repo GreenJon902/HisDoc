@@ -87,7 +87,7 @@ public class TimelineSearchFilterScript extends Script {
 				"        }\n" +
 				"      }\n" +
 				"\n" +
-				"      included = included && event.id.toLowerCase().includes(filterText.toLowerCase());\n" +
+				"      included = included && event.children[0].children[0].text.toLowerCase().includes(filterText.toLowerCase());\n" +
 				"    }\n" +
 				"\n" +
 				"    event.hidden = !included;\n" +
@@ -164,6 +164,9 @@ public class TimelineSearchFilterScript extends Script {
 		stream.write("};\n\n");
 	}
 
+	/**
+	 * Writes the filter ids used for text filtering.
+	 */
 	private void writeFilterIdsDataArray(HtmlOutputStream stream) throws IOException {
 		stream.write("const filterIds = [");
 		for (int i=0; i<timelineFilters.size(); i++) {
