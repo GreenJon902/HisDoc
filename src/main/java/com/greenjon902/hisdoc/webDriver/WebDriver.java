@@ -107,8 +107,8 @@ class HttpHandlerImpl implements HttpHandler {
 				return;
 			}
 
-			exchange.getResponseHeaders().set("Content-Type", pageRenderer.contentType());
 			rendered = pageRenderer.render(query, null, user);
+			pageRenderer.setHeaders(exchange.getResponseHeaders());
 
 		} catch (Throwable e) {
 			StringWriter sw = new StringWriter();
