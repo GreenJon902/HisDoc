@@ -145,7 +145,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 			if (required) stream.write(" required");
 			stream.write(">");
 			if (pattern.isEmpty()) {
-				stream.write(defaultContents);
+				stream.writeSafe(defaultContents);
 				stream.write("</textarea>");
 			}
 

@@ -22,7 +22,8 @@ INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDateUnits,
 
 INSERT INTO {prefix}Event (eid, name, eventDateType, eventDate1, eventDate2, postedDate, description, postedPid, details, eventDateTimeOffset) VALUES
 (11, 'Ranged Date', 'r', 2301, 10138, 9425, 'Ranged', 1, null, 589),
-(12, 'details', 'r', 2301, 10138, 9425, 'tihs has details', 1, 'Um, haha, no idomt what to put here :(', 589);
+(12, 'details', 'r', 2301, 10138, 9425, 'tihs has details', 1, 'Um, haha, no idomt what to put here :(', 589),
+(13, 'Quotes everywhere \'’', 'r', 2301, 10138, 9425, 'Oh no: \' or ’', 1, 'Oh no: \' or ’', 589);
 
 
 INSERT INTO {prefix}EventEventRelation (eid1, eid2) VALUES (1, 2), (2, 3), (1, 3);
@@ -39,3 +40,4 @@ INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (9, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (10, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (11, 1);
 INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (12, 1);
+INSERT INTO {prefix}EventTagRelation (eid, tid) VALUES (13, 1);
