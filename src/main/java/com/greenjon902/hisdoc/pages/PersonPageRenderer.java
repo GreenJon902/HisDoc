@@ -133,8 +133,7 @@ public class PersonPageRenderer extends HtmlPageRenderer {
 
 		ContainerWidgetBuilder right = new ContainerWidgetBuilder();
 
-		// Encoded is https://crafatar.com/renders/body/
-		IframeBuilder iframeBuilder = new IframeBuilder("https://corsproxy.io/?https%3A%2F%2Fcrafatar.com%2Frenders%2Fbody%2F" + person.uuid() + "?overlay");
+		IframeBuilder iframeBuilder = new IframeBuilder("https://minerender.org/embed/skin/?skin=" + person.name());
 		right.add(iframeBuilder);
 
 		TextBuilder attributionText = new TextBuilder(MISC);
