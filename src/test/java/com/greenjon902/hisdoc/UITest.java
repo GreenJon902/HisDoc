@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Logger;
 
 import static com.greenjon902.hisdoc.Utils.getTestLogger;
@@ -112,6 +113,8 @@ class TestPermissionHandlerImpl implements PermissionHandler {
 }
 
 class TestMinecraftInfoSupplierImpl implements MinecraftInfoSupplier {
+	private static HashMap<UUID, String> cachedNames = new HashMap<>();
+
 	@Override
 	public int getTicks(UUID uuid) {
 		return 0;
@@ -119,11 +122,13 @@ class TestMinecraftInfoSupplierImpl implements MinecraftInfoSupplier {
 
 	@Override
 	public String getUsername(UUID uuid) {
-		System.out.println("Loading player name for " + uuid + "...");
-		PlayerProfile playerProfile = new Mojang().connect().getPlayerProfile(uuid.toString());
+		return cachedNames.computeIfAbsent(uuid, uuid1 -> {
+			System.out.println("Loading player name for " + uuid1 + "...");
+			PlayerProfile playerProfile = new Mojang().connect().getPlayerProfile(uuid1.toString());
 
-		String username = playerProfile.getUsername();
-		System.out.println("Got " + username);
-		return username;
+			String username = playerProfile.getUsername();
+			System.out.println("Got " + username);
+			return username;
+		});
 	}
 }
