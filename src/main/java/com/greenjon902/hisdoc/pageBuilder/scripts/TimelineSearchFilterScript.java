@@ -87,7 +87,9 @@ public class TimelineSearchFilterScript extends Script {
 				"        }\n" +
 				"      }\n" +
 				"\n" +
-				"      included = included && event.children[0].children[0].text.toLowerCase().includes(filterText.toLowerCase());\n" +
+				"      // Check if the search query is in the title or description\n" +
+				"      included = included && (event.children[0].children[0].text.toLowerCase().includes(filterText.toLowerCase()) || " +
+							"event.children[3].textContent.toLowerCase().includes(filterText.toLowerCase()));\n" +
 				"    }\n" +
 				"\n" +
 				"    event.hidden = !included;\n" +
