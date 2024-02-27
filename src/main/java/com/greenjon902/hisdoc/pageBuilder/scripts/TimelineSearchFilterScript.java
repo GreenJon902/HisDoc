@@ -60,7 +60,7 @@ public class TimelineSearchFilterScript extends Script {
 				"  var filterEndDate = Date.parse(document.getElementById(\"date2\").value);\n" +
 				"  var filterText = document.getElementById(\"filterText\").value;\n" +
 
-				"  for (var eventId in filterIdsForEvent) {\n" +
+				"  for (var eventId in filterIdsForEvent) {\n" +  // Loops through all events
 				"    let event = document.getElementById(eventId);\n" +
 				"    let eventFilterIds = filterIdsForEvent[eventId];\n" +
 				"    let included = false;\n" +
@@ -74,7 +74,7 @@ public class TimelineSearchFilterScript extends Script {
 				"    endAllowed = endAllowed || !dateInclusive && (eventDates[eventId][1] <= filterEndDate);" +
 				"\n" +
 				"    if (startAllowed && endAllowed) {" +
-				"      for (let i=0; i<eventFilterIds.length; i++) {\n" +
+				"      for (let i=0; i<eventFilterIds.length; i++) {\n" +  // Loops through the ids of the filters of the properties this specific event has
 				"        let excludeFilter = document.getElementById(eventFilterIds[i] + \"-Exclude\");\n" +
 				"        if (excludeFilter.checked) {\n" +
 				"          included = false;\n" +
@@ -82,9 +82,20 @@ public class TimelineSearchFilterScript extends Script {
 				"        }\n" +
 				"\n" +
 				"        let includeFilter = document.getElementById(eventFilterIds[i] + \"-Include\");\n" +
-				"        if (includeFilter.checked) {\n" +
+				"        let requireFilter = document.getElementById(eventFilterIds[i] + \"-Require\");\n" +  // We will check properly afterwards, bit if the only relevant filter is require for an event, then we need this to include this
+				"        if (includeFilter.checked || requireFilter.checked) {\n" +
 				"          included = true;\n" +
 				"        }\n" +
+				"      }\n" +
+				"\n" +
+				"      if (included) {\n" +  // if still included, check that require filters are correct
+				"        for (let i=0; i<filterIds.length; i++) {\n" +
+				"          let requireFilter = document.getElementById(filterIds[i] + \"-Require\");\n" +
+				"          if (requireFilter.checked && !eventFilterIds.includes(filterIds[i])) {\n" +
+				"            included = false;\n" +
+				"            break;\n" +
+				"          }\n" +
+				"		 }\n" +
 				"      }\n" +
 				"\n" +
 				"      // Check if the search query is in the title or description\n" +
