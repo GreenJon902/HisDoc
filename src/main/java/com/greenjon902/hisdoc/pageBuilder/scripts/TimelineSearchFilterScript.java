@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 /**
  * A script that gives functionality to {@link TimelineFilter} buttons, to filter {@link FilterableEvent}.
  * This creates the function `filterChanged()` which updates all the events based on the current filter selection,
- * and saves them to cookies for the server in the format "{groupName}={Exclude|Ignore}", The "Include" option is
+ * and saves them to cookies for the server in the format "{groupName}={Ex|Ig}", The "In" option is
  * signified by no cookie existing with that name.
  * <br>
  * This expects the IDs "dateSelectionMethod-Inclusive", "date1", and "date2" to exist.
@@ -75,14 +75,14 @@ public class TimelineSearchFilterScript extends Script {
 				"\n" +
 				"    if (startAllowed && endAllowed) {" +
 				"      for (let i=0; i<eventFilterIds.length; i++) {\n" +  // Loops through the ids of the filters of the properties this specific event has
-				"        let excludeFilter = document.getElementById(eventFilterIds[i] + \"-Exclude\");\n" +
+				"        let excludeFilter = document.getElementById(eventFilterIds[i] + \"-Ex\");\n" +
 				"        if (excludeFilter.checked) {\n" +
 				"          included = false;\n" +
 				"          break;\n" +
 				"        }\n" +
 				"\n" +
-				"        let includeFilter = document.getElementById(eventFilterIds[i] + \"-Include\");\n" +
-				"        let requireFilter = document.getElementById(eventFilterIds[i] + \"-Require\");\n" +  // We will check properly afterwards, bit if the only relevant filter is require for an event, then we need this to include this
+				"        let includeFilter = document.getElementById(eventFilterIds[i] + \"-In\");\n" +
+				"        let requireFilter = document.getElementById(eventFilterIds[i] + \"-Re\");\n" +  // We will check properly afterwards, bit if the only relevant filter is require for an event, then we need this to include this
 				"        if (includeFilter.checked || requireFilter.checked) {\n" +
 				"          included = true;\n" +
 				"        }\n" +
@@ -90,7 +90,7 @@ public class TimelineSearchFilterScript extends Script {
 				"\n" +
 				"      if (included) {\n" +  // if still included, check that require filters are correct
 				"        for (let i=0; i<filterIds.length; i++) {\n" +
-				"          let requireFilter = document.getElementById(filterIds[i] + \"-Require\");\n" +
+				"          let requireFilter = document.getElementById(filterIds[i] + \"-Re\");\n" +
 				"          if (requireFilter.checked && !eventFilterIds.includes(filterIds[i])) {\n" +
 				"            included = false;\n" +
 				"            break;\n" +
@@ -108,11 +108,11 @@ public class TimelineSearchFilterScript extends Script {
 
 				"  // Update cookies\n" +
 				"  for (let i=0; i<filterIds.length; i++) {\n" +
-				"    if (document.getElementById(filterIds[i] + \"-Exclude\").checked) {\n" +
-				"      setCookie(filterIds[i], \"Exclude\");\n" +
-				"    } else if (document.getElementById(filterIds[i] + \"-Ignore\").checked) {\n" +
-				"      setCookie(filterIds[i], \"Ignore\");\n" +
-				"    } else if (document.getElementById(filterIds[i] + \"-Include\").checked) {\n" +
+				"    if (document.getElementById(filterIds[i] + \"-Ex\").checked) {\n" +
+				"      setCookie(filterIds[i], \"Ex\");\n" +
+				"    } else if (document.getElementById(filterIds[i] + \"-Ig\").checked) {\n" +
+				"      setCookie(filterIds[i], \"Ig\");\n" +
+				"    } else if (document.getElementById(filterIds[i] + \"-In\").checked) {\n" +
 				"      eraseCookie(filterIds[i]);\n" +  // No cookie means include
 				"    }\n" +
 				"  }\n" +
@@ -129,12 +129,12 @@ public class TimelineSearchFilterScript extends Script {
 
 				"function setAllFilters(to) {\n" +
 				"  for (let i=0; i<filterIds.length; i++) {\n" +
-				"    if (to == \"Exclude\") {\n" +
-				"      document.getElementById(filterIds[i] + \"-Exclude\").checked = true;\n" +
-				"    } else if (to == \"Ignore\") {\n" +
-				"      document.getElementById(filterIds[i] + \"-Ignore\").checked = true;\n" +
-				"    } else if (to == \"Include\") {\n" +
-				"      document.getElementById(filterIds[i] + \"-Include\").checked = true;\n" +
+				"    if (to == \"Ex\") {\n" +
+				"      document.getElementById(filterIds[i] + \"-Ex\").checked = true;\n" +
+				"    } else if (to == \"Ig\") {\n" +
+				"      document.getElementById(filterIds[i] + \"-Ig\").checked = true;\n" +
+				"    } else if (to == \"In\") {\n" +
+				"      document.getElementById(filterIds[i] + \"-In\").checked = true;\n" +
 				"    }\n" +
 				"  }\n" +
 				"}");

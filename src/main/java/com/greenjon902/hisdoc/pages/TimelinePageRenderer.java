@@ -99,11 +99,11 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 		table.add(new TextBuilder(AUX_INFO_TITLE) {{add("Set All To");}});
 		ContainerWidgetBuilder setAllContainer = new ContainerWidgetBuilder("timeline-filters-setall-holder");
 
-		setAllContainer.add(new Button("Exclude", "setAllFilters('Exclude');filterChanged()",
+		setAllContainer.add(new Button("Ex", "setAllFilters('Ex');filterChanged()",
 				"Events with this will not been shown"));
-		setAllContainer.add(new Button("Ignore", "setAllFilters('Ignore');filterChanged()",
+		setAllContainer.add(new Button("Ig", "setAllFilters('Ig');filterChanged()",
 				"This has no effect on whether events will be shown"));
-		setAllContainer.add(new Button("Include", "setAllFilters('Include');filterChanged()",
+		setAllContainer.add(new Button("In", "setAllFilters('In');filterChanged()",
 				"Events with this will be shown, given they are not excluded elsewhere"));
 		table.add(setAllContainer);
 
@@ -120,7 +120,7 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 		for (TagLink tagLink : tagLinks) {
 			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
 			TimelineFilter timelineFilter = new TimelineFilter(tagLink.name(),
-					user.otherCookies().getOrDefault(tagLink.name(), "Include"), "filterChanged()");
+					user.otherCookies().getOrDefault(tagLink.name(), "In"), "filterChanged()");
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}
@@ -146,7 +146,7 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 
 			table.add(personNameText);
 			TimelineFilter timelineFilter = new TimelineFilter(personLink.person().name(),
-					user.otherCookies().getOrDefault(personLink.person().name(), "Include"), "filterChanged()");
+					user.otherCookies().getOrDefault(personLink.person().name(), "In"), "filterChanged()");
 			table.add(timelineFilter);
 			searchFilterScript.add(timelineFilter);
 		}
