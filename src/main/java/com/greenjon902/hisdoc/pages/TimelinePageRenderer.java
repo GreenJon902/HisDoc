@@ -105,6 +105,9 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 				"This has no effect on whether events will be shown"));
 		setAllContainer.add(new Button("In", "setAllFilters('In');filterChanged()",
 				"Events with this will be shown, given they are not excluded elsewhere"));
+		setAllContainer.add(new Button("Re", "setAllFilters('Re');filterChanged()",
+				"Events without this will be hidden"));
+
 		table.add(setAllContainer);
 
 		top.add(table);

@@ -114,6 +114,8 @@ public class TimelineSearchFilterScript extends Script {
 				"      setCookie(filterIds[i], \"Ig\");\n" +
 				"    } else if (document.getElementById(filterIds[i] + \"-In\").checked) {\n" +
 				"      eraseCookie(filterIds[i]);\n" +  // No cookie means include
+				"    } else if (document.getElementById(filterIds[i] + \"-Re\").checked) {\n" +
+				"      setCookie(filterIds[i], \"Re\");\n" +
 				"    }\n" +
 				"  }\n" +
 				"  setCookie(\"date1\", document.getElementById(\"date1\").value);\n" +
@@ -135,6 +137,8 @@ public class TimelineSearchFilterScript extends Script {
 				"      document.getElementById(filterIds[i] + \"-Ig\").checked = true;\n" +
 				"    } else if (to == \"In\") {\n" +
 				"      document.getElementById(filterIds[i] + \"-In\").checked = true;\n" +
+				"    } else if (to == \"Re\") {\n" +
+				"      document.getElementById(filterIds[i] + \"-Re\").checked = true;\n" +
 				"    }\n" +
 				"  }\n" +
 				"}");
