@@ -22,7 +22,7 @@ public class TagsPageRenderer extends HtmlPageRenderer {
 
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
 		ArrayList<TagLink> tagLinks = new ArrayList<>(dispatcher.getAllTagLinks());  // List so we can sort them
-		tagLinks.sort(Comparator.comparing(TagLink::name));
+		tagLinks.sort(Comparator.comparing(o -> o.name().toLowerCase()));  // .toLowerCase() as sorting should be case-insensitive
 
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title("Tags");

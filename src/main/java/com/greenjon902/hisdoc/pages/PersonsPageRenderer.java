@@ -23,7 +23,7 @@ public class PersonsPageRenderer extends HtmlPageRenderer {
 
 	public String render(Map<String, String> query, String fragment, User user) throws SQLException {
 		List<PersonLink> personLinks = new ArrayList<> (dispatcher.getAllPersonLinks());
-		personLinks.sort(Comparator.comparing(o -> o.person().name()));
+		personLinks.sort(Comparator.comparing(o -> o.person().name().toLowerCase()));  // .toLowerCase() as sorting should be case-insensitive
 
 		PageBuilder pageBuilder = new PageBuilder();
 		pageBuilder.title("People");

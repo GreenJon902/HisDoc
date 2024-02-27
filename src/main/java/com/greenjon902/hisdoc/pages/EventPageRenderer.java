@@ -121,22 +121,27 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
 
 		ArrayList<TagLink> tagLinks = new ArrayList<>(eventInfo.tagLinks());  // List so we can sort them
-		tagLinks.sort(Comparator.comparing(TagLink::name));
+		tagLinks.sort(Comparator.comparing(o -> o.name().toLowerCase())); // .toLowerCase() as sorting should be case-insensitive
 		for (TagLink tagLink : tagLinks) {
 			tagContainer.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
 		}
 		right.add(tagContainer);
 		right.add(new BreakBuilder());
 
+
 		TextBuilder relatedEventTitles = new TextBuilder(AUX_INFO_TITLE);
 		relatedEventTitles.add("Related Events");
 		right.add(relatedEventTitles);
 		TextBuilder relatedEvents = new TextBuilder(NORMAL, "\n", null);
-		for (EventLink eventLink : eventInfo.relatedEventLinks()) {
+
+		ArrayList<EventLink> eventLinks = new ArrayList<>(eventInfo.relatedEventLinks());
+		eventLinks.sort(Comparator.comparing(o -> o.name().toLowerCase()));
+		for (EventLink eventLink : eventLinks) {
 			relatedEvents.add(eventLink.name(), "event?id=" + eventLink.id(), false);
 		}
 		right.add(relatedEvents);
 		right.add(new BreakBuilder());
+
 
 		TextBuilder relatedPersonTitles = new TextBuilder(AUX_INFO_TITLE);
 		relatedPersonTitles.add("Related Persons");
@@ -144,7 +149,7 @@ public class EventPageRenderer extends HtmlPageRenderer {
 		TextBuilder relatedPersons = new TextBuilder(NORMAL, "\n", null);
 
 		List<PersonLink> personLinks = new ArrayList<>(eventInfo.relatedPersonLinks());
-		personLinks.sort(Comparator.comparing(o -> o.person().name()));
+		personLinks.sort(Comparator.comparing(o -> o.person().name().toLowerCase()));
 		for (PersonLink personLink : personLinks) {
 			relatedPersons.add(personLink.person().name(), "person?id=" + personLink.id(), false);
 		}

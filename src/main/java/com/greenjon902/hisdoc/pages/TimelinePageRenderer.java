@@ -115,7 +115,7 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 		table.add(new BreakBuilder());
 
 		ArrayList<TagLink> tagLinks = new ArrayList<>(timelineInfo.tagLinks());  // List so we can sort them
-		tagLinks.sort(Comparator.comparing(TagLink::name));
+		tagLinks.sort(Comparator.comparing(o -> o.name().toLowerCase()));  // Sort with lower case for case-insensitivity
 
 		for (TagLink tagLink : tagLinks) {
 			table.add(new TagBuilder(tagLink.name(), tagLink.id(), tagLink.color(), tagLink.description()));
@@ -135,12 +135,10 @@ public class TimelinePageRenderer extends HtmlPageRenderer {
 
 		containerWidgetBuilder.add(table);
 
-		//I MADE A NEW TABLE THAT CAN BE SORTED BUT IT HAS BROKEN
-
 		table = new TableBuilder(2, false, "personFilters");
 
 		ArrayList<PersonLink> personLinks = new ArrayList<>(timelineInfo.personLinks());  // List so we can sort them
-		personLinks.sort(Comparator.comparing(o -> o.person().name()));
+		personLinks.sort(Comparator.comparing(o -> o.person().name().toLowerCase()));  // Sort with lower case for case-insensitivity
 
 		for (PersonLink personLink : personLinks) {
 			TextBuilder personNameText = new TextBuilder(NORMAL, "\n", null);
