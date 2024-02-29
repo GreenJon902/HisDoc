@@ -156,7 +156,7 @@ iframe {
     background: rgba(238, 238, 255, 0.1);
 }
 
-input[type=date] {
+input[type=date], input[type=datetime-local], input[type=number], input[type=text], select {
     border-color: #eef;
     color: #eef;
 }

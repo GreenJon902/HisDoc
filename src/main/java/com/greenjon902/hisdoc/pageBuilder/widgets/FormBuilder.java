@@ -174,7 +174,6 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 			} else {
 				throw new RuntimeException("Unsupported FlexiDateTime type " + defaultContents);
 			}
-			System.out.println(type);
 
 			this.dateType = new RadioButton("dateType", type, List.of("Centered", "Ranged"),
 					List.of("", ""),  // TODO: Get actual descriptions?
@@ -195,6 +194,8 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 
 		@Override
 		public void render(HtmlOutputStream stream, User user) throws IOException {
+			stream.write("<div class=\"" + TextType.NORMAL.cssClass + "\">");
+
 			dateType.render(stream, user);
 			renderCentered(stream, defaultContents, defaultContents != null && !(defaultContents instanceof CenteredFlexiDateTime));  // Default option
 			renderRanged(stream, defaultContents, !(defaultContents instanceof RangedFlexiDate));
@@ -227,7 +228,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 					document.getElementById("offset").value = hours + ":" + mins;
 					</script>""");
 			stream.write("<span>This should autofill correctly, if not (or if you entering a date from a different time zone) please check <a href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" target=\"_blank\">this list</a></span>");
-			stream.write("</div>");
+			stream.write("</div></div>");
 		}
 
 		private static void renderCentered(HtmlOutputStream stream, FlexiDateTime defaultContents, boolean defaultHidden) throws IOException {

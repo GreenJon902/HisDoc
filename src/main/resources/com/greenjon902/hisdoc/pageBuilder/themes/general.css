@@ -234,7 +234,7 @@ iframe {
 
 }
 
-input[type=date] {
+input[type=date], input[type=datetime-local], input[type=number], input[type=text], select {
     border: solid 1px;
     display: inline-block;
     border-radius: 10px;
