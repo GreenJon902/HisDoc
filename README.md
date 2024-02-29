@@ -1,5 +1,3 @@
-[![CodeFactor](https://www.codefactor.io/repository/github/greenjon902/hisdoc/badge/master)](https://www.codefactor.io/repository/github/greenjon902/hisdoc/overview/master)
-
 I don't rly feel like writing a whole explanation again so ill give you the start page description
 
 # Welcome
