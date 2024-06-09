@@ -17,7 +17,7 @@ ORDER BY
         WHEN {prefix}Event.eventDateType = 'r' THEN 24 * 60 * 60
     END))
 DESC
-LIMIT 10;
+LIMIT 100;
 
 SELECT {prefix}Tag.tid, {prefix}Tag.name, {prefix}Tag.description, {prefix}Tag.color, {prefix}Tag.description
 FROM {prefix}Tag

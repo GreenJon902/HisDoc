@@ -35,14 +35,14 @@ ORDER BY
         WHEN {prefix}Event.eventDateType = 'r' THEN 24 * 60 * 60
     END))
 DESC
-LIMIT 10;
+LIMIT 100;
 
 SELECT {prefix}Event.eid, {prefix}Event.name, {prefix}Event.eventDateType, {prefix}Event.eventDate1, {prefix}Event.eventDateTimeOffset,
                                             {prefix}Event.eventDateUnits, {prefix}Event.eventDateDiff,
                                             {prefix}Event.eventDate2, {prefix}Event.description FROM {prefix}Event
 WHERE {prefix}Event.postedPid = {pid}
 ORDER BY {prefix}Event.postedDate DESC  -- Posted date is always in seconds so can just order
-LIMIT 10;
+LIMIT 100;
 
 
 SELECT {prefix}Person.pid, {prefix}Person.personType, {prefix}Person.personData
