@@ -151,7 +151,7 @@ public abstract class AbstractModifyEventPageRenderer extends HtmlPageRenderer {
 
 	private void makeTagSelector(FormBuilder form, Set<Integer> defaultSelected) throws SQLException {
 		ArrayList<TagLink> tagLinks = new ArrayList<>(dispatcher.getAllTagLinks());  // List so we can sort them
-		tagLinks.sort(Comparator.comparing(TagLink::name));
+		tagLinks.sort(Comparator.comparing(o -> o.name().toLowerCase()));
 
 		ContainerWidgetBuilder tagContainer = new ContainerWidgetBuilder("tag-container");
 		for (TagLink tagLink : tagLinks) {
@@ -165,7 +165,7 @@ public abstract class AbstractModifyEventPageRenderer extends HtmlPageRenderer {
 
 	private void makePersonSelector(FormBuilder form, Set<Integer> defaultSelected) throws SQLException {
 		ArrayList<PersonLink> personLinks = new ArrayList<>(dispatcher.getAllPersonLinks());  // List so we can sort them
-		personLinks.sort(Comparator.comparing(o -> o.person().name()));
+		personLinks.sort(Comparator.comparing(o -> o.person().name().toLowerCase()));
 
 		ContainerWidgetBuilder container = new ContainerWidgetBuilder("add-person-container", "add-person-container", "");
 		for (PersonLink personLink : personLinks) {
