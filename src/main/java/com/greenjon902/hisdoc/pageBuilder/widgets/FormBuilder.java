@@ -204,7 +204,7 @@ public class FormBuilder extends AbstractContainerWidgetBuilder {
 			if (defaultContents != null) {
 				dateOffset = String.valueOf(defaultContents.offset());
 			} else {
-				dateOffset = "new Date().getTimezoneOffset();";  // Let JS figure it out
+				dateOffset = "-new Date().getTimezoneOffset();";  // Let JS figure it out
 			}
 
 			stream.write("<label for=\"offset\">The time offset from UTC: </label>");
